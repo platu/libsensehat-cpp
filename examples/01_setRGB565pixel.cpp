@@ -1,11 +1,23 @@
+/* https://github.com/platu/libsensehat-cpp
+ *
+ * This example program illustrates the senseSetRGB565pixel() function which
+ * has the following prototye:
+ * 
+ * bool senseSetRGB565pixel(unsigned int, unsigned int, rgb565_pixel_t);
+ *                                x-^           y-^    pixel color-^
+ *
+ * Pixel color is encodes in a 16 bit integer type rgb565_pixel_t
+ *
+ * The program prints one rainbow color per column on the Sense Hat LED matrix.
+ */
+
 #include <iostream>
+#include <iomanip>
 
 #include <termios.h>
 #include <assert.h>
 
 #include <sensehat.h>
-
-#define MAXCHAR 32
 
 using namespace std;
 
@@ -33,25 +45,35 @@ int getch() {
 
 int main() {
 
+	const rgb565_pixel_t red = 0xf800;
+	const rgb565_pixel_t orange = 0xfc00;
+	const rgb565_pixel_t yellow = 0xffe0;
+	const rgb565_pixel_t green = 0x07e0;
+	const rgb565_pixel_t cyan = 0x07ff;
+	const rgb565_pixel_t blue = 0x001f;
+	const rgb565_pixel_t purple = 0xf81f;
+	const rgb565_pixel_t pink = 0x0fc10;
 
-	rgb565_pixels_t question_mark = { .array= {
-		{0,  1,  2,  3,  4,  5,  6,  7},
-		{8,  9, 10, 11, 12, 13, 14, 15},
-		{16, 17, 18, 19, 20, 21, 22, 23},
-		{24, 25, 26, 27, 28, 29, 30, 31},
-		{32, 33, 34, 35, 36, 37, 38, 39},
-		{40, 41, 42, 43, 44, 45, 46, 47},
-		{48, 49, 50, 51, 52, 53, 54, 55},
-		{56, 57, 58, 59, 60, 61, 62, 63}
-		}
-	};
+	const rgb565_pixel_t rainbow[8] = {red, orange, yellow, green, cyan, blue, purple, pink};
+	rgb565_pixel_t pix;
+
+
+	int x, y;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
-		senseSetRGB565pixels(question_mark);
-		cout << "Waiting for keypress." << endl;
+
+		for (y = 0; y < 8; y++) {
+			pix = rainbow[y];
+			cout << hex << setw(4) << "[ " << pix << " ] " << flush;
+			for (x = 0; x < 8; x++) {
+				senseSetRGB565pixel(x, y, pix);
+			}
+		}
+
+		cout << endl << "Waiting for keypress." << endl;
 		getch();
 		senseShutdown();
 		cout << "-------------------------------" << endl
