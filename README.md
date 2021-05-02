@@ -38,12 +38,12 @@ The result of the `id` command below shows the user account belongs to the requi
  $ sudo apt install libi2c-dev
  ```
 
-4. Clone this repository
+3. Clone this repository
  ```bash
  $ git clone https://github.com/platu/libsensehat-cpp.git
  ```
 
-3. Build the library and compile the example programs
+4. Build the library and compile the example programs
  ```bash
  $ cd libsensehat-cpp/
  pi@rpixx:~/libsensehat-cpp $ make
