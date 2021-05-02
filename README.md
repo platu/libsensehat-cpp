@@ -60,4 +60,4 @@ The result of the `id` command below shows the user account belongs to the requi
 
 You're done ! It is now time to open example files and run your own tests.
 
-![SenseHat Rainbow](https://inetdoc.net/images/sensehat.jpg | width=384)
+![image](https://inetdoc.net/images/sensehat.jpg | width=384)
