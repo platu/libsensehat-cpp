@@ -10,7 +10,7 @@ Therefore, we use a very small subset of C++ programming language.
 * Typed input/output through iostream. Almost avoids burdens of C stdio formatting.
 * Use of IMU RTIMULib library already written in C++. Much more convenient to get magnetic field measures from LSM9DS1 registers.
 
-## Install en build
+## Install and build
 
 Open a terminal on your Raspberry Pi.
 
