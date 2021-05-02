@@ -726,7 +726,7 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 		// Turn on the humidity sensor analog front end in single shot mode
 		i2c_smbus_write_byte_data(humFile, HTS221_CTRL_REG1, 0x84);
 
-	    // Run one-shot measurement (temperature and humidity).
+		// Run one-shot measurement (temperature and humidity).
 		// The set bit will be reset by the sensor itself after execution (self-clearing bit)
 		i2c_smbus_write_byte_data(humFile, HTS221_CTRL_REG2, 0x01);
 
@@ -810,8 +810,8 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 		// Calculate ambient temperature
 		*T_DegC = (t_gradient_m * T_OUT) + t_intercept_c;
 
-	    // Calculate ambient humidity
-	    *H_rH = (h_gradient_m * H_T_OUT) + h_intercept_c;
+		// Calculate ambient humidity
+		*H_rH = (h_gradient_m * H_T_OUT) + h_intercept_c;
 
 		// Power down the device
 		i2c_smbus_write_byte_data(humFile, HTS221_CTRL_REG1, 0x00);
@@ -928,9 +928,9 @@ double senseGetTemperatureFromPressure() {
 // LSM9DS1 IMU
 void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabled) {
 
-    imu->setCompassEnable(compass_enabled);
+	imu->setCompassEnable(compass_enabled);
 	imu->setGyroEnable(gyro_enabled);
-    imu->setAccelEnable(accel_enabled);
+	imu->setAccelEnable(accel_enabled);
 }
 
 bool senseGetOrientationRadians(double *p, double *r, double *y) {
