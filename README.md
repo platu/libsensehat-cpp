@@ -16,7 +16,7 @@ Open a terminal on your Raspberry Pi.
 
 1. Your Raspberry Pi user account must belong to a few system groups to access hardware devices and install the library file once it is compiled.
 The result of the `id` command below shows the user account belongs to the required system groups.
- ```
+ ```bash
  $ id | egrep -o '(i2c|gpio|spi|sudo)'
  sudo
  gpio
@@ -25,7 +25,7 @@ The result of the `id` command below shows the user account belongs to the requi
  ```
 
  Check that the sense-hat packages are already there.
- ```
+ ```bash
  $ apt search sense-hat | grep install
 
  python-sense-hat/testing,now 2.2.0-1 armhf  [installé]
@@ -34,17 +34,17 @@ The result of the `id` command below shows the user account belongs to the requi
  ```
 
 2. Install development library packages
- ```
+ ```bash
  $ sudo apt install libi2c-dev
  ```
 
 4. Clone this repository
- ```
+ ```bash
  $ git clone https://github.com/platu/libsensehat-cpp.git
  ```
 
 3. Build the library and compile the example programs
- ```
+ ```bash
  $ cd libsensehat-cpp/
  pi@rpixx:~/libsensehat-cpp $ make
  g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -c -fPIC -o src/sensehat.o src/sensehat.cpp -lpng
@@ -60,4 +60,4 @@ The result of the `id` command below shows the user account belongs to the requi
 
 You're done ! It is now time to open example files and run your own tests.
 
-![image](https://inetdoc.net/images/sensehat.jpg | width=384)
+<img src="https://inetdoc.net/images/sensehat.jpg" width="384px" />
