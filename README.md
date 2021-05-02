@@ -14,52 +14,48 @@ Therefore, we use a very small subset of C++ programming language.
 
 Open a terminal on your Raspberry Pi.
 
-1. Your Raspberry Pi user account must belong to a few system groups to access hardware devices and install the library files once it is compiled.
+1. Your Raspberry Pi user account must belong to a few system groups to access hardware devices and install the library file once it is compiled.
 The result of the `id` command below shows the user account belongs to the required system groups.
-```
-$ id | egrep -o '(i2c|gpio|spi|sudo)'
-sudo
-gpio
-i2c
-spi
-```
+ ```
+ $ id | egrep -o '(i2c|gpio|spi|sudo)'
+ sudo
+ gpio
+ i2c
+ spi
+ ```
 
-Check that the sense-hat packages are already there.
-```
-$ apt search sense-hat
-En train de trier... Fait
-Recherche en texte intégral... Fait
-python-sense-hat/testing,now 2.2.0-1 armhf  [installé]
-  Sense HAT python library (Python 2)
+ Check that the sense-hat packages are already there.
+ ```
+ $ apt search sense-hat | grep install
 
-python3-sense-hat/testing,now 2.2.0-1 armhf  [installé]
-  Sense HAT python library (Python 3)
-
-sense-hat/testing,now 1.2 all  [installé]
-  Sense HAT configuration, libraries and examples
-```
+ python-sense-hat/testing,now 2.2.0-1 armhf  [installé]
+ python3-sense-hat/testing,now 2.2.0-1 armhf  [installé]
+ sense-hat/testing,now 1.2 all  [installé]
+ ```
 
 2. Install development library packages
-```
-$ sudo apt install libi2c-dev
-```
+ ```
+ $ sudo apt install libi2c-dev
+ ```
 
 4. Clone this repository
-```
-$ git clone https://github.com/platu/libsensehat-cpp.git
-```
+ ```
+ $ git clone https://github.com/platu/libsensehat-cpp.git
+ ```
 
 3. Build the library and compile the example programs
-```
-$ cd libsensehat-cpp/
-etu@rpi13:~/libsensehat-cpp $ make
-g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -c -fPIC -o src/sensehat.o src/sensehat.cpp -lpng
-g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -g -shared -Wl,-soname,libsensehat-c++.so -o lib/libsensehat-c++.so.0 src/sensehat.o
-sudo cp lib/libsensehat-c++.so.0 /usr/local/lib/libsensehat-c++.so.0
-sudo sh -c "cd /usr/local/lib && ln -sf libsensehat-c++.so.0 libsensehat-c++.so"
-sudo ldconfig
-cd examples && make
-make[1] : on entre dans le répertoire « /home/etu/libsensehat-cpp/examples »
-g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -o 01_setRGBpixel.o 01_setRGBpixel.cpp -lsensehat-c++ -lpng -li2c -lm -lRTIMULib
-```
-Depending on the number of example programs, compilation may take some time.
+ ```
+ $ cd libsensehat-cpp/
+ pi@rpixx:~/libsensehat-cpp $ make
+ g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -c -fPIC -o src/sensehat.o src/sensehat.cpp -lpng
+ g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -g -shared -Wl,-soname,libsensehat-c++.so -o lib/libsensehat-c++.so.0 src/sensehat.o
+ sudo cp lib/libsensehat-c++.so.0 /usr/local/lib/libsensehat-c++.so.0
+ sudo sh -c "cd /usr/local/lib && ln -sf libsensehat-c++.so.0 libsensehat-c++.so"
+ sudo ldconfig
+ cd examples && make
+ make[1] : on entre dans le répertoire « /home/etu/libsensehat-cpp/examples »
+ g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -o 01_setRGBpixel.o 01_setRGBpixel.cpp -lsensehat-c++ -lpng -li2c -lm -lRTIMULib
+ ```
+ Depending on the number of example programs, compilation may take some time.
+
+You're done ! It is now time to open example files and run tour own tests.
