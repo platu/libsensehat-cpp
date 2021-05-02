@@ -1,4 +1,4 @@
-# Yet another Raspberry pi + SenseHat library in C++ programming language
+# Yet another (Raspberry Pi + SenseHat) library in C++ programming language
 
 This repository aims to resume the Python API in C++ programming language.
 
