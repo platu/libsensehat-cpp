@@ -6,5 +6,5 @@ The functions provided by this library are intended for students who are taking 
 
 Therefore, we use a very small subset of C++ programming language.
 * No classes
-* Typed input/output through <iostream> (avoids burdens of C stdio formatting)
-* IMU RTIMULib library written in C++
+* Typed input/output through iostream (avoids burdens of C stdio formatting)
+* Use of IMU RTIMULib library written in C++
