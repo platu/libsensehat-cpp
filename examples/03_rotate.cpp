@@ -2,19 +2,18 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseFlip_h() and senseFlip_v()
- * functions which respectively flip image on the LED matrix horizontally and
- * vertically.
- * When the redraw boolean is set to true, the image is redrawn immediately.
+ * This example program illustrates the senseRotation() function which rotate
+ * the image on the LED matrix by increment of 90 degrees clockwise.
+ * The angle parameter values are: 90, 180, and 270 degrees.
+ * Any ohter value have no effetc.
  *
- * Functions prototye:
+ * Function prototye:
  *
- * rgb_pixels_t senseFlip_h(bool);
- * rgb_pixels_t senseFlip_v(bool);
- *            redraw switch -^           
+ * rgb_pixels_t senseRotation(unsigned int);
+ *                     rotation angle -^           
  *
- * This program prints a red question mark on a white background the the image
- * is flipped after keypress.
+ * This program prints a red question mark on a white background then the user
+ * is asked to give the rotation angle. The program ends with 0.
  */
 
 #include <iostream>
@@ -64,18 +63,22 @@ int main() {
 		{ W, W, W, W, W, W, W, W },
 		{ W, W, W, R, W, W, W, W } }
 	};
+	unsigned int angle;
+	rgb_pixels_t rgb_test_pixels;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
 		senseSetPixels(question_mark);
-		cout << endl << "Waiting for keypress to flip horizontally." << endl;
-		getch();
-		senseFlip_h(true);
-		cout << endl << "Waiting for keypress to flip vertically." << endl;
-		getch();
-		senseFlip_v(true);
+		do {
+			cout << "Enter the rotation angle [0, 90, 180, 270]" << endl
+				<< "The value 0 ends the program." << endl
+				<< "Angle: ";
+			cin >> angle;
+			rgb_test_pixels = senseRotation(angle);
+			senseSetPixels(rgb_test_pixels);
+		} while (angle != 0);
 		cout << endl << "Waiting for keypress." << endl;
 		getch();
 		senseShutdown();
