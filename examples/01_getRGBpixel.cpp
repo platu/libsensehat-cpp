@@ -71,7 +71,7 @@ int main() {
 		// Next we ask the user to enter pixel row and column 
 		cout << "Enter the row and column numbers of the pixel to be read: ";
 		cin >> row >> col;
-	    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Finally, we read the pixel in RGB565 format
 		readpx = senseGetRGBpixel(row, col);

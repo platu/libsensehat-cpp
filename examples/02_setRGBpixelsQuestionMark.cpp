@@ -1,11 +1,29 @@
+/* File: 02_setRGBpixelsQuestionMark.cpp
+ * Author: Philippe Latu
+ * Source: https://github.com/platu/libsensehat-cpp
+ *
+ * This example program illustrates the senseSetRGBpixels() function which
+ * prints all pixels at once.
+ * One pixel RGB colors are encoded in an array of three bytes defined by the
+ * rgb_pixel_t type.
+ * RGB colors of all pixels are stored in a 8x8 array of rgb_pixel_t elements.
+ * The complete pixel map is defined by the rgb_pixels_t type.
+ *
+ * Function prototye:
+ *
+ * void senseSetRGBpixels(rgb_pixels_t );
+ *             all pixels map -^           
+ *
+ * The program prints a red question mark on a white background.
+ */
+
 #include <iostream>
+#include <iomanip>
 
 #include <termios.h>
 #include <assert.h>
 
 #include <sensehat.h>
-
-#define MAXCHAR 32
 
 using namespace std;
 
