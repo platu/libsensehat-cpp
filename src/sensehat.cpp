@@ -138,10 +138,10 @@ bool senseInit() {
 	png_uint_32 png_width;
 	png_uint_32 png_height;
 	int png_bit_depth;
-    int png_color_type;
-    int png_interlace_method;
-    int png_compression_method;
-    int png_filter_method;
+	int png_color_type;
+	int png_interlace_method;
+	int png_compression_method;
+	int png_filter_method;
 
 	// I2C bus
 	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_ADAPTER);
@@ -154,7 +154,7 @@ bool senseInit() {
 	else if (ioctl(ledFile, I2C_SLAVE_FORCE, I2C_LED_DEVICE) < 0) {
         printf("Unable to open LED device as slave \n%s\n", strerror(errno));
 		retOk = false;
-    }
+	}
 
 	// Image text dictionnary
 	txtFile = open(txtDictFilename, O_RDONLY);
@@ -180,7 +180,7 @@ bool senseInit() {
 	else if(! (png_info_ptr = png_create_info_struct (png_ptr))) {
 		printf("Cannot create PNG info structure.\n%s\n", strerror(errno));
 		retOk = false;
-    }
+	}
 	else {
 		png_init_io (png_ptr, pngFile);
 		png_read_png (png_ptr, png_info_ptr, 0, 0);
@@ -238,8 +238,8 @@ rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 	rgb_pixel_t pix;
 
 	pix.color[_R] = (uint8_t) ((rgb565 & 0xf800) >> 11) << 3; // Red
-    pix.color[_G] = (uint8_t) ((rgb565 & 0x7e0) >> 5) << 2; // Green
-    pix.color[3] = (uint8_t) ((rgb565 & 0x1f)) << 3; // Blue
+	pix.color[_G] = (uint8_t) ((rgb565 & 0x7e0) >> 5) << 2; // Green
+	pix.color[3] = (uint8_t) ((rgb565 & 0x1f)) << 3; // Blue
 	return pix;
 }
 
@@ -344,7 +344,7 @@ rgb565_pixels_t senseGetRGB565pixels() {
 	unsigned int x, y;
 	rgb565_pixels_t image;
 	
-    for(y = 0; y < SENSE_LED_WIDTH; y++)
+	for(y = 0; y < SENSE_LED_WIDTH; y++)
 		for(x = 0; x < SENSE_LED_WIDTH; x++)
 			image.array[x][y] = senseGetRGB565pixel(x,y);
 
@@ -372,10 +372,10 @@ rgb_pixels_t _rotate90(rgb_pixels_t pixMat) {
 	for (i = 0; i < SENSE_LED_WIDTH/2; i++)
 		for (j = i; j < SENSE_LED_WIDTH - i - 1; j++) {
 			temp = pixMat.array[i][j];
-            pixMat.array[i][j] = pixMat.array[SENSE_LED_WIDTH - 1 - j][i];
-            pixMat.array[SENSE_LED_WIDTH - 1 - j][i] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
-            pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = pixMat.array[j][SENSE_LED_WIDTH - 1 - i];
-            pixMat.array[j][SENSE_LED_WIDTH - 1 - i] = temp;
+			pixMat.array[i][j] = pixMat.array[SENSE_LED_WIDTH - 1 - j][i];
+			pixMat.array[SENSE_LED_WIDTH - 1 - j][i] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
+			pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = pixMat.array[j][SENSE_LED_WIDTH - 1 - i];
+			pixMat.array[j][SENSE_LED_WIDTH - 1 - i] = temp;
 			}
 
 	return pixMat;
@@ -390,8 +390,8 @@ rgb_pixels_t _rotate180(rgb_pixels_t pixMat) {
 	for (i = 0; i < SENSE_LED_WIDTH/2; i++)
 		for (j = 0; j < SENSE_LED_WIDTH; j++) {
 			temp = pixMat.array[i][j];
-            pixMat.array[i][j] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
-            pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = temp;
+			pixMat.array[i][j] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
+			pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = temp;
 			}
 
 	return pixMat;
@@ -406,10 +406,10 @@ rgb_pixels_t _rotate270(rgb_pixels_t pixMat) {
 	for (i = 0; i < SENSE_LED_WIDTH/2; i++)
 		for (j = i; j < SENSE_LED_WIDTH - i - 1; j++) {
 			temp = pixMat.array[i][j];
-            pixMat.array[i][j] = pixMat.array[j][SENSE_LED_WIDTH - 1 - i];
-            pixMat.array[j][SENSE_LED_WIDTH - 1 - i] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
-            pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = pixMat.array[SENSE_LED_WIDTH - 1 - j][i];
-            pixMat.array[SENSE_LED_WIDTH - 1 - j][i] = temp;
+			pixMat.array[i][j] = pixMat.array[j][SENSE_LED_WIDTH - 1 - i];
+			pixMat.array[j][SENSE_LED_WIDTH - 1 - i] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
+			pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = pixMat.array[SENSE_LED_WIDTH - 1 - j][i];
+			pixMat.array[SENSE_LED_WIDTH - 1 - j][i] = temp;
 			}
 
 	return pixMat;
@@ -718,7 +718,7 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 		printf("HTS221 I2C who_am_i error: %" PRId32 "\n", i2c_status);
 		close(humFile);
 		retOk = false;
-    }
+	}
 	else {
 		// Power down the device (clean start)
 		i2c_smbus_write_byte_data(humFile, HTS221_CTRL_REG1, 0x00);
@@ -864,7 +864,7 @@ bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 		printf("LPS25H I2C who_am_i error: %" PRId32 "\n", i2c_status);
 		close(preFile);
 		retOk = false;
-    }
+	}
 	else {
 		// Power down the device (clean start)
 		i2c_smbus_write_byte_data(preFile, LPS25H_CTRL_REG1, 0x00);
