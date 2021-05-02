@@ -1,4 +1,4 @@
-/* File: 03_flip_H_and_V.cpp
+/* File: 04_showLetter.cpp
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
@@ -88,7 +88,7 @@ int main() {
 				<< "8:blue" << endl
 				<< "9:purple" << endl
 				<< "10:pink" << endl
-				<< "For example: a 2 1 prints the 'a' character white on black." << endl
+				<< "For instance: a 2 1 prints the 'a' character white on black." << endl
 				<< "The characater 'q' followed by 2 random colors ends the program." << endl
 				<< "Up to you: ";
 			cin >> c >> fg >> bg;
