@@ -1,12 +1,16 @@
-/* https://github.com/platu/libsensehat-cpp
+/* File: 01_setRGBpixel.cpp
+ * Author: Philippe Latu
+ * Source: https://github.com/platu/libsensehat-cpp
  *
  * This example program illustrates the senseSetRGBpixel() function which
- * has the following prototye:
+ * prints one single pixel encoded in an array of 3 8 bit integers.
+ * One integer is used for each R, G, and B colors.
+ * Here we use a dedicated type named rgb_pixel_t.
+ *
+ * Function prototye:
  * 
  * bool senseSetRGBpixel(unsigned int, unsigned int, rgb_pixel_t);
- *                             x-^           y-^    pixel color-^
- *
- * Pixel color is encoded in a 3 bytes array type rgb_pixel_t
+ *  ^-- status            x -^          y -^    pixel color -^
  *
  * The program prints one rainbow color per column on the Sense Hat LED matrix.
  */

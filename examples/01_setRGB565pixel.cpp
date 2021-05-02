@@ -1,12 +1,16 @@
-/* https://github.com/platu/libsensehat-cpp
+/* File: 01_setRGB565pixel.cpp
+ * Author: Philippe Latu
+ * Source: https://github.com/platu/libsensehat-cpp
  *
  * This example program illustrates the senseSetRGB565pixel() function which
- * has the following prototye:
+ * prints one single pixel encoded in RGB565 format.
+ * RGB565 encodes the three colors in a 16 bit integer.
+ * Here we use a dedicated type named rgb565_pixel_t.
+ *
+ * Function prototye:
  * 
  * bool senseSetRGB565pixel(unsigned int, unsigned int, rgb565_pixel_t);
- *                                x-^           y-^    pixel color-^
- *
- * Pixel color is encodes in a 16 bit integer type rgb565_pixel_t
+ *  ^-- status                 x -^           y -^    pixel color -^
  *
  * The program prints one rainbow color per column on the Sense Hat LED matrix.
  */
