@@ -1,4 +1,4 @@
-# Yet another (Raspberry Pi + SenseHat) library in C++ programming language
+# Yet another (Raspberry Pi + Sense HAT) library in C++ programming language
 
 ## Foreword 
 This repository aims to resume the [Python Sense HAT](https://github.com/astro-pi/python-sense-hat) API in C++ programming language. The functions provided by this library are intended for students who are taking their first steps in programming. Therefore, we use a very small subset of C++ programming language.
