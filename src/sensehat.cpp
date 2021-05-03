@@ -69,6 +69,7 @@ static png_bytepp png_rows;
 // IMU setup instantiation
 static RTIMUSettings *settings = new RTIMUSettings("RTIMULib");
 static RTIMU *imu = RTIMU::createIMU(settings);
+static RTPressure *pressure = RTPressure::createPressure(settings);
 
 /*
 static int i2cRead(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
@@ -200,6 +201,10 @@ bool senseInit() {
     }
     // Initialise the imu object
     imu->IMUInit();
+
+	//  set up pressure sensor
+	if (pressure != NULL)
+        pressure->pressureInit();
 
     // Set the Fusion coefficient
     imu->setSlerpPower(0.02);
@@ -936,12 +941,17 @@ void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabl
 bool senseGetOrientationRadians(double *p, double *r, double *y) {
 	bool retOk = true;
 
+	usleep(imu->IMUGetPollInterval() * 1000);
+
 	if (imu->IMURead()) {
 		RTIMU_DATA imuData = imu->getIMUData() ;
-		RTVector3 curr_pose = imuData.fusionPose ;
-		*p = curr_pose.x();
-		*r = curr_pose.y();
-		*y = -curr_pose.z();
+		if (imuData.fusionPoseValid) {
+			RTVector3 curr_pose = imuData.fusionPose ;
+			*p = curr_pose.x();
+			*r = curr_pose.y();
+			*y = -curr_pose.z();
+		}
+		else retOk = false;
 	}
 	else
 		retOk = false;
