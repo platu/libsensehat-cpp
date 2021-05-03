@@ -910,7 +910,7 @@ bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 double senseGetPressure() {
 	double Temp, Pressure;
 
-	if (!senseGetTempHumid(&Temp, &Pressure))
+	if (!senseGetTempPressure(&Temp, &Pressure))
 		Pressure = 0.0;
 
 	return Pressure;
