@@ -70,3 +70,4 @@ Almost every function has its own example program that illustrates how it works.
 * 03 Flip or rotate all pixels
 * 04 Display a character or scroll a message
 * 05 HTS221 Humidity sensor and LPS25H Pressure sensor
+* 06 LSM9DS1 IMU Orientation and compass
