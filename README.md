@@ -64,7 +64,7 @@ You're done ! It is now time to open example files and run your own tests.
 
 ## Example programs
 
-Almost every function has its own example program that illustrates how it works. Source file numbering in the directory named examples designates the category of functions. Here is a list of these categories:
+Almost every function has its own example program that illustrates how it works. Source file numbering in the directory named [examples](examples/) designates the category of functions. Here is a list of these categories:
 * 01 Get or set a single pixel
 * 02 Get or set all pixels
 * 03 Flip or rotate all pixels
