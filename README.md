@@ -1,11 +1,7 @@
 # Yet another (Raspberry Pi + SenseHat) library in C++ programming language
 
 ## Foreword 
-This repository aims to resume the Python API in C++ programming language.
-
-The functions provided by this library are intended for students who are taking their first steps in programming.
-
-Therefore, we use a very small subset of C++ programming language.
+This repository aims to resume the Python API in C++ programming language. The functions provided by this library are intended for students who are taking their first steps in programming. Therefore, we use a very small subset of C++ programming language.
 * No classes. Okaaaayyy! I know. Don't slap me, even virtually.
 * Typed input/output through iostream. Almost avoids burdens of C stdio formatting.
 * Use of IMU RTIMULib library already written in C++. Much more convenient to get magnetic field measures from LSM9DS1 registers.
@@ -65,3 +61,11 @@ The result of the `id` command below shows the user account belongs to the requi
 You're done ! It is now time to open example files and run your own tests.
 
 <img src="https://inetdoc.net/images/sensehat.jpg" width="384px" />
+
+## Example programs
+
+Almost every function has its own example program that illustrates how it works. Source file numbering in the directory named examples designates the category of functions. Here is a list of these categories:
+* 01 Get or set a single pixel
+* 02 Get or set all pixels
+* 03 Flip or rotate all pixels
+* 04 Display a character or scroll a message
