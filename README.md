@@ -10,6 +10,10 @@ Therefore, we use a very small subset of C++ programming language.
 * Typed input/output through iostream. Almost avoids burdens of C stdio formatting.
 * Use of IMU RTIMULib library already written in C++. Much more convenient to get magnetic field measures from LSM9DS1 registers.
 
+The code in this repository is more a compilation than an original development. Many thanks are due to the developers of the following projects:
+* [Sense Hat Unchained](https://github.com/bitbank2/sense_hat_unchained)
+* [Raspberry Pi Sense-HAT add-on board](https://github.com/davebm1/c-sense-hat)
+
 ## Install and build
 
 Open a terminal on your Raspberry Pi.
