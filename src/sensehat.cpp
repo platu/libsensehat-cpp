@@ -972,3 +972,12 @@ bool senseGetOrientationDegrees(double *p, double *r, double *y) {
 
 	return retOk;
 }
+
+double senseGetCompass() {
+	double p, r, y;
+
+	_msecSleep(250);
+	senseGetOrientationDegrees(&p, &r, &y);
+
+	return y;
+}

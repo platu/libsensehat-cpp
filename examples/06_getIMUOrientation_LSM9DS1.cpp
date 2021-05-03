@@ -86,6 +86,10 @@ int main() {
 		else
 			cout << "Error. No measures." << endl;
 
+		cout << "Compass angle to north in degrees." << endl;
+		cout << fixed << setprecision(2) << senseGetCompass() << endl; 
+
+
 		cout << endl << "Waiting for keypress." << endl;
 		getch();
 		senseShutdown();

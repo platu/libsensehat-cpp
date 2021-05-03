@@ -109,4 +109,6 @@ bool senseGetOrientationRadians(double *, double *, double *);
 
 bool senseGetOrientationDegrees(double *, double *, double *);
 
+double senseGetCompass();
+
 #endif // SENSEHAT_H
