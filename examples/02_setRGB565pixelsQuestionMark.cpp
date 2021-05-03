@@ -2,14 +2,14 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseSetRGB565pixels() function which
+ * This example program illustrates the senseSetRGB565pixels() function that
  * prints all pixels at once.
  * One pixel colors are encoded in RGB565 format. This format fits into a 16
  * bit integer defined by the rgb565_pixel_t type.
  * All pixels are stored in a 8x8 array of rgb565_pixel_t elements.
  * The complete pixel map is defined by the rgb565_pixels_t type.
  *
- * Function prototye:
+ * Function prototype:
  *
  * void senseSetRGB565pixels(rgb565_pixels_t );
  *             all pixels map -^           

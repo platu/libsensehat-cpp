@@ -2,18 +2,18 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseRotation() function which rotate
+ * This example program illustrates the senseRotation() function that rotates
  * the image on the LED matrix by increment of 90 degrees clockwise.
  * The angle parameter values are: 90, 180, and 270 degrees.
  * Any ohter value have no effetc.
  *
- * Function prototye:
+ * Function prototype:
  *
  * rgb_pixels_t senseRotation(unsigned int);
  *                     rotation angle -^           
  *
  * This program prints a red question mark on a white background then the user
- * is asked to give the rotation angle. The program ends with 0.
+ * is asked to give the rotation angle. The program ends with angle value 0.
  */
 
 #include <iostream>

@@ -2,12 +2,12 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseGetRGB565pixel() function which
+ * This example program illustrates the senseGetRGB565pixel() function that
  * reads one single pixel encoded in RGB565 format.
  * RGB565 encodes the three colors in a 16 bit integer.
  * Here we use a dedicated type named rgb565_pixel_t.
  *
- * Function prototye:
+ * Function prototype:
  * 
  * rgb565_pixel_t senserGetRGB565pixel(unsigned int, unsigned int);
  *       ^-- pixel color                    x -^          y -^

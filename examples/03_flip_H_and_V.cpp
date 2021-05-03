@@ -5,15 +5,16 @@
  * This example program illustrates the senseFlip_h() and senseFlip_v()
  * functions which respectively flip image on the LED matrix horizontally and
  * vertically.
- * When the redraw boolean is set to true, the image is redrawn immediately.
+ * When the redraw boolean parameter is set to true, the image is redrawn
+ * immediately.
  *
- * Functions prototye:
+ * Function prototypes:
  *
  * rgb_pixels_t senseFlip_h(bool);
  * rgb_pixels_t senseFlip_v(bool);
  *            redraw switch -^           
  *
- * This program prints a red question mark on a white background the the image
+ * This program prints a red question mark on a white background then the image
  * is flipped after keypress.
  */
 

@@ -1,33 +1,38 @@
-/* File: 04_showLetter.cpp
+/* File: 04_showMessage.cpp
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseShowRGBColoredLetter() function
- * that prints a character on the LED matrix.
+ * This example program illustrates the senseShowRGBcoloredMessage() function
+ * that scrolls a character string on the LED matrix.
  * 
- * When the function senseShowLetter() is called with no color is specified,
- * the character is printed with white foreground and black background.
+ * When the fucntion senseShowMessage() is called with no color is specified,
+ * the character string is printed with white foreground and black background.
  *
  * Function prototypes:
  *
- * void senseShowLetter(char);
- *     character to print -^
- * void senseShowRGB565ColoredLetter(char, rgb565_pixel_t, rgb565_pixel_t);
- *                 character to print -^  foreground -^   background -^
- * void senseShowRGBColoredLetter(char, rgb_pixel_t, rgb_pixel_t);
- *             character to print -^ foreground -^ background -^
+ * void senseShowMessage(char *);
+ *       string to scroll -^
  *
- * This program asks the user to choose a character with the foreground and
- * background colors. Program ends with the 'q' character.
+ * void senseShowRGB565ColoredMessage(char *, rgb565_pixel_t, rgb565_pixel_t);
+ *                     string to scroll -^  foreground -^   background -^
+ *
+ * void senseShowRGBColoredMessage(char *, rgb_pixel_t, rgb_pixel_t);
+ *                  string to scroll -^ foreground -^ background -^
+ *
+ * This program asks the user to enter a character string followed by the
+ * foreground and background colors. Program ends with the 'q' character.
  */
 
 #include <iostream>
 #include <iomanip>
+#include <string>
 
 #include <termios.h>
 #include <assert.h>
 
 #include <sensehat.h>
+
+#define NBCHARS 80
 
 using namespace std;
 
@@ -67,19 +72,21 @@ int main() {
 	const rgb_pixel_t pink = { .color = {255, 128, 128} };
 
 	const rgb_pixel_t c_set[10] = {black, white, red, orange, yellow, green, cyan, blue, purple, pink};
-	char c;
+	string msg;
+	char *scroll;
 	unsigned int fg, bg;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
+		// Ensure the scroll message is not too long
+		msg.resize(NBCHARS);
 		cout << "The characater 'q' ends the program." << endl;
 		do {
-			cout << "First, enter the character to print: ";
-			cin >> c;
-			cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			if (c != 'q') {
+			cout << "First, enter the message to scroll: ";
+			getline(cin, msg);
+			if (msg != "q") {
 				cout << "Second, choose the foreground and background colors" << endl
 					<< "according to the following list:" << endl
 					<< "1:\tblack" << endl
@@ -96,9 +103,13 @@ int main() {
 					<< "Choose 2 colors: ";
 				cin >> fg >> bg;
 				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				senseShowRGBColoredLetter(c, c_set[fg-1], c_set[bg-1]);
+				// msg string to scroll char *
+				scroll = strdup(msg.c_str());
+				// start scrolling on pixel array
+				senseShowRGBColoredMessage(scroll, c_set[fg-1], c_set[bg-1]);
+				free(scroll);
 			}
-		} while (c != 'q');
+		} while (msg != "q");
 		cout << endl << "Waiting for keypress." << endl;
 		getch();
 		senseShutdown();

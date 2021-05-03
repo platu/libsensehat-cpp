@@ -2,14 +2,14 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseSetRGBpixels() function which
+ * This example program illustrates the senseSetRGBpixels() function that
  * prints all pixels at once.
  * One pixel RGB colors are encoded in an array of three bytes defined by the
  * rgb_pixel_t type.
  * RGB colors of all pixels are stored in a 8x8 array of rgb_pixel_t elements.
  * The complete pixel map is defined by the rgb_pixels_t type.
  *
- * Function prototye:
+ * Function prototype:
  *
  * void senseSetRGBpixels(rgb_pixels_t );
  *             all pixels map -^           

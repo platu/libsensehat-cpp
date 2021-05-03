@@ -2,12 +2,12 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseSetRGBpixel() function which
+ * This example program illustrates the senseSetRGBpixel() function that
  * prints one single pixel encoded in an array of 3 8 bit integers.
- * One integer is used for each R, G, and B colors.
+ * One 8 bit integer is used for each R, G, and B colors.
  * Here we use a dedicated type named rgb_pixel_t.
  *
- * Function prototye:
+ * Function prototype:
  * 
  * bool senseSetRGBpixel(unsigned int, unsigned int, rgb_pixel_t);
  *  ^-- status            x -^          y -^    pixel color -^
