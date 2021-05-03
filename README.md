@@ -69,3 +69,4 @@ Almost every function has its own example program that illustrates how it works.
 * 02 Get or set all pixels
 * 03 Flip or rotate all pixels
 * 04 Display a character or scroll a message
+* 05 HTS221 Humidity sensor and LPS25H Pressure sensor
