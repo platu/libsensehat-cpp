@@ -13,6 +13,7 @@ extern "C" {
 
 #include <RTIMULib.h>
 #include <RTMath.h>
+#define G_2_MPSS 9.80665
 
 // The LED Array is handled by a dedicated microcontroller
 // It must be updated in a single shot by writing
@@ -106,9 +107,13 @@ double senseGetTemperatureFromPressure();
 void senseSetIMUConfig(bool, bool, bool);
 
 bool senseGetOrientationRadians(double *, double *, double *);
-
 bool senseGetOrientationDegrees(double *, double *, double *);
-
 double senseGetCompass();
+
+bool senseGetGyroscopeRadians(double *, double *, double *);
+bool senseGetGyroscopeDegrees(double *, double *, double *);
+
+bool senseGetAccelG(double *, double *, double *);
+bool senseGetAccelMPSS(double *, double *, double *);
 
 #endif // SENSEHAT_H

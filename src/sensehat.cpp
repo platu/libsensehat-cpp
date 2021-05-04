@@ -979,5 +979,77 @@ double senseGetCompass() {
 	_msecSleep(250);
 	senseGetOrientationDegrees(&p, &r, &y);
 
-	return y;
+	return y + 180;
+}
+
+bool senseGetGyroscopeRadians(double *p, double *r, double *y) {
+	bool retOk = true;
+
+	senseSetIMUConfig(false, true, false);
+
+	usleep(imu->IMUGetPollInterval() * 1000);
+
+    if (imu->IMURead()) {
+        RTIMU_DATA imuData = imu->getIMUData() ;
+        if (imuData.gyroValid) {
+            *p = imuData.gyro.x();
+            *r = imuData.gyro.y();
+            *y = imuData.gyro.z();
+        }
+        else retOk = false;
+    }
+    else
+        retOk = false;
+
+    return retOk;
+}
+
+bool senseGetGyroscopeDegrees(double *p, double *r, double *y) {
+	bool retOk = true;
+
+	if (senseGetGyroscopeRadians(p, r, y)) {
+		*p *= 180.0 / M_PI;  
+		*r *= 180.0 / M_PI;
+		*y *= 180.0 / M_PI;
+	}
+	else
+		retOk = false;
+
+	return retOk;
+}
+
+bool senseGetAccelG(double *x, double *y, double *z) {
+	bool retOk = true;
+
+	senseSetIMUConfig(false, false, true);
+
+	usleep(imu->IMUGetPollInterval() * 1000);
+
+    if (imu->IMURead()) {
+        RTIMU_DATA imuData = imu->getIMUData() ;
+        if (imuData.accelValid) {
+            *x = imuData.accel.x();
+            *y = imuData.accel.y();
+            *z = imuData.accel.z();
+        }
+        else retOk = false;
+    }
+    else
+        retOk = false;
+
+    return retOk;
+}
+
+bool senseGetAccelMPSS(double *x, double *y, double *z) {
+	bool retOk = true;
+
+	if (senseGetGyroscopeRadians(x, y, z)) {
+		*x *= G_2_MPSS;
+		*y *= G_2_MPSS;
+		*z *= G_2_MPSS;
+	}
+	else
+		retOk = false;
+
+	return retOk;
 }

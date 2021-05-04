@@ -2,22 +2,19 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program collects orientation measures from the LSM9DS1 IMU
- * sensor.
+ * This example program collects direction to north with the senseGetCompass()
+ * function.
  *
  * Function prototypes:
  * 
  * void senseSetIMUConfig(bool,          bool,           bool);
  *         compass_enabled-^ gyro_enabled-^ accel_enabled-^
  *
- * bool senseGetOrientationRadians(double *, double *, double *);
- *                             roll-^    pitch-^     yaw-^
+ * double senseGetCompass()
+ *   ^- angle in degrees [0..360]
  *
- * bool senseGetOrientationDegrees(double *, double *, double *);
- *                             roll-^    pitch-^     yaw-^
- *
- * The program simply calls the senseGetOrientationDegrees() function and print
- * the roll, picth and yaw measures.
+ * This program reverses the direction so the illuminated led always appears to
+ * point north.
  */
 
 #include <iostream>
@@ -54,10 +51,16 @@ int getch() {
 	return c;
 }
 
+#define LEDNB 28
+
 int main() {
 
-	double x, y ,z;
 	unsigned int time = 0;
+	// list of leds located at the edge of the square
+	unsigned int led_index, led_loop[LEDNB] = {4, 5, 6, 7, 15, 23, 31, 39, 47, 55, 63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8, 0, 1, 2, 3};
+	float led_degree_ratio = LEDNB / 360.0;
+	double direction;
+	unsigned int prev_x, x, prev_y, y, offset; 
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
@@ -66,18 +69,31 @@ int main() {
  
 		senseSetIMUConfig(true, true, true);
 
-		for (time = 0; time < 30; time++) {
+		for (time = 0; time < 60; time++) {
 			this_thread::sleep_for(chrono::milliseconds(500));
+			// reverse direction
+			direction = 360 - senseGetCompass();
+			cout << "Compass angle to north in degrees:\t" << 
+					fixed << setprecision(2) << direction << endl; 
 
-			cout << "Orientation in degrees:\t";
-			if (senseGetOrientationDegrees(&x, &y, &z)) {
-				cout << fixed << setprecision(6) 
-					<< "Roll=\t" << x
-					<< " Pitch=\t" << y
-					<< " Yaw=\t" << z << endl;
-				}
-			else
-				cout << "Error. No measures." << endl;
+			// select the led
+			led_index = (unsigned int) floor(led_degree_ratio * direction);
+			offset = led_loop[led_index];
+			
+			// extract coordinates
+			y = offset / 8; // row
+			x = offset % 8; // column
+
+			// turns off the previous led
+		    if (x != prev_x || y != prev_y)
+				senseSetRGB565pixel(prev_x, prev_y, 0);
+
+			// turn on the new led 
+		    senseSetRGB565pixel(x, y,  255);
+
+			prev_x = x;
+			prev_y = y;
+
 		}
 
 		cout << endl << "Waiting for keypress." << endl;

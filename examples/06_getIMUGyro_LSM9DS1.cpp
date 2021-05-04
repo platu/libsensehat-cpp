@@ -16,14 +16,11 @@
  * bool senseGetOrientationDegrees(double *, double *, double *);
  *                             roll-^    pitch-^     yaw-^
  *
- * The program simply calls the senseGetOrientationDegrees() function and print
- * the roll, picth and yaw measures.
+ * The program simply calls the two functions
  */
 
 #include <iostream>
 #include <iomanip>
-#include <chrono>
-#include <thread>
 
 #include <termios.h>
 #include <assert.h>
@@ -57,28 +54,39 @@ int getch() {
 int main() {
 
 	double x, y ,z;
-	unsigned int time = 0;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
  
-		senseSetIMUConfig(true, true, true);
+		// wait 250ms
+		usleep(250 * 1000);
+		cout << "Orientation in radians." << endl;
+		if (senseGetOrientationRadians(&x, &y, &z)) {
+			cout << fixed << setprecision(6) 
+				<< "Roll = " << x
+				<< " Pitch = " << y
+				<< " Yaw = " << z << endl;
+			}
+		else
+			cout << "Error. No measures." << endl;
 
-		for (time = 0; time < 30; time++) {
-			this_thread::sleep_for(chrono::milliseconds(500));
+		// wait 250ms
+		usleep(250 * 1000);
+		cout << "Orientation in degrees." << endl;
+		if (senseGetOrientationDegrees(&x, &y, &z)) {
+			cout << fixed << setprecision(6) 
+				<< "Roll = " << x
+				<< " Pitch = " << y
+				<< " Yaw = " << z << endl;
+			}
+		else
+			cout << "Error. No measures." << endl;
 
-			cout << "Orientation in degrees:\t";
-			if (senseGetOrientationDegrees(&x, &y, &z)) {
-				cout << fixed << setprecision(6) 
-					<< "Roll=\t" << x
-					<< " Pitch=\t" << y
-					<< " Yaw=\t" << z << endl;
-				}
-			else
-				cout << "Error. No measures." << endl;
-		}
+		cout << "Compass angle to north in degrees." << endl;
+		cout << fixed << setprecision(2) << senseGetCompass() << endl; 
+
 
 		cout << endl << "Waiting for keypress." << endl;
 		getch();
