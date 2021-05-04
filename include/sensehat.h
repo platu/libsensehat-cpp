@@ -73,6 +73,7 @@ const auto senseGetPixels = senseGetRGBpixels;
 // Write all pixels at once
 void senseSetRGB565pixels(rgb565_pixels_t );
 void senseSetRGBpixels(rgb_pixels_t );
+void senseRGBClear(uint8_t , uint8_t , uint8_t );
 const auto senseSetPixels = senseSetRGBpixels;
 
 // Horizontal and Vertical flip of all pixels

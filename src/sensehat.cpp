@@ -98,11 +98,10 @@ int i2cWrite(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
 }
 
 void senseClear() {
-// Shut the LED array with black color
+// Turn off all LEDs
 	memset(LEDStore, 0, sizeof(LEDStore));
 	i2cWrite(ledFile, 0, LEDStore, sizeof(LEDStore));
 }
-
 
 void senseSetLowLight(bool low) {
 // Lower led light intensity
@@ -246,6 +245,23 @@ rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 	pix.color[_G] = (uint8_t) ((rgb565 & 0x7e0) >> 5) << 2; // Green
 	pix.color[3] = (uint8_t) ((rgb565 & 0x1f)) << 3; // Blue
 	return pix;
+}
+
+void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
+// Turns on all pixels with the same RGB color
+	int i, x, y;
+
+	rgb_pixel_t rgb = { .color = {r, g, b}  };
+	rgb565_pixel_t rgb565 = sensePackPixel(rgb);
+
+	for(x = 0; x < SENSE_LED_WIDTH; x++)
+		for(y = 0; y < SENSE_LED_WIDTH; y++) {
+			i = (x*24)+y; // offset into array
+			LEDStore[i] = (uint8_t)((rgb565 >> 10) & 0x3e); // Red
+			LEDStore[i+8] = (uint8_t)((rgb565 >> 5) & 0x3f); // Green
+			LEDStore[i+16] = (uint8_t)((rgb565 << 1) & 0x3e); // Blue
+		}
+	i2cWrite(ledFile, 0, LEDStore, sizeof(LEDStore));
 }
 
 bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) {
