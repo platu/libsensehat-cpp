@@ -67,6 +67,7 @@ int main() {
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
  
+		// turn on all sensors for Compass
 		senseSetIMUConfig(true, true, true);
 
 		for (time = 0; time < 60; time++) {
@@ -85,15 +86,14 @@ int main() {
 			x = offset % 8; // column
 
 			// turns off the previous led
-		    if (x != prev_x || y != prev_y)
+			if (x != prev_x || y != prev_y)
 				senseSetRGB565pixel(prev_x, prev_y, 0);
 
 			// turn on the new led 
-		    senseSetRGB565pixel(x, y,  255);
+			senseSetRGB565pixel(x, y,  255);
 
 			prev_x = x;
 			prev_y = y;
-
 		}
 
 		cout << endl << "Waiting for keypress." << endl;
