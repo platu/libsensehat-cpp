@@ -1011,7 +1011,7 @@ double senseGetCompass() {
 	return y + 180;
 }
 
-bool senseGetGyroscopeRadians(double *p, double *r, double *y) {
+bool senseGetGyroRadians(double *p, double *r, double *y) {
 	bool retOk = true;
 
 	senseSetIMUConfig(false, true, false);
@@ -1033,10 +1033,10 @@ bool senseGetGyroscopeRadians(double *p, double *r, double *y) {
     return retOk;
 }
 
-bool senseGetGyroscopeDegrees(double *p, double *r, double *y) {
+bool senseGetGyroDegrees(double *p, double *r, double *y) {
 	bool retOk = true;
 
-	if (senseGetGyroscopeRadians(p, r, y)) {
+	if (senseGetGyroRadians(p, r, y)) {
 		*p *= 180.0 / M_PI;  
 		*r *= 180.0 / M_PI;
 		*y *= 180.0 / M_PI;
@@ -1072,7 +1072,7 @@ bool senseGetAccelG(double *x, double *y, double *z) {
 bool senseGetAccelMPSS(double *x, double *y, double *z) {
 	bool retOk = true;
 
-	if (senseGetGyroscopeRadians(x, y, z)) {
+	if (senseGetAccelG(x, y, z)) {
 		*x *= G_2_MPSS;
 		*y *= G_2_MPSS;
 		*z *= G_2_MPSS;

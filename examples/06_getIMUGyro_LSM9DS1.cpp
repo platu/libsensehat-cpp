@@ -1,4 +1,4 @@
-/* File: 05_getTempHumid_HTS221.cpp
+/* File: 06_getIMUGyro_LSM9DS1.cpp
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
@@ -21,6 +21,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <chrono>
+#include <thread>
 
 #include <termios.h>
 #include <assert.h>
@@ -53,6 +55,7 @@ int getch() {
 
 int main() {
 
+	unsigned int time = 0;
 	double x, y ,z;
 
 	if(senseInit()) {
@@ -60,33 +63,20 @@ int main() {
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
  
-		// wait 250ms
-		usleep(250 * 1000);
-		cout << "Orientation in radians." << endl;
-		if (senseGetOrientationRadians(&x, &y, &z)) {
-			cout << fixed << setprecision(6) 
-				<< "Roll = " << x
-				<< " Pitch = " << y
-				<< " Yaw = " << z << endl;
+		for (time = 0; time < 60; time++) {
+			// wait for 500ms
+			this_thread::sleep_for(chrono::milliseconds(500));
+			cout << "Gyrometer in radians/s." << endl;
+			if (senseGetGyroRadians(&x, &y, &z)) {
+				cout << fixed << setprecision(6) 
+					<< "Roll = " << x
+					<< " Pitch = " << y
+					<< " Yaw = " << z << endl;
 			}
-		else
-			cout << "Error. No measures." << endl;
+			else
+				cout << "Error. No measures." << endl;
 
-		// wait 250ms
-		usleep(250 * 1000);
-		cout << "Orientation in degrees." << endl;
-		if (senseGetOrientationDegrees(&x, &y, &z)) {
-			cout << fixed << setprecision(6) 
-				<< "Roll = " << x
-				<< " Pitch = " << y
-				<< " Yaw = " << z << endl;
-			}
-		else
-			cout << "Error. No measures." << endl;
-
-		cout << "Compass angle to north in degrees." << endl;
-		cout << fixed << setprecision(2) << senseGetCompass() << endl; 
-
+		}
 
 		cout << endl << "Waiting for keypress." << endl;
 		getch();

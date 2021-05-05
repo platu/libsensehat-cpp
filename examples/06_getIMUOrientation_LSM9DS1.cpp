@@ -1,4 +1,4 @@
-/* File: 05_getTempHumid_HTS221.cpp
+/* File: 06_getIMUOrientation_LSM9DS1.cpp
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *

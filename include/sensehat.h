@@ -111,8 +111,8 @@ bool senseGetOrientationRadians(double *, double *, double *);
 bool senseGetOrientationDegrees(double *, double *, double *);
 double senseGetCompass();
 
-bool senseGetGyroscopeRadians(double *, double *, double *);
-bool senseGetGyroscopeDegrees(double *, double *, double *);
+bool senseGetGyroRadians(double *, double *, double *);
+bool senseGetGyroDegrees(double *, double *, double *);
 
 bool senseGetAccelG(double *, double *, double *);
 bool senseGetAccelMPSS(double *, double *, double *);
