@@ -80,6 +80,7 @@ int main() {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
+
 		// Ensure the scroll message is not too long
 		msg.resize(NBCHARS);
 		cout << "The characater 'q' ends the program." << endl;

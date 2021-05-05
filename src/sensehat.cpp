@@ -28,7 +28,8 @@ static uint8_t LEDStore[LEDSTORESIZE];
 // I2C file handles
 #define FILENAMELENGTH 32
 static int ledFile = -1; // LED matrix
-static bool ledLowLight = false;
+static bool lowLight_switch = false;
+static bool lowLight_state = false;
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 const uint8_t gamma8[] = {
@@ -106,14 +107,15 @@ void senseClear() {
 void senseSetLowLight(bool low) {
 // Lower led light intensity
 	if (low)
-		ledLowLight = true;
+		lowLight_switch = true;
 	else
-		ledLowLight = false;
+		lowLight_switch = false;
+	lowLight_state = false;
 }
 
 rgb_pixel_t _lowLightDimmer(rgb_pixel_t px) {
 // Internal
-// Lower light intensity if ledLowLight is true.
+// Reduce light intensity if lowLight_switch is true.
 	uint8_t w;
 
 	px.color[_R] = gamma8[px.color[_R]];
@@ -243,7 +245,7 @@ rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 
 	pix.color[_R] = (uint8_t) ((rgb565 & 0xf800) >> 11) << 3; // Red
 	pix.color[_G] = (uint8_t) ((rgb565 & 0x7e0) >> 5) << 2; // Green
-	pix.color[3] = (uint8_t) ((rgb565 & 0x1f)) << 3; // Blue
+	pix.color[_B] = (uint8_t) ((rgb565 & 0x1f)) << 3; // Blue
 	return pix;
 }
 
@@ -301,9 +303,17 @@ bool senseSetRGBpixel(unsigned int x, unsigned int y, uint8_t red, uint8_t green
 void senseSetRGB565pixels(rgb565_pixels_t pixelArray) {
 	int x, y, i;
 	rgb565_pixel_t rgb565;
+	rgb_pixel_t temp;
 
 	for(x = 0; x < SENSE_LED_WIDTH; x++)
 		for(y = 0; y < SENSE_LED_WIDTH; y++) {
+			if (lowLight_switch && !lowLight_state) {
+				temp = senseUnPackPixel(pixelArray.array[x][y]);
+				temp = _lowLightDimmer(temp);
+				pixelArray.array[x][y] = sensePackPixel(temp);
+				if (x == SENSE_LED_WIDTH)
+					lowLight_state = true; // the brightness of all LEDs is reduced
+			}
 			rgb565 = pixelArray.array[x][y];
 			i = (x*24)+y; // offset into array
 			LEDStore[i] = (uint8_t)((rgb565 >> 10) & 0x3e); // Red
@@ -319,8 +329,11 @@ void senseSetRGBpixels(rgb_pixels_t pixelArray) {
 
 	for(x = 0; x < SENSE_LED_WIDTH; x++)
 		for(y = 0; y < SENSE_LED_WIDTH; y++) {
-			if (ledLowLight)
+			if (lowLight_switch && !lowLight_state) {
 				pixelArray.array[x][y] = _lowLightDimmer(pixelArray.array[x][y]);
+				if (x == SENSE_LED_WIDTH)
+					lowLight_state = true; // the brightness of all LEDs is reduced
+			}
 			rgb565 = sensePackPixel(pixelArray.array[x][y]);
 			i = (x*24)+y; // offset into array
 			LEDStore[i] = (uint8_t)((rgb565 >> 10) & 0x3e); // Red
