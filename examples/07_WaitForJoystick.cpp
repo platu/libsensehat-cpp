@@ -21,8 +21,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <chrono>
-#include <thread>
 
 #include <termios.h>
 #include <assert.h>
@@ -65,8 +63,12 @@ int main() {
  
 		cout << "Waiting for 60 joystick events" << endl;
 		for(event_count = 0; event_count < 60; event_count++) {
+
+			// blocking function call
 			joystick = senseWaitForJoystick();
 			cout << endl << "Event number " << event_count << " -> ";
+
+			// Identify action on stick
 			switch (joystick.action) {
 				case KEY_ENTER:	cout << "push  "; break;
 				case KEY_UP:	cout << "up    "; break;
@@ -75,6 +77,7 @@ int main() {
 				case KEY_DOWN:	cout << "down  "; break;
 			}
 
+			// Identify state of stick
 			switch(joystick.state) {
 				case KEY_RELEASED:	cout << "\treleased"; break;
 				case KEY_PRESSED:	cout << "\tpressed"; break;
