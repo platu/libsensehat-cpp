@@ -201,25 +201,25 @@ bool senseInit() {
 	}
 
 	// IMU 
-    std::cout << "IMU is opening" << std::endl; 
+	std::cout << "IMU is opening" << std::endl; 
 	
-    if ((imu == NULL) || (imu->IMUType() == RTIMU_TYPE_NULL)){
-       std::cout << "Error, couldn't open IMU" << std::endl; 
-       retOk = false;
-    }
-    // Initialise the imu object
-    imu->IMUInit();
+	if ((imu == NULL) || (imu->IMUType() == RTIMU_TYPE_NULL)){
+		std::cout << "Error, couldn't open IMU" << std::endl; 
+		retOk = false;
+	}
+	// Initialise the imu object
+	imu->IMUInit();
 
 	//  set up pressure sensor
 	if (pressure != NULL)
         pressure->pressureInit();
 
-    // Set the Fusion coefficient
-    imu->setSlerpPower(0.02);
-    // Enable the sensors
-    imu->setGyroEnable(true);
-    imu->setAccelEnable(true);
-    imu->setCompassEnable(true); 
+	// Set the Fusion coefficient
+	imu->setSlerpPower(0.02);
+	// Enable the sensors
+	imu->setGyroEnable(true);
+	imu->setAccelEnable(true);
+	imu->setCompassEnable(true); 
 
 	// Joystick file handler
 	jsFile = open(joystickFilename, O_RDONLY);
@@ -1038,18 +1038,18 @@ bool senseGetGyroRadians(double *p, double *r, double *y) {
 	usleep(imu->IMUGetPollInterval() * 1000);
 
     if (imu->IMURead()) {
-        RTIMU_DATA imuData = imu->getIMUData() ;
-        if (imuData.gyroValid) {
-            *p = imuData.gyro.x();
-            *r = imuData.gyro.y();
-            *y = imuData.gyro.z();
-        }
-        else retOk = false;
-    }
-    else
-        retOk = false;
+		RTIMU_DATA imuData = imu->getIMUData() ;
+		if (imuData.gyroValid) {
+			*p = imuData.gyro.x();
+			*r = imuData.gyro.y();
+			*y = imuData.gyro.z();
+		}
+		else retOk = false;
+	}
+	else
+		retOk = false;
 
-    return retOk;
+	return retOk;
 }
 
 bool senseGetGyroDegrees(double *p, double *r, double *y) {
@@ -1073,19 +1073,19 @@ bool senseGetAccelG(double *x, double *y, double *z) {
 
 	usleep(imu->IMUGetPollInterval() * 1000);
 
-    if (imu->IMURead()) {
-        RTIMU_DATA imuData = imu->getIMUData() ;
-        if (imuData.accelValid) {
-            *x = imuData.accel.x();
-            *y = imuData.accel.y();
-            *z = imuData.accel.z();
-        }
-        else retOk = false;
-    }
-    else
-        retOk = false;
+	if (imu->IMURead()) {
+		RTIMU_DATA imuData = imu->getIMUData() ;
+		if (imuData.accelValid) {
+			*x = imuData.accel.x();
+			*y = imuData.accel.y();
+			*z = imuData.accel.z();
+		}
+		else retOk = false;
+	}
+	else
+		retOk = false;
 
-    return retOk;
+	return retOk;
 }
 
 bool senseGetAccelMPSS(double *x, double *y, double *z) {
