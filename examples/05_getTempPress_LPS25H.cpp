@@ -1,4 +1,4 @@
-/* File: 05_getTempPress_LPS25H
+/* File: 05_getTempPress_LPS25H.cpp
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *

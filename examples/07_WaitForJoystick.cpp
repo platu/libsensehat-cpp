@@ -2,14 +2,14 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseGetJoystick() function.
+ * This example program illustrates the senseWaitForJoystick() function.
  *
  * Function prototypes:
  * 
- * stick_t senseGetJoystick()
+ * stick_t senseWaitForJoystick()
  *    ^- struct returned 
  *
- * The stick_t struct has four members
+ * The stick_t struct has three members
  *		timestamp	seconds and microseconds float number
  *		action		KEY_ENTER, KEY_UP, KEY_LEFT, KEY_RIGHT, KEY_DOWN
  *		state		KEY_RELEASED, KEY_PRESSED, KEY_HELD

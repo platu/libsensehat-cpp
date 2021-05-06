@@ -1,4 +1,4 @@
-/* File: 03_flip_H_and_V.cpp
+/* File: 03_rotate.cpp
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
