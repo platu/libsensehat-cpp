@@ -39,6 +39,22 @@ typedef struct { rgb565_pixel_t array [SENSE_LED_WIDTH][SENSE_LED_WIDTH]; } rgb5
 typedef struct { uint8_t color [COLORS]; } rgb_pixel_t;
 typedef struct { rgb_pixel_t array [SENSE_LED_WIDTH][SENSE_LED_WIDTH]; } rgb_pixels_t;
 
+// Joystick codes 
+#define KEY_ENTER 28
+#define KEY_UP 103
+#define KEY_LEFT 105
+#define KEY_RIGHT 106
+#define KEY_DOWN 108
+#define KEY_RELEASED 0
+#define KEY_PRESSED 1
+#define KEY_HELD 2
+
+// Joystick data type
+typedef struct {
+	float timestamp;
+	int action, state;
+} stick_t;
+
 // Initialize before any job
 bool senseInit();
 // Shut down when job is done
@@ -116,5 +132,8 @@ bool senseGetGyroDegrees(double *, double *, double *);
 
 bool senseGetAccelG(double *, double *, double *);
 bool senseGetAccelMPSS(double *, double *, double *);
+
+// Joystick
+stick_t senseWaitForJoystick();
 
 #endif // SENSEHAT_H

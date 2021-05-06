@@ -107,7 +107,7 @@ int main() {
 			if (loop % 200 == 0) {
 				cout << setw(4) << loop << " loops left / ";
 				end = chrono::steady_clock::now();
-				cout << "Elapsed time = " << chrono::duration_cast<std::chrono::microseconds>(end - begin).count() / 1000 << "[ms]" << endl;
+				cout << "Elapsed time = " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << endl;
 				begin = chrono::steady_clock::now();
 				}
 		}

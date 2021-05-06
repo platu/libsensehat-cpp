@@ -17,8 +17,9 @@ Open a terminal on your Raspberry Pi.
 1. Your Raspberry Pi user account must belong to a few system groups to access hardware devices and install the library file once it is compiled.
 The result of the `id` command below shows the user account belongs to the required system groups.
  ```bash
- $ id | egrep -o '(i2c|gpio|spi|sudo)'
+ $ id | egrep -o '(input|i2c|gpio|spi|sudo)'
  sudo
+ input
  gpio
  i2c
  spi
@@ -71,3 +72,4 @@ Almost every function has its own example program that illustrates how it works.
 * 04 Display a character or scroll a message
 * 05 HTS221 Humidity sensor and LPS25H Pressure sensor
 * 06 LSM9DS1 IMU Orientation and compass
+* 07 Joystick events
