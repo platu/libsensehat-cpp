@@ -25,7 +25,7 @@ The result of the `id` command below shows the user account belongs to the requi
  spi
  ```
 
- Check that the sense-hat packages are already there.
+  Check that the sense-hat packages are already there.
  ```bash
  $ apt search sense-hat | grep install
 
