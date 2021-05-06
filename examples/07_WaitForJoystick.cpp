@@ -1,4 +1,4 @@
-/* File: 07_getJoystick.cpp
+/* File: 07_WaitForJoystick.cpp
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
@@ -10,13 +10,13 @@
  *    ^- struct returned 
  *
  * The stick_t struct has four members
- *		newEvent	anything happend -> true /flase
  *		timestamp	seconds and microseconds float number
  *		action		KEY_ENTER, KEY_UP, KEY_LEFT, KEY_RIGHT, KEY_DOWN
  *		state		KEY_RELEASED, KEY_PRESSED, KEY_HELD
  *
- * This program reverses the direction so the illuminated led always appears to
- * point north.
+ * This program shows that there are many events for a single action.
+ * The use of this blocking function requires to evaluate a combination of the
+ * two members of the type stick_t: action and state 
  */
 
 #include <iostream>

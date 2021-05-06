@@ -224,7 +224,7 @@ bool senseInit() {
 	// Joystick file handler
 	jsFile = open(joystickFilename, O_RDONLY);
 	if (jsFile < 0) {
-		printf("Failed to open I2C bus.\n%s\n", strerror(errno));
+		printf("Failed to open joystick file handle.\n%s\n", strerror(errno));
 		retOk = false;
 	}
 	
@@ -1107,13 +1107,8 @@ stick_t senseWaitForJoystick() {
 	stick_t happen;
 
 	if (read(jsFile, &_jsEvent, sizeof(_jsEvent)) == sizeof(_jsEvent)) {
-		//EV_SYN is the event separator mark, not printed
+		//EV_SYN is the event separator mark, not used
 		if (_jsEvent.type != EV_SYN) {
-		//	printf("Event: time %ld.%ld, type %d, code %d,value %d\n",
-		//			_jsEvent.time.tv_sec, _jsEvent.time.tv_usec,
-		//			_jsEvent.type,
-		//			_jsEvent.code,
-		//			_jsEvent.value);
 			happen.action = _jsEvent.code;
 			happen.state = _jsEvent.value;
 			happen.timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
