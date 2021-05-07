@@ -136,4 +136,6 @@ bool senseGetAccelMPSS(double *, double *, double *);
 // Joystick
 stick_t senseWaitForJoystick();
 
+void senseSetJoystickWaitTime(long int);
+
 #endif // SENSEHAT_H

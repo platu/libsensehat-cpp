@@ -75,9 +75,13 @@ static RTIMUSettings *settings = new RTIMUSettings("RTIMULib");
 static RTIMU *imu = RTIMU::createIMU(settings);
 static RTPressure *pressure = RTPressure::createPressure(settings);
 
+// Joystick event collection
 static const char joystickFilename[] = "/dev/input/event0";
 static int jsFile = -1;
 static struct input_event _jsEvent;
+static fd_set readfdjs;
+static int fdjs;
+static struct timeval tvjs;
 
 /*
 static int i2cRead(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
@@ -226,6 +230,10 @@ bool senseInit() {
 	if (jsFile < 0) {
 		printf("Failed to open joystick file handle.\n%s\n", strerror(errno));
 		retOk = false;
+	}
+	else {
+		FD_ZERO(&readfdjs);
+		FD_SET(fdjs, &readfdjs);
 	}
 	
 	senseClear();
@@ -1103,7 +1111,6 @@ bool senseGetAccelMPSS(double *x, double *y, double *z) {
 }
 
 stick_t senseWaitForJoystick() {
-
 	stick_t happen;
 
 	if (read(jsFile, &_jsEvent, sizeof(_jsEvent)) == sizeof(_jsEvent)) {
@@ -1118,3 +1125,8 @@ stick_t senseWaitForJoystick() {
 	return happen;
 }
 
+void senseSetJoystickWaitTime(long int msec) {
+
+	tvjs.tv_sec = 0;
+	tvjs.tv_usec = msec * 1000;
+}
