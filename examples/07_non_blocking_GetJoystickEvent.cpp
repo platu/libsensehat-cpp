@@ -21,6 +21,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <chrono>
+#include <thread>
 
 #include <termios.h>
 #include <assert.h>
@@ -28,6 +30,8 @@
 #include <sensehat.h>
 
 using namespace std;
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 int getch() {
 	int c=0;
@@ -53,36 +57,51 @@ int getch() {
 
 int main() {
 
-	int event_count;
+	int time, event_count;
 	stick_t joystick;
+	bool clicked = false;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
  
-		cout << "Waiting for 60 joystick events" << endl;
-		for(event_count = 0; event_count < 60; event_count++) {
+		event_count = 0;
+		cout << "Waiting for 60 seconds" << endl;
+		for(time = 1; time <= 60; time++) {
 
-			// blocking function call
-			joystick = senseWaitForJoystick();
-			cout << endl << "Event number " << event_count << " -> ";
+			// Set monitoring for 1 second
+			senseSetJoystickWaitTime(1, 0);
 
-			// Identify action on stick
-			switch (joystick.action) {
-				case KEY_ENTER:	cout << "push  "; break;
-				case KEY_UP:	cout << "up    "; break;
-				case KEY_LEFT:	cout << "left  "; break;
-				case KEY_RIGHT:	cout << "right "; break;
-				case KEY_DOWN:	cout << "down  "; break;
+			// non blocking function call
+			clicked = senseGetJoystickEvent(&joystick);
+			if (clicked) {
+				do {
+					event_count++;
+					cout << "Event number " << event_count << " -> ";
+
+					// Identify action on stick
+					switch (joystick.action) {
+						case KEY_ENTER:	cout << "push  "; break;
+						case KEY_UP:	cout << "up    "; break;
+						case KEY_LEFT:	cout << "left  "; break;
+						case KEY_RIGHT:	cout << "right "; break;
+						case KEY_DOWN:	cout << "down  "; break;
+					}
+
+					// Identify state of stick
+					switch(joystick.state) {
+						case KEY_RELEASED:	cout << "\treleased"; break;
+						case KEY_PRESSED:	cout << "\tpressed"; break;
+						case KEY_HELD:		cout << "\theld"; break;
+					}
+					cout << endl;
+					clicked = senseGetJoystickEvent(&joystick);
+				} while (clicked);
+				sleep_until(system_clock::now() + seconds(1));
 			}
-
-			// Identify state of stick
-			switch(joystick.state) {
-				case KEY_RELEASED:	cout << "\treleased"; break;
-				case KEY_PRESSED:	cout << "\tpressed"; break;
-				case KEY_HELD:		cout << "\theld"; break;
-			}
+			else
+				cout << setw(3) << right << time << " seconds" << endl;
 		}
 
 		cout << endl << "Waiting for keypress." << endl;

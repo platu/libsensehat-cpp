@@ -79,9 +79,7 @@ static RTPressure *pressure = RTPressure::createPressure(settings);
 static const char joystickFilename[] = "/dev/input/event0";
 static int jsFile = -1;
 static struct input_event _jsEvent;
-static fd_set readfdjs;
-static int fdjs;
-static struct timeval tvjs;
+static struct timeval _jstv;
 
 /*
 static int i2cRead(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
@@ -143,6 +141,8 @@ rgb_pixel_t _lowLightDimmer(rgb_pixel_t px) {
 bool senseInit() {
 // Initialization
 	char filename[FILENAMELENGTH];
+	// Return code set to true by default.
+	// Set to false if any initialization step goes wrong.
 	bool retOk = true;
 	// Dictionnary file
 	int txtFile =-1;
@@ -231,11 +231,7 @@ bool senseInit() {
 		printf("Failed to open joystick file handle.\n%s\n", strerror(errno));
 		retOk = false;
 	}
-	else {
-		FD_ZERO(&readfdjs);
-		FD_SET(fdjs, &readfdjs);
-	}
-	
+
 	senseClear();
 	
 	return retOk;
@@ -1125,8 +1121,44 @@ stick_t senseWaitForJoystick() {
 	return happen;
 }
 
-void senseSetJoystickWaitTime(long int msec) {
+void senseSetJoystickWaitTime(long int sec, long int msec) {
 
-	tvjs.tv_sec = 0;
-	tvjs.tv_usec = msec * 1000;
+	_jstv.tv_sec = sec;
+	_jstv.tv_usec = msec * 1000;
+}
+
+bool senseGetJoystickEvent(stick_t *happen) {
+	bool jsAction = false;
+	int clicked;
+	struct timeval timeout = _jstv; 
+	int _jsfd = jsFile;
+	fd_set _jsRead;
+
+	// Initialize read file descriptor
+	FD_ZERO(&_jsRead);
+
+	// Add driver file descriptor
+	FD_SET(_jsfd, &_jsRead);
+
+	clicked = select(_jsfd + 1, &_jsRead, NULL, NULL, &timeout);
+
+	if (clicked == -1) {
+		printf("Unable to access to joystick.\n%s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	else if (clicked == 0) {
+		jsAction = false;
+	}
+	else if (FD_ISSET(_jsfd, &_jsRead)) {
+		read(jsFile, &_jsEvent, sizeof(_jsEvent));
+		//EV_SYN is the event separator mark, not used
+		if (_jsEvent.type != EV_SYN) {
+			happen->action = _jsEvent.code;
+			happen->state = _jsEvent.value;
+			happen->timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
+			jsAction = true;
+		}
+	}
+
+	return jsAction;
 }
