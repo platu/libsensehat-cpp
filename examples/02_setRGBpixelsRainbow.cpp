@@ -21,6 +21,7 @@
 #include <iostream>
 #include <iomanip>
 #include <chrono>
+#include <thread>
 
 #include <termios.h>
 #include <assert.h>
@@ -28,6 +29,8 @@
 #include <sensehat.h>
 
 using namespace std;
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 int getch() {
 	int c=0;
@@ -70,13 +73,13 @@ int main() {
 	int loop = 2000; // number of refresh
 	const uint8_t colorStep = 1;
 
-	std::chrono::steady_clock::time_point begin, end;
+	steady_clock::time_point begin, end;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
-		begin = chrono::steady_clock::now();
+		begin = steady_clock::now();
 		while (loop > 0) {
 			for (y = 0; y < SENSE_LED_WIDTH; y++)
 				for (x = 0; x < SENSE_LED_WIDTH; x++) {
@@ -102,13 +105,13 @@ int main() {
 					rainbow.array[x][y].color[_B] = blue;
 				}
 			senseSetPixels(rainbow);
-			usleep(100);
+			sleep_until(system_clock::now() + milliseconds(100));
 			loop--;
 			if (loop % 200 == 0) {
 				cout << setw(4) << loop << " loops left / ";
-				end = chrono::steady_clock::now();
-				cout << "Elapsed time = " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << endl;
-				begin = chrono::steady_clock::now();
+				end = steady_clock::now();
+				cout << "Elapsed time = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+				begin = steady_clock::now();
 				}
 		}
 

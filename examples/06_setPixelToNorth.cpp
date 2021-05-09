@@ -28,6 +28,8 @@
 #include <sensehat.h>
 
 using namespace std;
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 int getch() {
 	int c=0;
@@ -71,7 +73,7 @@ int main() {
 		senseSetIMUConfig(true, true, true);
 
 		for (time = 0; time < 60; time++) {
-			this_thread::sleep_for(chrono::milliseconds(500));
+			sleep_for(milliseconds(500));
 			// reverse direction
 			direction = 360 - senseGetCompass();
 			cout << "Compass angle to north in degrees:\t" << 

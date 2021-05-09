@@ -26,6 +26,8 @@
 #include <sensehat.h>
 
 using namespace std;
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 int getch( ) {
 	int c=0;
@@ -59,7 +61,7 @@ int main() {
 			 << "Sense Hat initialization Ok." << endl;
 
 		for(count = 0; count < 1024; count++) {
-			this_thread::sleep_for(chrono::milliseconds(10));
+			sleep_for(milliseconds(10));
 
 			senseRGBClear(r, g, b);
 
