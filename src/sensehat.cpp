@@ -11,7 +11,9 @@
 #include <sys/ioctl.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include <fcntl.h>
+#include <linux/fb.h>
 #include <linux/input.h>
 
 #include "../include/HTS221_Registers.h"
@@ -20,20 +22,16 @@
 #include "../include/LSM9DS1_Types.h"
 #include "../include/sensehat.h"
 
-#define I2C_ADAPTER 1 
-// 8x8 LED array mapped to a microcontroller
-#define I2C_LED_DEVICE 0x46
-// Buffer size in bytes for the bitmap
-#define LEDSTORESIZE (SENSE_PIXELS * 3)
-static uint8_t LEDStore[LEDSTORESIZE];
-
-// I2C file handles
-#define FILENAMELENGTH 32
-static int ledFile = -1; // LED matrix
+// Led file handle
+#define LEDFILEPATH "/dev/fb1"
+static int ledFile = -1;
 static bool lowLight_switch = false;
 static bool lowLight_state = false;
+static uint16_t *pixelMap;
+#define LEDBUFFER (SENSE_PIXELS * sizeof(uint16_t))
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
+
 const uint8_t gamma8[] = {
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
@@ -52,11 +50,14 @@ const uint8_t gamma8[] = {
   177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
   215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
 
+#define I2C_BUS_NUMBER 1
 // I2C devices addresses
-#define HTS221_ADDRESS		0x5f
-#define LPS25H_ADDRESS		0x5c
-#define LSM9DS1_ADDRESS_G	0x6a
-#define LSM9DS1_ADDRESS_M	0x1c
+#define HTS221_ADDRESS 0x5f
+#define LPS25H_ADDRESS 0x5c
+#define LSM9DS1_ADDRESS_G 0x6a
+#define LSM9DS1_ADDRESS_M 0x1c
+
+#define FILENAMELENGTH 20
 
 // Text dictionnary and corresponding pixel maps
 #define NBCHARS 92
@@ -80,36 +81,9 @@ static int jsFile = -1;
 static struct input_event _jsEvent;
 static struct timeval _jstv;
 
-/*
-static int i2cRead(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
-	int rc;
-
-	rc = write(iHandle, &addr, 1);
-	if (rc == 1)
-	{
-		rc = read(iHandle, buf, iLen);
-	}
-	return rc;
-}
-*/
-
-int i2cWrite(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
-	uint8_t tmp[(LEDSTORESIZE + 1)];
-	int rc;
-
-	if (iLen > LEDSTORESIZE || iLen < 1 || buf == NULL)
-		return -1; // invalid write
-
-	tmp[0] = addr; // send the register number first 
-	memcpy(&tmp[1], buf, iLen); // followed by the data
-	rc = write(iHandle, tmp, iLen+1);
-	return rc-1;
-}
-
 void senseClear() {
 // Turn off all LEDs
-	memset(LEDStore, 0, sizeof(LEDStore));
-	i2cWrite(ledFile, 0, LEDStore, sizeof(LEDStore));
+	memset(pixelMap, 0, LEDBUFFER);
 }
 
 void senseSetLowLight(bool low) {
@@ -139,7 +113,8 @@ rgb_pixel_t _lowLightDimmer(rgb_pixel_t px) {
 
 bool senseInit() {
 // Initialization
-	char filename[FILENAMELENGTH];
+
+	struct fb_fix_screeninfo fix_info;
 	// Return code set to true by default.
 	// Set to false if any initialization step goes wrong.
 	bool retOk = true;
@@ -155,16 +130,28 @@ bool senseInit() {
 	int png_compression_method;
 	int png_filter_method;
 
-	// I2C bus
-	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_ADAPTER);
 	// LED matrix
-	ledFile = open(filename, O_RDWR);
+	ledFile = open(LEDFILEPATH, O_RDWR);
 	if (ledFile < 0) {
-		printf("Failed to open I2C bus.\n%s\n", strerror(errno));
+		printf("Failed to open LED frame buffer file handle.\n%s\n",
+				strerror(errno));
 		retOk = false;
 	}
-	else if (ioctl(ledFile, I2C_SLAVE_FORCE, I2C_LED_DEVICE) < 0) {
-        printf("Unable to open LED device as slave \n%s\n", strerror(errno));
+	else if (ioctl(ledFile, FBIOGET_FSCREENINFO, &fix_info) < 0) {
+		printf("Unable to set LED frame buffer operation.\n%s\n",
+				strerror(errno));
+		retOk = false;
+	}
+	// Check the correct device has been found
+	else if  (strcmp(fix_info.id, "RPi-Sense FB") != 0) {
+		puts("RPi-Sense FB not found");
+		retOk = false;
+	}
+	// Map the led frame buffer device into memory
+    pixelMap = (uint16_t *)mmap(NULL, LEDBUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
+    if (pixelMap == MAP_FAILED) {
+		printf("Unable to map the LED matrix into memory.\n%s\n",
+				strerror(errno));
 		retOk = false;
 	}
 
@@ -273,19 +260,11 @@ rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 
 void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
 // Turns on all pixels with the same RGB color
-	int i, x, y;
 
 	rgb_pixel_t rgb = { .color = {r, g, b}  };
 	rgb565_pixel_t rgb565 = sensePackPixel(rgb);
 
-	for(x = 0; x < SENSE_LED_WIDTH; x++)
-		for(y = 0; y < SENSE_LED_WIDTH; y++) {
-			i = (x*24)+y; // offset into array
-			LEDStore[i] = (uint8_t)((rgb565 >> 10) & 0x3e); // Red
-			LEDStore[i+8] = (uint8_t)((rgb565 >> 5) & 0x3f); // Green
-			LEDStore[i+16] = (uint8_t)((rgb565 << 1) & 0x3e); // Blue
-		}
-	i2cWrite(ledFile, 0, LEDStore, sizeof(LEDStore));
+	memset(pixelMap, rgb565, LEDBUFFER);
 }
 
 bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) {
@@ -294,11 +273,8 @@ bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) 
 
 	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH)
 	{
-		i = (x*24)+y; // offset into array
-		LEDStore[i] = (uint8_t)((rgb565 >> 10) & 0x3e); // Red
-		LEDStore[i+8] = (uint8_t)((rgb565 >> 5) & 0x3f); // Green
-		LEDStore[i+16] = (uint8_t)((rgb565 << 1) & 0x3e); // Blue
-		i2cWrite(ledFile, 0, LEDStore, sizeof(LEDStore)); // send the whole array at once
+		i = (x*8)+y; // offset into array
+		*(pixelMap + i) = rgb565;
 		retOk = true;
 	}
 	return retOk;
@@ -306,18 +282,13 @@ bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) 
 
 bool senseSetRGBpixel(unsigned int x, unsigned int y, uint8_t red, uint8_t green, uint8_t blue) {
 	rgb565_pixel_t rgb565;
-	rgb_pixel_t pix;
+	rgb_pixel_t pix = { .color = {red, green, blue} };
 	bool retOk = false;
 
 	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH)
 	{
-		pix.color[_R] = red;
-		pix.color[_G] = green;
-		pix.color[_B] = blue;
 		rgb565 = sensePackPixel(pix);
-		
 		retOk = senseSetRGB565pixel(x, y, rgb565);
-
 	}
 	return retOk;
 }
@@ -337,12 +308,9 @@ void senseSetRGB565pixels(rgb565_pixels_t pixelArray) {
 					lowLight_state = true; // the brightness of all LEDs is reduced
 			}
 			rgb565 = pixelArray.array[x][y];
-			i = (x*24)+y; // offset into array
-			LEDStore[i] = (uint8_t)((rgb565 >> 10) & 0x3e); // Red
-			LEDStore[i+8] = (uint8_t)((rgb565 >> 5) & 0x3f); // Green
-			LEDStore[i+16] = (uint8_t)((rgb565 << 1) & 0x3e); // Blue
+			i = (x*8)+y; // offset into array
+			*(pixelMap + i) = rgb565;
 		}
-	i2cWrite(ledFile, 0, LEDStore, sizeof(LEDStore)); // send the whole array at once
 }
 
 void senseSetRGBpixels(rgb_pixels_t pixelArray) {
@@ -357,26 +325,19 @@ void senseSetRGBpixels(rgb_pixels_t pixelArray) {
 					lowLight_state = true; // the brightness of all LEDs is reduced
 			}
 			rgb565 = sensePackPixel(pixelArray.array[x][y]);
-			i = (x*24)+y; // offset into array
-			LEDStore[i] = (uint8_t)((rgb565 >> 10) & 0x3e); // Red
-			LEDStore[i+8] = (uint8_t)((rgb565 >> 5) & 0x3f); // Green
-			LEDStore[i+16] = (uint8_t)((rgb565 << 1) & 0x3e); // Blue
+			i = (x*8)+y; // offset into array
+			*(pixelMap + i) = rgb565;
 		}
-	i2cWrite(ledFile, 0, LEDStore, sizeof(LEDStore)); // send the whole array at once
 }
 
 rgb565_pixel_t senseGetRGB565pixel(unsigned int x, unsigned int y) {
 	unsigned int i;
-	rgb_pixel_t pix = { .color = {0, 0, 0} };
 	rgb565_pixel_t rgb565pix;
 
 	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH) {
-		i = (x*24)+y; // offset into array
-		pix.color[_R] = LEDStore[i] << 2; // Red
-		pix.color[_G] = LEDStore[i+8] << 2; // Green
-		pix.color[_B] = LEDStore[i+16] << 2; // Blue
+		i = (x*8)+y; // offset into array
+		rgb565pix = *(pixelMap + i);
 	}
-	rgb565pix = sensePackPixel(pix);
 
 	return rgb565pix;
 }
@@ -386,10 +347,8 @@ rgb_pixel_t senseGetRGBpixel(unsigned int x, unsigned int y) {
 	rgb_pixel_t pix = { .color = {0, 0, 0} };
 
 	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH) {
-		i = (x*24)+y; // offset into array
-		pix.color[_R] = LEDStore[i] << 2; // Red
-		pix.color[_G] = LEDStore[i+8] << 2; // Green
-		pix.color[_B] = LEDStore[i+16] << 2; // Blue
+		i = (x*8)+y; // offset into array
+		pix = senseUnPackPixel(*(pixelMap + i));
 	}
 
 	return pix;
@@ -758,7 +717,7 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 	int32_t i2c_status;
 
 	// I2C bus
-	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_ADAPTER);
+	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_BUS_NUMBER);
 	humFile = open(filename, O_RDWR);
 	if (humFile < 0) {
 		printf("Failed to open I2C bus.\n%s\n", strerror(errno));
@@ -904,7 +863,7 @@ bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 	int32_t i2c_status;
 
 	// I2C bus
-	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_ADAPTER);
+	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_BUS_NUMBER);
 	preFile = open(filename, O_RDWR);
 	if (preFile < 0) {
 		printf("Failed to open I2C bus.\n%s\n", strerror(errno));

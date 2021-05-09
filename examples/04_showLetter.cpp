@@ -92,7 +92,7 @@ int main() {
 					<< "8:\tblue" << endl
 					<< "9:\tpurple" << endl
 					<< "10:\tpink" << endl
-					<< "For instance: 2 1 prints the 'a' character white on black." << endl
+					<< "For instance: 2 1 print the character white on black." << endl
 					<< "Choose 2 colors: ";
 				cin >> fg >> bg;
 				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

@@ -51,8 +51,9 @@ int getch() {
 
 int main() {
 
+	rgb565_pixel_t color, mask = 0xf800;
 	rgb_pixel_t readpx;
-	unsigned int x, y, index;
+	unsigned int x, y;
 	unsigned int row, col;
 
 	if(senseInit()) {
@@ -62,10 +63,12 @@ int main() {
 
 		// First we fill the LED matrix
 		for (y = 0; y < 8; y++) {
+			color = mask;
 			for (x = 0; x < 8; x++) {
-				index = x + y * 8;
-				senseSetRGBpixel(x, y, 255 - index, index, 63 - index);
+				senseSetRGB565pixel(x, y, color);
+				color <<= 1;
 			}
+			mask >>= 2;
 		}
 
 		// Next we ask the user to enter pixel row and column 

@@ -53,35 +53,24 @@ int getch( ) {
 
 int main() {
 
-	uint8_t r = 255, g = 0, b = 0;
+	rgb565_pixel_t clr = 0xf800;
+	rgb_pixel_t rgb;
 	unsigned int count;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 
-		for(count = 0; count < 1024; count++) {
-			sleep_for(milliseconds(10));
+		for(count = 0; count < 64; count++) {
 
-			senseRGBClear(r, g, b);
+			rgb = senseUnPackPixel(clr);
+			senseRGBClear(rgb.color[_R], rgb.color[_G], rgb.color[_B]);
 
-			if (r == 255 && g < 255 && b == 0)
-				g += 1;
+			clr >>= 1;
+			if (clr == 0)
+				clr = 0xf800;
 
-			if (g == 255 && r > 0 && b == 0)
-				r -= 1;
-
-			if (g == 255 && b < 255 && r == 0)
-				b += 1;
-
-			if (b == 255 && g > 0 && r == 0)
-				g -= 1;
-
-			if (b == 255 && r < 255 && g == 0)
-				r += 1;
-
-			if (r == 255 && b > 0 && g == 0)
-				b -= 1;
+			sleep_for(milliseconds(200));
 		}
 		cout << endl << "Waiting for keypress." << endl;
 		getch();

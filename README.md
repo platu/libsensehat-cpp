@@ -7,8 +7,9 @@ This repository aims to resume the [Python Sense HAT](https://github.com/astro-p
 * Use of IMU RTIMULib library already written in C++. Much more convenient to get magnetic field measures from LSM9DS1 registers.
 
 The code in this repository is more a compilation than an original development. Many thanks are due to the developers of the following projects:
-* [Sense Hat Unchained](https://github.com/bitbank2/sense_hat_unchained)
+* [libsense](https://github.com/moshegottlieb/libsense)
 * [Raspberry Pi Sense-HAT add-on board](https://github.com/davebm1/c-sense-hat)
+* [Sense Hat Unchained](https://github.com/bitbank2/sense_hat_unchained)
 
 ## Install and build
 
