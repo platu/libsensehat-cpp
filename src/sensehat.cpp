@@ -20,7 +20,6 @@
 #include "../include/LSM9DS1_Types.h"
 #include "../include/sensehat.h"
 
-#define I2C_BUFFER_SIZE 512
 #define I2C_ADAPTER 1 
 // 8x8 LED array mapped to a microcontroller
 #define I2C_LED_DEVICE 0x46
@@ -95,10 +94,10 @@ static int i2cRead(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
 */
 
 int i2cWrite(int iHandle, uint8_t addr, uint8_t *buf, int iLen) {
-	uint8_t tmp[I2C_BUFFER_SIZE];
+	uint8_t tmp[(LEDSTORESIZE + 1)];
 	int rc;
 
-	if (iLen > I2C_BUFFER_SIZE-1 || iLen < 1 || buf == NULL)
+	if (iLen > LEDSTORESIZE || iLen < 1 || buf == NULL)
 		return -1; // invalid write
 
 	tmp[0] = addr; // send the register number first 
