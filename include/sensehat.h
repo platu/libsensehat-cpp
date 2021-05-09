@@ -146,4 +146,4 @@ void senseSetJoystickWaitTime(long int, long int);
 
 bool senseGetJoystickEvent(stick_t *);
 
-#endif // SENSEHAT_H
+#endif // __SENSEHAT_H__

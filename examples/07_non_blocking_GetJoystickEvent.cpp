@@ -2,21 +2,29 @@
  * Author: Philippe Latu
  * Source: https://github.com/platu/libsensehat-cpp
  *
- * This example program illustrates the senseWaitForJoystick() function.
+ * This example program illustrates the senseGetJoystickEvent() function.
  *
  * Function prototypes:
  * 
- * stick_t senseWaitForJoystick()
- *    ^- struct returned 
+ * senseSetJoystickWaitTime(long int, long int);
+ *           duration in sec -^         ^- duration int milliseconds
+ *
+ * bool senseGetJoystickEvent(stick_t *);
+ *        updated struct members -^
  *
  * The stick_t struct has three members
  *		timestamp	seconds and microseconds float number
  *		action		KEY_ENTER, KEY_UP, KEY_LEFT, KEY_RIGHT, KEY_DOWN
  *		state		KEY_RELEASED, KEY_PRESSED, KEY_HELD
  *
- * This program shows that there are many events for a single action.
- * The use of this blocking function requires to evaluate a combination of the
- * two members of the type stick_t: action and state 
+ * This program illustrates this non blocking function. If one click happens
+ * during the time defined by senseSetJoystickWaitTime() then the action and
+ * state are printed on terminal screen. If nothing happens on the joystick,
+ * then a message is sent to the terminal screen evrey second.
+ * In this example porgram, the time base is set to 20ms.
+ * 
+ * Time counter is intitialized with 60 x 20ms x 5 = 3000
+ * One second corresponds to 50 time counter increments.
  */
 
 #include <iostream>
@@ -68,10 +76,10 @@ int main() {
  
 		event_count = 0;
 		cout << "Waiting for 60 seconds" << endl;
-		for(time = 1; time <= 60; time++) {
+		for(time = 1; time <= 3000; time++) {
 
 			// Set monitoring for 1 second
-			senseSetJoystickWaitTime(1, 0);
+			senseSetJoystickWaitTime(0, 20);
 
 			// non blocking function call
 			clicked = senseGetJoystickEvent(&joystick);
@@ -98,10 +106,10 @@ int main() {
 					cout << endl;
 					clicked = senseGetJoystickEvent(&joystick);
 				} while (clicked);
-				sleep_until(system_clock::now() + seconds(1));
+				sleep_until(system_clock::now() + milliseconds(20));
 			}
-			else
-				cout << setw(3) << right << time << " seconds" << endl;
+			else if (time % 50 == 0)
+				cout << setw(3) << right << time/50 << " seconds" << endl;
 		}
 
 		cout << endl << "Waiting for keypress." << endl;
