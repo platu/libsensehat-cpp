@@ -4,10 +4,16 @@
 #include <cstdint>
 #include <cstdbool>
 
+#ifdef __cplusplus
 extern "C" {
+#endif	
+
     #include <linux/i2c-dev.h>
     #include <i2c/smbus.h>
+
+#ifdef __cplusplus
 }
+#endif	
 
 #include <png.h>
 
