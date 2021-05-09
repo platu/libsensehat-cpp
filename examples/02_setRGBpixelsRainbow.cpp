@@ -69,9 +69,7 @@ int main() {
 	};
 
 	uint8_t red, green, blue;
-	int x, y;
-	int loop = 2000; // number of refresh
-	const uint8_t colorStep = 1;
+	int x, y, loop;
 
 	steady_clock::time_point begin, end;
 
@@ -80,7 +78,7 @@ int main() {
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
 		begin = steady_clock::now();
-		while (loop > 0) {
+		for (loop = 2000; loop > 0; loop--) {
 			for (y = 0; y < SENSE_LED_WIDTH; y++)
 				for (x = 0; x < SENSE_LED_WIDTH; x++) {
 					red = rainbow.array[x][y].color[_R];
@@ -88,29 +86,28 @@ int main() {
 					blue = rainbow.array[x][y].color[_B];
 		
 					if ((red == 255) && (green < 255) && (blue == 0))
-						green += colorStep;
+						green += 1;
 					if ((green == 255) && (red > 0) && (blue == 0))
-						red -= colorStep;
+						red -= 1;
 					if ((green == 255) && (blue < 255) && (red == 0))
-						blue += colorStep;
+						blue += 1;
 					if ((blue == 255) && (green > 0) && (red == 0))
-						green -= colorStep;
+						green -= 1;
 					if ((blue == 255) && (red < 255) && (green == 0))
-						red += colorStep;
+						red += 1;
 					if ((red == 255) && (blue > 0) && (green == 0))
-						blue -= colorStep;
+						blue -= 1;
 
 					rainbow.array[x][y].color[_R] = red;
 					rainbow.array[x][y].color[_G] = green;
 					rainbow.array[x][y].color[_B] = blue;
 				}
 			senseSetPixels(rainbow);
-			sleep_until(system_clock::now() + milliseconds(100));
-			loop--;
-			if (loop % 200 == 0) {
+			sleep_until(system_clock::now() + milliseconds(2));
+			if (loop < 2000 && loop % 200 == 0) {
 				cout << setw(4) << loop << " loops left / ";
 				end = steady_clock::now();
-				cout << "Elapsed time = " << duration_cast<milliseconds>(end - begin).count() << "[ms]" << endl;
+				cout << "Elapsed time = " << duration_cast<milliseconds>(end - begin).count() << " ms" << endl;
 				begin = steady_clock::now();
 				}
 		}
