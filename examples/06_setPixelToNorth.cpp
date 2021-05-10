@@ -59,10 +59,11 @@ int main() {
 
 	unsigned int time = 0;
 	// list of leds located at the edge of the square
-	unsigned int led_index, led_loop[LEDNB] = {4, 5, 6, 7, 15, 23, 31, 39, 47, 55, 63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8, 0, 1, 2, 3};
+	const unsigned int led_loop[LEDNB] = {4, 5, 6, 7, 15, 23, 31, 39, 47, 55,
+		63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8, 0, 1, 2, 3};
 	float led_degree_ratio = LEDNB / 360.0;
 	double direction;
-	unsigned int prev_x, x, prev_y, y, offset; 
+	unsigned int led_index, prev_x, x, prev_y, y, offset; 
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
@@ -92,7 +93,7 @@ int main() {
 				senseSetRGB565pixel(prev_x, prev_y, 0);
 
 			// turn on the new led 
-			senseSetRGB565pixel(x, y,  255);
+			senseSetRGB565pixel(x, y, 255);
 
 			prev_x = x;
 			prev_y = y;

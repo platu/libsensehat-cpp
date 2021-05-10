@@ -23,7 +23,7 @@
  * then a message is sent to the terminal screen evrey second.
  * In this example porgram, the time base is set to 20ms.
  * 
- * Time counter is intitialized with 60 x 20ms x 5 = 3000
+ * Time counter is intitialized with 60 x (5 x 20ms) = 3000
  * One second corresponds to 50 time counter increments.
  */
 
@@ -78,7 +78,7 @@ int main() {
 		cout << "Waiting for 60 seconds" << endl;
 		for(time = 1; time <= 3000; time++) {
 
-			// Set monitoring for 1 second
+			// Set monitoring for 20ms
 			senseSetJoystickWaitTime(0, 20);
 
 			// non blocking function call
@@ -108,6 +108,7 @@ int main() {
 				} while (clicked);
 				sleep_until(system_clock::now() + milliseconds(20));
 			}
+			// Print elapsed time in seconds
 			else if (time % 50 == 0)
 				cout << setw(3) << right << time/50 << " seconds" << endl;
 		}

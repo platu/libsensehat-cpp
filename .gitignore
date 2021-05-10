@@ -2,3 +2,4 @@
 *.so*
 *.ini
 **/*.o
+.vscode
