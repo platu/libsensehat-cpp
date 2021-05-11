@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <limits>
 
 #include <termios.h>
 #include <assert.h>
