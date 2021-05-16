@@ -24,12 +24,15 @@ extern "C" {
 #include <RTMath.h>
 #define G_2_MPSS 9.80665
 
-// Colors
+// Number of colors for a unique pixel
 #define COLORS 3
+// Red color index
 #define _R 0
+// Green color index
 #define _G 1
+// Blue color index
 #define _B 2
-// LED array width
+// LED matrix width
 #define SENSE_LED_WIDTH 8
 // Number of pixels in the bitmap
 #define SENSE_PIXELS (SENSE_LED_WIDTH * SENSE_LED_WIDTH)
@@ -83,7 +86,7 @@ void senseShutdown();
 void senseClear();
 
 /// \brief Lower LED light intensity
-/// \param[in] low true if color values must be lowered to limit power consomption 
+/// \param[in] low true if color values must be lowered to limit power consomption
 void senseSetLowLight(bool low);
 
 /// \brief Convert from array of 3 color bytes to rgb565
@@ -141,11 +144,11 @@ rgb_pixels_t senseGetRGBpixels();
 const auto senseGetPixels = senseGetRGBpixels;
 
 /// \brief Write color attributes of all pixels at once
-/// \param rgb565_map 2 dimensional array of integers in RGB565 format: rgb565_pixel_t type 
+/// \param rgb565_map 2 dimensional array of integers in RGB565 format: rgb565_pixel_t type
 void senseSetRGB565pixels(rgb565_pixels_t rgb565_map);
 
 /// \brief Write color attributes of all pixels at once
-/// \param rgb_map 2 dimensional array of RGB color attributes of rgb_pixel_t type 
+/// \param rgb_map 2 dimensional array of RGB color attributes of rgb_pixel_t type
 void senseSetRGBpixels(rgb_pixels_t rgb_map);
 
 /// \brief Set all pixels with the same color attributes
@@ -158,7 +161,7 @@ void senseRGBClear(uint8_t R, uint8_t G, uint8_t B);
 const auto senseSetPixels = senseSetRGBpixels;
 
 /// \brief Horizontal flip of all pixels
-/// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type 
+/// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type
 rgb_pixels_t senseFlip_h(bool);
 
 /// \brief Vertical flip of all pixels
@@ -173,12 +176,12 @@ rgb_pixels_t senseRotation(unsigned int angle);
 /// \brief Print a single character with foreground and background color
 /// \param[in] c character to print
 /// \param[in] fg foreground color encoded in RGB565 format
-/// \param[in] bg background color encoded in RGB565 format 
+/// \param[in] bg background color encoded in RGB565 format
 void senseShowRGB565ColoredLetter(char c, rgb565_pixel_t fg, rgb565_pixel_t bg);
 
 /// \brief Print a single character with foreground and background color
 /// \param[in] c character to print
-/// \param[in] fg foreground color of rgb_pixel_t type - array of 3 bytes 
+/// \param[in] fg foreground color of rgb_pixel_t type - array of 3 bytes
 /// \param[in] bg background color of rgb_pixel_t type - array of 3 bytes
 void senseShowRGBColoredLetter(char c, rgb_pixel_t fg, rgb_pixel_t bg);
 
@@ -189,39 +192,132 @@ const auto senseShowColoredLetter = senseShowRGBColoredLetter;
 /// \param[in] c character to print
 void senseShowLetter(char c);
 
-// Print a scrolling text line with(out) foreground and background color
-void senseShowRGB565ColoredMessage(char *, rgb565_pixel_t, rgb565_pixel_t);
-void senseShowRGBColoredMessage(char *, rgb_pixel_t, rgb_pixel_t);
-void senseShowMessage(char * );
+/// \brief Print a scrolling text line with foreground and background color
+/// \param[in] msg line to print
+/// \param[in] fg foreground color encoded in RGB565 format
+/// \param[in] bg background color encoded in RGB565 format
+void senseShowRGB565ColoredMessage(char *msg, rgb565_pixel_t fg, rgb565_pixel_t bg);
 
+/// \brief Print a scrolling text line with foreground and background color
+/// \param[in] msg line to print
+/// \param[in] fg foreground color of rgb_pixel_t type - array of 3 bytes
+/// \param[in] bg background color of rgb_pixel_t type - array of 3 bytes
+void senseShowRGBColoredMessage(char *msg, rgb_pixel_t fg, rgb_pixel_t bg);
+
+/// \brief Print a scrolling text line with white foreground color on black background color
+/// \param[in] msg line to print
+void senseShowMessage(char *msg);
+
+// ----------------------
 // HTS221 Humidity sensor
-bool senseGetTempHumid(double *, double *);
+// ----------------------
+
+/// \brief Get temperature in °C and relative humidity in % measures from the HTS221 sensor
+/// \param[out] t_C temperature in °C
+/// \param[out] h_R relative humidity in %
+/// \return bool false if somnething went wrong
+bool senseGetTempHumid(double *t_C, double *h_R);
+
+/// \brief Get relative humidity measure in % from the HTS221 sensor
+/// \return relative humidity in %
 double senseGetHumidity();
+
+/// \brief Get temperature measure in °C from the HTS221 sensor
+/// \return temperature in °C
 double senseGetTemperatureFromHumidity();
 
+// ----------------------
 // LPS25H Pressure sensor
-bool senseGetTempPressure(double *, double *);
+// ----------------------
+
+/// \brief Get temperature in °C and pressure in hPa measures from the LPS25H sensor
+/// \param[out] t_C temperature in °C
+/// \param[out] p_hPa pressure in hPa
+/// \return bool false if somnething went wrong
+bool senseGetTempPressure(double *t_C, double *p_hPa);
+
+/// \brief Get pressure measure in hPa from the LPS25H sensor
+/// \return pressure in hPa
 double senseGetPressure();
+
+/// \brief Get temperature measure in °C from the LPS25H sensor
+/// \return temperature in °C
 double senseGetTemperatureFromPressure();
 
+// ----------------------
 // LSM9DS1 IMU
-void senseSetIMUConfig(bool, bool, bool);
+// ----------------------
 
-bool senseGetOrientationRadians(double *, double *, double *);
-bool senseGetOrientationDegrees(double *, double *, double *);
+/// \brief IMU features intialization
+/// \param[in] magn true to enable magnetometer 
+/// \param[in] gyro true to enable gyrometer 
+/// \param[in] accel true to enable accelerometer 
+void senseSetIMUConfig(bool magn, bool gyro, bool accel);
+
+/// \brief Get IMU orientation in radians from the magnetometer
+/// \param[out] pitch value in radians
+/// \param[out] roll value in radians
+/// \param[out] yaw value in radians
+/// \return bool false if somnething went wrong
+bool senseGetOrientationRadians(double *pitch, double *roll, double *yaw);
+
+/// \brief Get IMU orientation in degrees from the magnetometer
+/// \param[out] pitch value in degrees
+/// \param[out] roll value in degrees
+/// \param[out] yaw value in degrees
+/// \return bool false if somnething went wrong
+bool senseGetOrientationDegrees(double *pitch, double *roll, double *yaw);
+
+/// \brief Get the direction of north in degrees from the magnetometer
+/// \details Calls senseSetIMUConfig to disable gyrometer and accelerometer
+/// \return direction of north in degrees
 double senseGetCompass();
 
-bool senseGetGyroRadians(double *, double *, double *);
-bool senseGetGyroDegrees(double *, double *, double *);
+/// \brief Get gyrometer measurements along the 3 axis in radians/s 
+/// \param[out] pitch value in radians/s
+/// \param[out] roll value in radians/s
+/// \param[out] yaw value in radians/s
+/// \return bool false if somnething went wrong
+bool senseGetGyroRadians(double *pitch, double *roll, double *yaw);
 
-bool senseGetAccelG(double *, double *, double *);
-bool senseGetAccelMPSS(double *, double *, double *);
+/// \brief Get gyrometer measurements along the 3 axis in degrees/s 
+/// \param[out] pitch value in degrees/s
+/// \param[out] roll value in degrees/s
+/// \param[out] yaw value in degrees/s
+/// \return bool false if somnething went wrong
+bool senseGetGyroDegrees(double *picth, double *roll, double *yaw);
 
+/// \brief Get accelerometer measurements along the 3 axis in g
+/// \param[out] pitch value in g
+/// \param[out] roll value in g
+/// \param[out] yaw value in g
+/// \return bool false if somnething went wrong
+bool senseGetAccelG(double *pitch, double *roll, double *yaw);
+
+/// \brief Get accelerometer measurements along the 3 axis in meter per second squared
+/// \param[out] pitch value in mpss
+/// \param[out] roll value in mpss
+/// \param[out] yaw value in mpss
+/// \return bool false if somnething went wrong
+bool senseGetAccelMPSS(double *pitch, double *roll, double *yaw);
+
+// ----------------------
 // Joystick
+// ----------------------
+
+/// \brief Wait for any joystick event
+/// \details This is a blocking function 
+/// \return stick_t structure contains timestamp, action and state of the joystick button
 stick_t senseWaitForJoystick();
 
-void senseSetJoystickWaitTime(long int, long int);
+/// \brief Define the duration for monotoring joystick events
+/// \param[in] sec duration in seconds
+/// \param[in] msec duration in milliseconds
+void senseSetJoystickWaitTime(long int sec, long int msec);
 
-bool senseGetJoystickEvent(stick_t *);
+/// \brief Get joystick event if any
+/// \param[out] ev stick_t structure containing timestamp, action and state of the joystick button
+/// \return bool true if something happened
+bool senseGetJoystickEvent(stick_t *ev);
 
 #endif // __SENSEHAT_H__
