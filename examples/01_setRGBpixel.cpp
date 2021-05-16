@@ -9,8 +9,8 @@
  *
  * Function prototype:
  * 
- * bool senseSetRGBpixel(unsigned int, unsigned int, rgb_pixel_t);
- *  ^-- status            x -^          y -^    pixel color -^
+ * bool senseSetRGBpixel(unsigned int, unsigned int, uint8_t, uint8_t, uint8_t);
+ *  ^-- status            x -^          y -^    pixel R, G, B colors -^
  *
  * The program prints one rainbow color per column on the Sense Hat LED matrix.
  */
