@@ -24,6 +24,9 @@ extern "C" {
 #include <RTMath.h>
 #define G_2_MPSS 9.80665
 
+// GPIOD library
+#include <gpiod.h>
+
 // Number of colors for a unique pixel
 #define COLORS 3
 // Red color index
@@ -71,11 +74,15 @@ typedef struct {
 	int action, state;
 } stick_t;
 
+/// \typedef GPIO pin values
+/// \details on: high level / off: low level
+typedef enum {on = 1, off = 0} gpio_t;
+
+#define	GPIO_CONSUMER	"SenseHatLib"
+
 /// \brief Initialize file handles and communications
-/// \details led matrix framebuffer,
-///  josytick input,
-///  IMU calibration parameters,
-///  and character set
+/// \details led matrix framebuffer, josytick input, IMU calibration
+/// parameters, character set, GPIO chip
 /// \return bool false if something went wrong
 bool senseInit();
 
@@ -319,5 +326,11 @@ void senseSetJoystickWaitTime(long int sec, long int msec);
 /// \param[out] ev stick_t structure containing timestamp, action and state of the joystick button
 /// \return bool true if something happened
 bool senseGetJoystickEvent(stick_t *ev);
+
+// ----------------------
+// GPIO pins
+// ----------------------
+
+bool gpioSetOutput(unsigned int pin, gpio_t val);
 
 #endif // __SENSEHAT_H__

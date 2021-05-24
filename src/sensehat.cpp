@@ -81,6 +81,9 @@ static int jsFile = -1;
 static struct input_event _jsEvent;
 static struct timeval _jstv;
 
+// GPIO chip
+static struct gpiod_chip *chip;
+
 void senseClear() {
 // Turn off all LEDs
 	memset(pixelMap, 0, LEDBUFFER);
@@ -218,6 +221,13 @@ bool senseInit() {
 		retOk = false;
 	}
 
+	// GPIO chip selection
+	chip = gpiod_chip_open_by_name("gpiochip0");
+	if (!chip) {
+		printf("GPIO chip opening failure.\n%s\n", strerror(errno));
+		retOk = false;
+	}
+
 	senseClear();
 	
 	return retOk;
@@ -236,6 +246,8 @@ void senseShutdown() {
 		close(jsFile);
 		jsFile = -1;
 	}
+	// Close GPIO chip communication
+	gpiod_chip_close(chip);
 }
 
 uint16_t sensePackPixel(rgb_pixel_t rgb) {
@@ -1064,28 +1076,35 @@ bool senseGetAccelMPSS(double *x, double *y, double *z) {
 	return retOk;
 }
 
+// ----------------------
+// Joystick
+// ----------------------
+
+// Wait for any joystick event
 stick_t senseWaitForJoystick() {
-	stick_t happen;
+	stick_t ev;
 
 	if (read(jsFile, &_jsEvent, sizeof(_jsEvent)) == sizeof(_jsEvent)) {
 		//EV_SYN is the event separator mark, not used
 		if (_jsEvent.type != EV_SYN) {
-			happen.action = _jsEvent.code;
-			happen.state = _jsEvent.value;
-			happen.timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
+			ev.action = _jsEvent.code;
+			ev.state = _jsEvent.value;
+			ev.timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
 		}
 	}
 
-	return happen;
+	return ev;
 }
 
+// Define the duration for monotoring joystick events
 void senseSetJoystickWaitTime(long int sec, long int msec) {
 
 	_jstv.tv_sec = sec;
 	_jstv.tv_usec = msec * 1000;
 }
 
-bool senseGetJoystickEvent(stick_t *happen) {
+// Get joystick event if any
+bool senseGetJoystickEvent(stick_t *ev) {
 	bool jsAction = false;
 	int clicked;
 	struct timeval timeout = _jstv; 
@@ -1111,12 +1130,54 @@ bool senseGetJoystickEvent(stick_t *happen) {
 		read(jsFile, &_jsEvent, sizeof(_jsEvent));
 		//EV_SYN is the event separator mark, not used
 		if (_jsEvent.type != EV_SYN) {
-			happen->action = _jsEvent.code;
-			happen->state = _jsEvent.value;
-			happen->timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
+			ev->action = _jsEvent.code;
+			ev->state = _jsEvent.value;
+			ev->timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
 			jsAction = true;
 		}
 	}
 
 	return jsAction;
+}
+
+// ----------------------
+// GPIO pins
+// ----------------------
+
+// Set GPIO output pin on or off
+bool gpioSetOutput(unsigned int pin, gpio_t val) {
+	struct gpiod_line *line;
+	bool retOk = true;
+
+	switch(pin) {
+		case 5:
+		case 6:
+		case 16:
+		case 17:
+		case 22:
+		case 26:
+		case 27:
+			line = gpiod_chip_get_line(chip, pin);
+			if (!line) {
+				puts("Get line failed.");
+				retOk = false;
+			}
+			else if (gpiod_line_request_output(line, GPIO_CONSUMER, 0) < 0) {
+				puts("Request line as output failed.");
+				gpiod_line_release(line);
+				retOk = false;
+			}
+			else if (gpiod_line_set_value(line, val) < 0) {
+				puts("Set line output failed.");
+				gpiod_line_release(line);
+				retOk = false;
+			}
+			break;
+		default:
+			puts("Wrong pin number.");
+			puts("Choose among: 5, 6, 16, 17, 22, 26, 27.");
+			retOk = false;
+	}
+
+	return retOk;
 }
