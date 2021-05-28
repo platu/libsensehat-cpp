@@ -37,7 +37,7 @@ The result of the `id` command below shows the user account belongs to the requi
 
 2. Install development library packages
  ```bash
- $ sudo apt install libi2c-dev libpng-dev
+ $ sudo apt install libi2c-dev libpng-dev libgpiod-dev
  ```
 
 3. Clone this repository
