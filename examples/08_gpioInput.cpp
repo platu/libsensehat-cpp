@@ -10,13 +10,13 @@
  * bool gpioSetConfig(unsigned int pin, gpio_dir_t direction);
  *                 GPIO pin number -^   in/out -^
  *
- * bool gpioSetOutput(unsigned int pin, gpio_t val);
- *                 GPIO pin number -^   on/off -^
+ * int gpioGetInput(unsigned int pin);
+ * ^- read val   GPIO pin number -^
  *
- * The program set output on/off 10 times. This is the typical blink led test.
+ * The program counts 10 events from input pin number
  * Available GPIO pin numbers: 5, 6, 16, 17, 22, 26, 27 
  *
- * _GPIO_PIN_----_LED_----_330_resistor_---|GND
+ * _GPIO_PIN_----_push_button_----_4.7k_resistor_----> 3.3V
  *
  */
 
@@ -33,18 +33,10 @@ using namespace std;
 using namespace std::this_thread; // sleep_for, sleep_until
 using namespace std::chrono; // system_clock, milliseconds
 
-gpio_state_t toggle(gpio_state_t v) {
-	if (v == on)
-		return off;
-	else
-		return on;
-}
-	
 int main(int argc, char **argv) {
 
-	int opt;
+	int opt, prev, val;
 	unsigned int count, pin = 5;
-	gpio_state_t val = on;
 
 	// command line arguments: -p 27 for pin 27
 	while ((opt = getopt(argc, argv, "p:")) != -1) {
@@ -58,15 +50,18 @@ int main(int argc, char **argv) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 
-		if (gpioSetConfig(pin, out)) {
-			for(count = 0; count < NB_EV; count++) {
-				cout << "GPIO pin: " << pin << " -> " << val << endl;
-				gpioSetOutput(pin, val);
-
-				sleep_for(milliseconds(500));
-
-				val = toggle(val);
-			}
+		if (gpioSetConfig(pin, in)) {
+			prev = 1;
+			count = 0;
+			do {
+				val = gpioGetInput(pin);
+				if (val != prev) {
+					cout << "GPIO pin: " << pin << " -> " << val << endl;
+					count++;
+				}
+				sleep_for(milliseconds(20));
+				prev = val;
+			} while (count < NB_EV);
 		}
 
 		senseShutdown();

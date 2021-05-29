@@ -344,4 +344,9 @@ bool gpioSetConfig(unsigned int pin, gpio_dir_t direction);
 /// \return bool false if something goes wrong
 bool gpioSetOutput(unsigned int pin, gpio_state_t val);
 
+/// \brief Get GPIO pin input value
+/// \param[in] pin number among 5, 6, 16, 17, 22, 26, 27
+/// \return int < 0 if something goes wrong
+int gpioGetInput(unsigned int pin);
+
 #endif // __SENSEHAT_H__

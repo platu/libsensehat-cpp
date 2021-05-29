@@ -1147,6 +1147,8 @@ bool senseGetJoystickEvent(stick_t *ev) {
 // GPIO pins
 // ----------------------
 
+// Check that the GPIO pin number belongs to the list defined in gpio_pinlist
+// array
 int _gpioCheckPin(uint8_t pin) {
 	int i, pos = -1;
 
@@ -1157,6 +1159,10 @@ int _gpioCheckPin(uint8_t pin) {
 	return pos;
 }
 
+// Set GPIO pin configuration:
+// . Pin number must belong to gpio_pinlist
+// . Pin line must be free
+// . Resource mist be available
 bool gpioSetConfig(unsigned int pin, gpio_dir_t direction) {
 	bool retOk = true;
 	int pos;
@@ -1172,6 +1178,11 @@ bool gpioSetConfig(unsigned int pin, gpio_dir_t direction) {
 			retOk = false;
 		}
 		else if ((direction == out) && (gpiod_line_request_output(gpio_line[pos], GPIO_CONSUMER, 0) < 0)) {
+			printf("Request line as output failed for pin number: %u.\n", pin);
+			gpiod_line_release(gpio_line[pos]);
+			retOk = false;
+		}
+		else if ((direction == in) && (gpiod_line_request_input(gpio_line[pos], GPIO_CONSUMER) < 0)) {
 			printf("Request line as output failed for pin number: %u.\n", pin);
 			gpiod_line_release(gpio_line[pos]);
 			retOk = false;
@@ -1197,4 +1208,20 @@ bool gpioSetOutput(unsigned int pin, gpio_state_t val) {
 	}
 
 	return retOk;
+}
+
+// Get GPIO input from pin
+int gpioGetInput(unsigned int pin) {
+	int pos;
+	int val = -1;
+
+	if ((pos = _gpioCheckPin(pin)) < 0) {
+		printf("Wrong GPIO pin number: %u.\n", pin);
+	}
+	else if ((val = (gpio_state_t)gpiod_line_get_value(gpio_line[pos])) < 0) {
+		puts("Get line input failed.");
+		gpiod_line_release(gpio_line[pos]);
+	}
+
+	return val;
 }
