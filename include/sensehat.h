@@ -76,7 +76,8 @@ typedef struct {
 
 /// \typedef GPIO pin values
 /// \details on: high level / off: low level
-typedef enum {on = 1, off = 0} gpio_t;
+typedef enum {on = 1, off = 0} gpio_state_t;
+typedef enum {in = 1, out = 0} gpio_dir_t;
 
 #define	GPIO_CONSUMER	"SenseHatLib"
 
@@ -331,6 +332,16 @@ bool senseGetJoystickEvent(stick_t *ev);
 // GPIO pins
 // ----------------------
 
-bool gpioSetOutput(unsigned int pin, gpio_t val);
+/// \brief Setup GPIO pin configuration and direction
+/// \param[in] pin number among 5, 6, 16, 17, 22, 26, 27
+/// \param[in] direction: in or out
+/// \return bool false if something goes wrong
+bool gpioSetConfig(unsigned int pin, gpio_dir_t direction);
+
+/// \brief Set GPIO pin output value to high level (on) or low level (off)
+/// \param[in] pin number among 5, 6, 16, 17, 22, 26, 27
+/// \param[in] value: on or off
+/// \return bool false if something goes wrong
+bool gpioSetOutput(unsigned int pin, gpio_state_t val);
 
 #endif // __SENSEHAT_H__

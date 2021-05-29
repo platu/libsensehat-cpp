@@ -82,7 +82,10 @@ static struct input_event _jsEvent;
 static struct timeval _jstv;
 
 // GPIO chip
-static struct gpiod_chip *chip;
+static struct gpiod_chip *gpio_chip;
+#define GPIOLIST 7
+const uint8_t gpio_pinlist[GPIOLIST] = {5, 6, 16, 17, 22, 26, 27};
+static struct gpiod_line *gpio_line[GPIOLIST];
 
 void senseClear() {
 // Turn off all LEDs
@@ -222,8 +225,8 @@ bool senseInit() {
 	}
 
 	// GPIO chip selection
-	chip = gpiod_chip_open_by_name("gpiochip0");
-	if (!chip) {
+	gpio_chip = gpiod_chip_open_by_name("gpiochip0");
+	if (!gpio_chip) {
 		printf("GPIO chip opening failure.\n%s\n", strerror(errno));
 		retOk = false;
 	}
@@ -247,7 +250,7 @@ void senseShutdown() {
 		jsFile = -1;
 	}
 	// Close GPIO chip communication
-	gpiod_chip_close(chip);
+	gpiod_chip_close(gpio_chip);
 }
 
 uint16_t sensePackPixel(rgb_pixel_t rgb) {
@@ -1144,39 +1147,53 @@ bool senseGetJoystickEvent(stick_t *ev) {
 // GPIO pins
 // ----------------------
 
-// Set GPIO output pin on or off
-bool gpioSetOutput(unsigned int pin, gpio_t val) {
-	struct gpiod_line *line;
-	bool retOk = true;
+int _gpioCheckPin(uint8_t pin) {
+	int i, pos = -1;
 
-	switch(pin) {
-		case 5:
-		case 6:
-		case 16:
-		case 17:
-		case 22:
-		case 26:
-		case 27:
-			line = gpiod_chip_get_line(chip, pin);
-			if (!line) {
-				puts("Get line failed.");
-				retOk = false;
-			}
-			else if (gpiod_line_request_output(line, GPIO_CONSUMER, 0) < 0) {
-				puts("Request line as output failed.");
-				gpiod_line_release(line);
-				retOk = false;
-			}
-			else if (gpiod_line_set_value(line, val) < 0) {
-				puts("Set line output failed.");
-				gpiod_line_release(line);
-				retOk = false;
-			}
-			break;
-		default:
-			puts("Wrong pin number.");
-			puts("Choose among: 5, 6, 16, 17, 22, 26, 27.");
+	for (i = 0; i < GPIOLIST; i++)
+		if (pin == gpio_pinlist[i])
+			pos = i;
+
+	return pos;
+}
+
+bool gpioSetConfig(unsigned int pin, gpio_dir_t direction) {
+	bool retOk = true;
+	int pos;
+
+	if ((pos = _gpioCheckPin(pin)) < 0) {
+		printf("Wrong GPIO pin number: %u.\n", pin);
+		retOk = false;
+	}
+	else {
+		gpio_line[pos] = gpiod_chip_get_line(gpio_chip, pin);
+		if (!gpio_line[pos]) {
+			printf("GPIO get line failed for pin number: %u.\n", pin);
 			retOk = false;
+		}
+		else if ((direction == out) && (gpiod_line_request_output(gpio_line[pos], GPIO_CONSUMER, 0) < 0)) {
+			printf("Request line as output failed for pin number: %u.\n", pin);
+			gpiod_line_release(gpio_line[pos]);
+			retOk = false;
+		}
+	}
+
+	return retOk;
+}
+
+// Set GPIO output pin on or off
+bool gpioSetOutput(unsigned int pin, gpio_state_t val) {
+	bool retOk = true;
+	int pos;
+
+	if ((pos = _gpioCheckPin(pin)) < 0) {
+		printf("Wrong GPIO pin number: %u.\n", pin);
+		retOk = false;
+	}
+	else if (gpiod_line_set_value(gpio_line[pos], val) < 0) {
+		puts("Set line output failed.");
+		gpiod_line_release(gpio_line[pos]);
+		retOk = false;
 	}
 
 	return retOk;
