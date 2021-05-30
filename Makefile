@@ -7,9 +7,7 @@ INCLUDEDIR=${PREFIX}/include
 
 # -----------------------------------------------------------
 #  jobs
-all: install cxx_examples
-
-install: includes images library
+all: library examples
 
 # -----------------------------------------------------------
 # include files
@@ -28,7 +26,7 @@ vpath %.h include
 IMAGES=$(wildcard src/sense_hat_text.*)
 IMAGES_DIST=$(addprefix ${LIBDIR}/, $(notdir ${IMAGES}))
 
-images: $(IMAGES_DIST)
+images: ${IMAGES_DIST}
 
 ${IMAGES_DIST}: ${IMAGES}
 	sudo cp $? ${LIBDIR}
@@ -40,9 +38,8 @@ LIBRARY_NAME=lib${SOURCE_NAME}-c++.so
 LIBRARY_SOURCE=src/${SOURCE_NAME}.cpp
 OBJECT=$(LIBRARY_SOURCE:.cpp=.o)
 LIBRARY=lib/${LIBRARY_NAME}
-LIBRARY_DIST=${LIBDIR}/$(notdir ${LIBRARY})
 
-library: ${LIBRARY_DIST}.0
+library: ${LIBRARY}.0
 
 ${OBJECT}: ${LIBRARY_SOURCE} ${INCLUDES}
 	${CXX} ${CXXFLAGS} -c -fPIC -o $@ $< -lpng
@@ -50,17 +47,29 @@ ${OBJECT}: ${LIBRARY_SOURCE} ${INCLUDES}
 ${LIBRARY}.0: ${OBJECT}
 	${CXX} ${CXXFLAGS} -g -shared -Wl,-soname,${LIBRARY_NAME} -o $@ $<
 
+# -----------------------------------------------------------
+# install library files
+LIBRARY_DIST=${LIBDIR}/$(notdir ${LIBRARY})
+
+install: includes images ${LIBRARY_DIST}.0
+
 ${LIBRARY_DIST}.0: ${LIBRARY}.0
 	sudo cp $< $@
 	sudo sh -c "cd ${LIBDIR} && ln -sf ${LIBRARY_NAME}.0 ${LIBRARY_NAME}"
 	sudo ldconfig
 
 # -----------------------------------------------------------
-#  examples
-cxx_examples:
+#  example programs
+examples: install
 	cd examples && $(MAKE)
 
 # -----------------------------------------------------------
 clean:
-	rm -f *o src/*.o lib/*.so*
+	rm -f *o src/*.o examples/*.o lib/*.so*
 
+# -----------------------------------------------------------
+#  remove files from system directories
+distclean:
+	sudo rm -rf ${LIBRARY_DIST}.0 ${IMAGES_DIST} ${INCLUDES_DIST}
+	sudo sh -c "cd ${LIBDIR} && rm -f ${LIBRARY_NAME}"
+	sudo ldconfig
