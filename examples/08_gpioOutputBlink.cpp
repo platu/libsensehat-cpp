@@ -43,13 +43,14 @@ gpio_state_t toggle(gpio_state_t v) {
 int main(int argc, char **argv) {
 
 	int opt;
+	char *eptr;
 	unsigned int count, pin = 5;
 	gpio_state_t val = on;
 
 	// command line arguments: -p 27 for pin 27
 	while ((opt = getopt(argc, argv, "p:")) != -1) {
 		if (opt == 'p')
-			pin = atoi(optarg);
+			pin = strtoul(optarg, &eptr, 10);
 		else
 			cerr << "Usage: " << argv[0] << " [-p] GPIO pin number." << endl;
 	}

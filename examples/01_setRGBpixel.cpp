@@ -36,7 +36,7 @@ int getch() {
 	assert(res==0);
 	//----- set new terminal parameters --------
 	memcpy(&new_opts, &org_opts, sizeof(new_opts));
-	new_opts.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
+	new_opts.c_lflag &= (tcflag_t)~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
 	tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
 	//------ wait for a single key -------------
 	c=getchar();
@@ -61,7 +61,7 @@ int main() {
 	const rgb_pixel_t rainbow[8] = {red, orange, yellow, green, cyan, blue, purple, pink};
 	rgb_pixel_t pix;
 
-	int x, y;
+	unsigned int x, y;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl

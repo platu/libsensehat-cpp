@@ -33,22 +33,22 @@ static uint16_t *pixelMap;
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
 const uint8_t gamma8[] = {
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
-    2,  3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  5,  5,  5,
-    5,  6,  6,  6,  6,  7,  7,  7,  7,  8,  8,  8,  9,  9,  9, 10,
-   10, 10, 11, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16,
-   17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 24, 24, 25,
-   25, 26, 27, 27, 28, 29, 29, 30, 31, 32, 32, 33, 34, 35, 35, 36,
-   37, 38, 39, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 50,
-   51, 52, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 67, 68,
-   69, 70, 72, 73, 74, 75, 77, 78, 79, 81, 82, 83, 85, 86, 87, 89,
-   90, 92, 93, 95, 96, 98, 99,101,102,104,105,107,109,110,112,114,
-  115,117,119,120,122,124,126,127,129,131,133,135,137,138,140,142,
-  144,146,148,150,152,154,156,158,160,162,164,167,169,171,173,175,
-  177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
-  215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
+	1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
+	2,  3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  5,  5,  5,
+	5,  6,  6,  6,  6,  7,  7,  7,  7,  8,  8,  8,  9,  9,  9, 10,
+	10, 10, 11, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16,
+	17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 24, 24, 25,
+	25, 26, 27, 27, 28, 29, 29, 30, 31, 32, 32, 33, 34, 35, 35, 36,
+	37, 38, 39, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 50,
+	51, 52, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 67, 68,
+	69, 70, 72, 73, 74, 75, 77, 78, 79, 81, 82, 83, 85, 86, 87, 89,
+	90, 92, 93, 95, 96, 98, 99,101,102,104,105,107,109,110,112,114,
+	115,117,119,120,122,124,126,127,129,131,133,135,137,138,140,142,
+	144,146,148,150,152,154,156,158,160,162,164,167,169,171,173,175,
+	177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
+	215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
 
 #define I2C_BUS_NUMBER 1
 // I2C devices addresses
@@ -64,7 +64,7 @@ const uint8_t gamma8[] = {
 static const char txtDictFilename[] = "/usr/local/lib/sense_hat_text.txt";
 static const char txtPNGFilename[] = "/usr/local/lib/sense_hat_text.png";
 static char txtDict[NBCHARS];
-static ssize_t txtDictLen;
+static size_t txtDictLen;
 // PNG pointers and rows
 static png_structp png_ptr;
 static png_infop png_info_ptr;
@@ -87,38 +87,21 @@ static struct gpiod_chip *gpio_chip;
 const uint8_t gpio_pinlist[GPIOLIST] = {5, 6, 16, 17, 22, 26, 27};
 static struct gpiod_line *gpio_line[GPIOLIST];
 
-void senseClear() {
+// ----------------------
+// Initialization
+// ----------------------
+
 // Turn off all LEDs
+void senseClear() {
 	memset(pixelMap, 0, LEDBUFFER);
 }
 
-void senseSetLowLight(bool low) {
-// Lower led light intensity
-	if (low)
-		lowLight_switch = true;
-	else
-		lowLight_switch = false;
-	lowLight_state = false;
-}
-
-rgb_pixel_t _lowLightDimmer(rgb_pixel_t px) {
-// Internal
-// Reduce light intensity if lowLight_switch is true.
-	uint8_t w;
-
-	px.color[_R] = gamma8[px.color[_R]];
-	px.color[_G] = gamma8[px.color[_G]];
-	px.color[_B] = gamma8[px.color[_B]];
-	w = MIN(px.color[_R], MIN(px.color[_G], px.color[_B])) / 3;
-	px.color[_R] -= w;
-	px.color[_G] -= w;
-	px.color[_B] -= w;
-
-	return px;
-}
-
+// Sense HAT Initialization
+// . file handles for leb framebuffer and joystick
+// . character set
+// . IMU
+// . GPIO chip
 bool senseInit() {
-// Initialization
 
 	struct fb_fix_screeninfo fix_info;
 	// Return code set to true by default.
@@ -154,8 +137,8 @@ bool senseInit() {
 		retOk = false;
 	}
 	// Map the led frame buffer device into memory
-    pixelMap = (uint16_t *)mmap(NULL, LEDBUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
-    if (pixelMap == MAP_FAILED) {
+	pixelMap = (uint16_t *)mmap(NULL, LEDBUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
+	if (pixelMap == MAP_FAILED) {
 		printf("Unable to map the LED matrix into memory.\n%s\n",
 				strerror(errno));
 		retOk = false;
@@ -168,7 +151,7 @@ bool senseInit() {
 		retOk = false;
 	}
 	else {
-		txtDictLen = read(txtFile, txtDict, NBCHARS);
+		txtDictLen = (size_t)read(txtFile, txtDict, NBCHARS);
 		close(txtFile);
 	}
 
@@ -190,17 +173,17 @@ bool senseInit() {
 		png_init_io (png_ptr, pngFile);
 		png_read_png (png_ptr, png_info_ptr, 0, 0);
 		png_get_IHDR (png_ptr, png_info_ptr, &png_width, &png_height, &png_bit_depth,
-					&png_color_type, &png_interlace_method, &png_compression_method,
-					&png_filter_method);
+				&png_color_type, &png_interlace_method, &png_compression_method,
+				&png_filter_method);
 		png_rows = png_get_rows(png_ptr, png_info_ptr);
 		fclose(pngFile);
 	}
 
-	// IMU 
-	std::cout << "IMU is opening" << std::endl; 
-	
+	// IMU
+	std::cout << "IMU is opening" << std::endl;
+
 	if ((imu == NULL) || (imu->IMUType() == RTIMU_TYPE_NULL)){
-		std::cout << "Error, couldn't open IMU" << std::endl; 
+		std::cout << "Error, couldn't open IMU" << std::endl;
 		retOk = false;
 	}
 	// Initialise the imu object
@@ -208,14 +191,14 @@ bool senseInit() {
 
 	//  set up pressure sensor
 	if (pressure != NULL)
-        pressure->pressureInit();
+		pressure->pressureInit();
 
 	// Set the Fusion coefficient
 	imu->setSlerpPower(0.02);
 	// Enable the sensors
 	imu->setGyroEnable(true);
 	imu->setAccelEnable(true);
-	imu->setCompassEnable(true); 
+	imu->setCompassEnable(true);
 
 	// Joystick file handler
 	jsFile = open(joystickFilename, O_RDONLY);
@@ -232,10 +215,11 @@ bool senseInit() {
 	}
 
 	senseClear();
-	
+
 	return retOk;
 }
 
+// Free Sense HAT file handles
 void senseShutdown() {
 
 	senseClear();
@@ -253,8 +237,36 @@ void senseShutdown() {
 	gpiod_chip_close(gpio_chip);
 }
 
-uint16_t sensePackPixel(rgb_pixel_t rgb) {
+// ----------------------
+// LEDs
+// ----------------------
+
+// Internal. Reduce light intensity if lowLight_switch is true.
+rgb_pixel_t _lowLightDimmer(rgb_pixel_t px) {
+	uint8_t w;
+
+	px.color[_R] = gamma8[px.color[_R]];
+	px.color[_G] = gamma8[px.color[_G]];
+	px.color[_B] = gamma8[px.color[_B]];
+	w = MIN(px.color[_R], MIN(px.color[_G], px.color[_B])) / 3;
+	px.color[_R] -= w;
+	px.color[_G] -= w;
+	px.color[_B] -= w;
+
+	return px;
+}
+
+// Lower led light intensity
+void senseSetLowLight(bool low) {
+	if (low)
+		lowLight_switch = true;
+	else
+		lowLight_switch = false;
+	lowLight_state = false;
+}
+
 // Internal. Encodes [R,G,B] array into 16 bit RGB565
+uint16_t sensePackPixel(rgb_pixel_t rgb) {
 	uint16_t r, g, b;
 
 	r = (uint16_t)(rgb.color[_R] >> 3) & 0x1f;
@@ -263,8 +275,8 @@ uint16_t sensePackPixel(rgb_pixel_t rgb) {
 	return r << 11 | g << 5 | b;
 }
 
-rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 // Internal. Decodes 16 bit RGB565 into [R,G,B] array
+rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 	rgb_pixel_t pix;
 
 	pix.color[_R] = (uint8_t) ((rgb565 & 0xf800) >> 11) << 3; // Red
@@ -273,8 +285,8 @@ rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 	return pix;
 }
 
+// Turn on all pixels with the same RGB color
 void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
-// Turns on all pixels with the same RGB color
 
 	rgb_pixel_t rgb = { .color = {r, g, b}  };
 	rgb565_pixel_t rgb565 = sensePackPixel(rgb);
@@ -282,12 +294,12 @@ void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
 	memset(pixelMap, rgb565, LEDBUFFER);
 }
 
+// Turn on a single pixel with RGB565 color format
 bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) {
-	int i;
+	unsigned int i;
 	bool retOk = false;
 
-	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH)
-	{
+	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH)	{
 		i = (x*8)+y; // offset into array
 		*(pixelMap + i) = rgb565;
 		retOk = true;
@@ -295,19 +307,20 @@ bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) 
 	return retOk;
 }
 
+// Turn on a single pixel with R, G, and B individual values
 bool senseSetRGBpixel(unsigned int x, unsigned int y, uint8_t red, uint8_t green, uint8_t blue) {
 	rgb565_pixel_t rgb565;
 	rgb_pixel_t pix = { .color = {red, green, blue} };
 	bool retOk = false;
 
-	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH)
-	{
+	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH) {
 		rgb565 = sensePackPixel(pix);
 		retOk = senseSetRGB565pixel(x, y, rgb565);
 	}
 	return retOk;
 }
 
+// Turn on all pixels from a RGB565 predefined map
 void senseSetRGB565pixels(rgb565_pixels_t pixelArray) {
 	int x, y, i;
 	rgb565_pixel_t rgb565;
@@ -328,6 +341,7 @@ void senseSetRGB565pixels(rgb565_pixels_t pixelArray) {
 		}
 }
 
+// Turn on all pixels from a predefined map of rgb_pixel_t color array
 void senseSetRGBpixels(rgb_pixels_t pixelArray) {
 	int x, y, i;
 	uint16_t rgb565;
@@ -345,6 +359,7 @@ void senseSetRGBpixels(rgb_pixels_t pixelArray) {
 		}
 }
 
+// Read a single pixel color in RGB565 format 
 rgb565_pixel_t senseGetRGB565pixel(unsigned int x, unsigned int y) {
 	unsigned int i;
 	rgb565_pixel_t rgb565pix;
@@ -357,6 +372,7 @@ rgb565_pixel_t senseGetRGB565pixel(unsigned int x, unsigned int y) {
 	return rgb565pix;
 }
 
+// Read a single pixel color in a R, G, B array 
 rgb_pixel_t senseGetRGBpixel(unsigned int x, unsigned int y) {
 	unsigned int i;
 	rgb_pixel_t pix = { .color = {0, 0, 0} };
@@ -369,11 +385,11 @@ rgb_pixel_t senseGetRGBpixel(unsigned int x, unsigned int y) {
 	return pix;
 }
 
-rgb565_pixels_t senseGetRGB565pixels() {
 // Returns an 8x8 array containing RGB565 pixels
+rgb565_pixels_t senseGetRGB565pixels() {
 	unsigned int x, y;
 	rgb565_pixels_t image;
-	
+
 	for(y = 0; y < SENSE_LED_WIDTH; y++)
 		for(x = 0; x < SENSE_LED_WIDTH; x++)
 			image.array[x][y] = senseGetRGB565pixel(x,y);
@@ -381,21 +397,20 @@ rgb565_pixels_t senseGetRGB565pixels() {
 	return image;
 }
 
-rgb_pixels_t senseGetRGBpixels() {
 // Returns an 8x8 array containing [R,G,B] pixels
+rgb_pixels_t senseGetRGBpixels() {
 	unsigned int x, y;
 	rgb_pixels_t image;
-	
-    for(y = 0; y < SENSE_LED_WIDTH; y++)
+
+	for(y = 0; y < SENSE_LED_WIDTH; y++)
 		for(x = 0; x < SENSE_LED_WIDTH; x++)
 			image.array[x][y] = senseGetPixel(x,y);
 
 	return image;
 }
 
+// Internal. 90 degrees clockwise rotation of LED matrix
 rgb_pixels_t _rotate90(rgb_pixels_t pixMat) {
-// Internal.
-// 90 degrees clockwise rotation of LED matrix
 	int i, j;
 	rgb_pixel_t temp;
 
@@ -406,14 +421,13 @@ rgb_pixels_t _rotate90(rgb_pixels_t pixMat) {
 			pixMat.array[SENSE_LED_WIDTH - 1 - j][i] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
 			pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = pixMat.array[j][SENSE_LED_WIDTH - 1 - i];
 			pixMat.array[j][SENSE_LED_WIDTH - 1 - i] = temp;
-			}
+		}
 
 	return pixMat;
 }
 
+// Internal. 180 degrees rotation of LED matrix
 rgb_pixels_t _rotate180(rgb_pixels_t pixMat) {
-// Internal.
-// 180 degrees rotation of LED matrix
 	int i, j;
 	rgb_pixel_t temp;
 
@@ -422,14 +436,13 @@ rgb_pixels_t _rotate180(rgb_pixels_t pixMat) {
 			temp = pixMat.array[i][j];
 			pixMat.array[i][j] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
 			pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = temp;
-			}
+		}
 
 	return pixMat;
 }
 
+// Internal. 270 degrees clockwise (90 anti clockwise) rotation of LED matrix
 rgb_pixels_t _rotate270(rgb_pixels_t pixMat) {
-// Internal.
-// 270 degrees clockwise (90 anti clockwise) rotation of LED matrix
 	int i, j;
 	rgb_pixel_t temp;
 
@@ -440,15 +453,15 @@ rgb_pixels_t _rotate270(rgb_pixels_t pixMat) {
 			pixMat.array[j][SENSE_LED_WIDTH - 1 - i] = pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j];
 			pixMat.array[SENSE_LED_WIDTH - 1 - i][SENSE_LED_WIDTH - 1 - j] = pixMat.array[SENSE_LED_WIDTH - 1 - j][i];
 			pixMat.array[SENSE_LED_WIDTH - 1 - j][i] = temp;
-			}
+		}
 
 	return pixMat;
 }
 
-rgb_pixels_t senseRotation(unsigned int angle) {
 // Rotate 90, 180, 270 degrees clockwise
+rgb_pixels_t senseRotation(unsigned int angle) {
 	rgb_pixels_t rotated;
-	
+
 	switch(angle) {
 		case 90:
 			rotated = senseGetPixels();
@@ -470,8 +483,8 @@ rgb_pixels_t senseRotation(unsigned int angle) {
 	return rotated;
 }
 
-rgb_pixels_t senseFlip_h(bool redraw) {
 // Flip LED matrix horizontally
+rgb_pixels_t senseFlip_h(bool redraw) {
 	unsigned int i, start, end;
 	rgb_pixels_t flipped;
 	rgb_pixel_t temp;
@@ -497,8 +510,8 @@ rgb_pixels_t senseFlip_h(bool redraw) {
 	return flipped;
 }
 
-rgb_pixels_t senseFlip_v(bool redraw) {
 // Flip LED matrix vertically
+rgb_pixels_t senseFlip_v(bool redraw) {
 	int i, start, end;
 	rgb_pixels_t flipped;
 	rgb_pixel_t temp;
@@ -523,10 +536,10 @@ rgb_pixels_t senseFlip_v(bool redraw) {
 	return flipped;
 }
 
-rgb_pixels_t _fillCharPixels(char sign, rgb_pixel_t fgcolor, rgb_pixels_t signPixels) {
 // Internal. Collects PNG bytes and fill pixel array with foreground color.
 // Character changes every 5 rows of PNG data.
 // Each PNG row has 24 bytes.
+rgb_pixels_t _fillCharPixels(char sign, rgb_pixel_t fgcolor, rgb_pixels_t signPixels) {
 	char * sign_p;
 	int i, j, pos;
 	png_bytep png_row;
@@ -543,7 +556,7 @@ rgb_pixels_t _fillCharPixels(char sign, rgb_pixel_t fgcolor, rgb_pixels_t signPi
 				// Every 3 PNG byte, all values above 128 should be printed.
 				if (png_row[j*3] > 128)
 					signPixels.array[i][j] = fgcolor;
-        }
+		}
 		// Rotate 90 degrees anti clockwise 
 		signPixels = _rotate270(signPixels);
 	}
@@ -553,9 +566,9 @@ rgb_pixels_t _fillCharPixels(char sign, rgb_pixel_t fgcolor, rgb_pixels_t signPi
 	return signPixels;
 }
 
-
-void senseShowRGBColoredLetter(char ltr, rgb_pixel_t fg, rgb_pixel_t bg) {
 // Print a character with foreground color on background color
+// Colors are defined in rgb_pixel_t arrays
+void senseShowRGBColoredLetter(char ltr, rgb_pixel_t fg, rgb_pixel_t bg) {
 	int i, j;
 	rgb_pixels_t ltrPix;
 
@@ -568,8 +581,9 @@ void senseShowRGBColoredLetter(char ltr, rgb_pixel_t fg, rgb_pixel_t bg) {
 	senseSetPixels(ltrPix);
 }
 
-void senseShowRGB565ColoredLetter(char ltr, rgb565_pixel_t fg, rgb565_pixel_t bg) {
 // Print a character with foreground color on background color
+// Colors are encoded ine RGB565 format
+void senseShowRGB565ColoredLetter(char ltr, rgb565_pixel_t fg, rgb565_pixel_t bg) {
 	int i, j;
 	rgb_pixels_t ltrPix;
 
@@ -582,23 +596,21 @@ void senseShowRGB565ColoredLetter(char ltr, rgb565_pixel_t fg, rgb565_pixel_t bg
 	senseSetPixels(ltrPix);
 }
 
+// Print a character, white foreground on black background
 void senseShowLetter(char ltr) {
-// Print a white character on black background
 	const rgb_pixel_t white = { .color = {255, 255, 255} };
 	const rgb_pixel_t black = { .color = {0, 0, 0} };
 
 	senseShowColoredLetter(ltr, white, black);
 }
 
+// Internal. Microseconds to milliseconds conversion.
 void _msecSleep(unsigned int msec) {
-// Internal.
-// Microseconds to milliseconds conversion.
 	usleep(1000 * msec);
 }
 
+// Internal. Shift each column left from one position.
 rgb_pixels_t _shiftLeft(rgb_pixels_t shifted, rgb_pixel_t bg) {
-// Internal.
-// Shift each column left from one position.
 	int i, j;
 
 	for (i = 0; i < SENSE_LED_WIDTH; i++)
@@ -611,22 +623,21 @@ rgb_pixels_t _shiftLeft(rgb_pixels_t shifted, rgb_pixel_t bg) {
 	return shifted;
 }
 
+// Internal. Determines if the current pixel is of background color.
 bool _isBackground(rgb_pixel_t pix, rgb_pixel_t bg) {
-// Internal.
-// Determines if the current pixel is of background color.
 	bool bgPix = false;
 
 	if( pix.color[_R] == bg.color[_R] &&
-		pix.color[_G] == bg.color[_G] &&
-		pix.color[_B] == bg.color[_B] )
+			pix.color[_G] == bg.color[_G] &&
+			pix.color[_B] == bg.color[_B] )
 		bgPix = true;
 
 	return bgPix;
 }
 
+// Internal. Determines if the current character is a space for which all
+// pixels are of background color.
 bool _isSpace(rgb_pixels_t key, rgb_pixel_t bg) {
-// Internal.
-// Determines if the current character is a space for which all pixels are of background color.
 	bool spaceKey = true;
 	int i, j;
 
@@ -644,8 +655,9 @@ bool _isSpace(rgb_pixels_t key, rgb_pixel_t bg) {
 	return spaceKey;
 }
 
-void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 // Scrolls a string of characters from left to right
+// Foreground and background colors are defined in two rgb_pixel_t arrays
+void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 	const unsigned int speed = 100;
 	int i, j, msgPos, msgLen;
 	int signWidth, width;
@@ -676,7 +688,7 @@ void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 				while (_isBackground(sign.array[i][0], bg) &&
 						i < SENSE_LED_WIDTH)
 					i++;
-		
+
 				if (i == SENSE_LED_WIDTH)
 					sign = _shiftLeft(sign, bg);
 				else
@@ -711,11 +723,15 @@ void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 	}
 }
 
+// Scrolls a string of characters from left to right
+// Foreground and background colors are encoded in RGB565 format
 void senseShowRGB565ColoredMessage(char * msg, rgb565_pixel_t fg, rgb565_pixel_t bg) {
 
 	senseShowRGBColoredMessage(msg, senseUnPackPixel(fg), senseUnPackPixel(bg));
 }
 
+// Scrolls a string of characters from left to right
+// White foreground on black background
 void senseShowMessage(char * msg) {
 	const rgb_pixel_t white = { .color = {255, 255, 255} };
 	const rgb_pixel_t black = { .color = {0, 0, 0} };
@@ -723,7 +739,11 @@ void senseShowMessage(char * msg) {
 	senseShowRGBColoredMessage(msg, white, black);
 }
 
+// -----------------------------
 // HTS221 Humidity sensor
+// -----------------------------
+
+// Read both temperature and relative humidity
 bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 	char filename[FILENAMELENGTH];
 	int humFile;
@@ -851,6 +871,7 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 	return retOk;
 }
 
+// Return relative humidity only
 double senseGetHumidity() {
 	double Temp, Humid;
 
@@ -860,6 +881,7 @@ double senseGetHumidity() {
 	return Humid;
 }
 
+// Return temperature only
 double senseGetTemperatureFromHumidity() {
 	double Temp, Humid;
 
@@ -869,7 +891,11 @@ double senseGetTemperatureFromHumidity() {
 	return Temp;
 }
 
+// -----------------------------
 // LPS25H Pressure sensor
+// -----------------------------
+
+// Read both temperature and pressure
 bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 	char filename[FILENAMELENGTH];
 	int preFile;
@@ -937,6 +963,7 @@ bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 	return retOk;
 }
 
+// Return pressure only
 double senseGetPressure() {
 	double Temp, Pressure;
 
@@ -946,6 +973,7 @@ double senseGetPressure() {
 	return Pressure;
 }
 
+// Return temperature only
 double senseGetTemperatureFromPressure() {
 	double Temp, Pressure;
 
@@ -955,7 +983,11 @@ double senseGetTemperatureFromPressure() {
 	return Temp;
 }
 
+// -----------------------------
 // LSM9DS1 IMU
+// -----------------------------
+
+// Select function(s) to enable
 void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabled) {
 
 	imu->setCompassEnable(compass_enabled);
@@ -966,7 +998,7 @@ void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabl
 bool senseGetOrientationRadians(double *p, double *r, double *y) {
 	bool retOk = true;
 
-	usleep(imu->IMUGetPollInterval() * 1000);
+	usleep((__useconds_t)(imu->IMUGetPollInterval() * 1000));
 
 	if (imu->IMURead()) {
 		RTIMU_DATA imuData = imu->getIMUData() ;
@@ -976,7 +1008,8 @@ bool senseGetOrientationRadians(double *p, double *r, double *y) {
 			*r = curr_pose.y();
 			*y = -curr_pose.z();
 		}
-		else retOk = false;
+		else
+			retOk = false;
 	}
 	else
 		retOk = false;
@@ -1012,9 +1045,9 @@ bool senseGetGyroRadians(double *p, double *r, double *y) {
 
 	senseSetIMUConfig(false, true, false);
 
-	usleep(imu->IMUGetPollInterval() * 1000);
+	usleep((__useconds_t)(imu->IMUGetPollInterval() * 1000));
 
-    if (imu->IMURead()) {
+	if (imu->IMURead()) {
 		RTIMU_DATA imuData = imu->getIMUData() ;
 		if (imuData.gyroValid) {
 			*p = imuData.gyro.x();
@@ -1033,7 +1066,7 @@ bool senseGetGyroDegrees(double *p, double *r, double *y) {
 	bool retOk = true;
 
 	if (senseGetGyroRadians(p, r, y)) {
-		*p *= 180.0 / M_PI;  
+		*p *= 180.0 / M_PI;
 		*r *= 180.0 / M_PI;
 		*y *= 180.0 / M_PI;
 	}
@@ -1048,7 +1081,7 @@ bool senseGetAccelG(double *x, double *y, double *z) {
 
 	senseSetIMUConfig(false, false, true);
 
-	usleep(imu->IMUGetPollInterval() * 1000);
+	usleep((__useconds_t)(imu->IMUGetPollInterval() * 1000));
 
 	if (imu->IMURead()) {
 		RTIMU_DATA imuData = imu->getIMUData() ;
@@ -1057,7 +1090,8 @@ bool senseGetAccelG(double *x, double *y, double *z) {
 			*y = imuData.accel.y();
 			*z = imuData.accel.z();
 		}
-		else retOk = false;
+		else
+			retOk = false;
 	}
 	else
 		retOk = false;
@@ -1177,12 +1211,14 @@ bool gpioSetConfig(unsigned int pin, gpio_dir_t direction) {
 			printf("GPIO get line failed for pin number: %u.\n", pin);
 			retOk = false;
 		}
-		else if ((direction == out) && (gpiod_line_request_output(gpio_line[pos], GPIO_CONSUMER, 0) < 0)) {
+		else if ((direction == out) &&
+				(gpiod_line_request_output(gpio_line[pos], GPIO_CONSUMER, 0) < 0)) {
 			printf("Request line as output failed for pin number: %u.\n", pin);
 			gpiod_line_release(gpio_line[pos]);
 			retOk = false;
 		}
-		else if ((direction == in) && (gpiod_line_request_input(gpio_line[pos], GPIO_CONSUMER) < 0)) {
+		else if ((direction == in) &&
+				(gpiod_line_request_input(gpio_line[pos], GPIO_CONSUMER) < 0)) {
 			printf("Request line as output failed for pin number: %u.\n", pin);
 			gpiod_line_release(gpio_line[pos]);
 			retOk = false;
@@ -1213,10 +1249,11 @@ bool gpioSetOutput(unsigned int pin, gpio_state_t val) {
 // Get GPIO input from pin
 int gpioGetInput(unsigned int pin) {
 	int pos;
-	int val = -1;
+	int val;
 
 	if ((pos = _gpioCheckPin(pin)) < 0) {
 		printf("Wrong GPIO pin number: %u.\n", pin);
+		val = -1;
 	}
 	else if ((val = (gpio_state_t)gpiod_line_get_value(gpio_line[pos])) < 0) {
 		puts("Get line input failed.");
