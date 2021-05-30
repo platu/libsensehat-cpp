@@ -75,3 +75,10 @@ Almost every function has its own example program that illustrates how it works.
 * 06 LSM9DS1 IMU Orientation and compass
 * 07 Joystick events
 * 08 GPIO read input or write output on Raspberry Pi pins subset
+
+## Library addons
+
+Using a stcking header, GPIO and PWM pins are available.
+
+<img src="https://inetdoc.net/images/sensehat_stacking.jpg" width="384px" />
+<img src="https://inetdoc.net/images/sensehat.jpg" width="384px" />
