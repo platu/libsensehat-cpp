@@ -74,3 +74,4 @@ Almost every function has its own example program that illustrates how it works.
 * 05 HTS221 Humidity sensor and LPS25H Pressure sensor
 * 06 LSM9DS1 IMU Orientation and compass
 * 07 Joystick events
+* 08 GPIO read input or write output on Raspberry Pi pins subset
