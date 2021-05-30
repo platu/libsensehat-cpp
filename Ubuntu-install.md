@@ -18,11 +18,12 @@ On the joystick `input` side, there is no difference.
 So, the normal user account must belong to the follwoing system groups:
 
 ```
-$ id | egrep -o '(dialout|input|i2c|sudo)'
+$ id | egrep -o '(dialout|input|i2c|gpio|sudo)'
 dialout
 sudo
 input
 i2c
+gpio
 ```
 
 If it is not the case, you have to run a command like this: `sudo adduser
@@ -36,7 +37,7 @@ In order to build the libsensehat-cpp library, the 2c and PNG development
 packages are required:
 
 ```
-$ sudo apt install libi2c-dev libpng-dev
+$ sudo apt install libi2c-dev libpng-dev libgpiod-dev
 ```
 
 ## RTIMULib2 build from source
