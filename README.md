@@ -78,7 +78,6 @@ Almost every function has its own example program that illustrates how it works.
 
 ## Library addons
 
-Using a stcking header, GPIO and PWM pins are available.
+Once the Sense HAT standard header is replaced by a stacking header, GPIO and PWM pins are available.
 
 <img src="https://inetdoc.net/images/sensehat_stacking.jpg" width="384px" />
-<img src="https://inetdoc.net/images/sensehat.jpg" width="384px" />
