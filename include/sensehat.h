@@ -349,4 +349,15 @@ bool gpioSetOutput(unsigned int pin, gpio_state_t val);
 /// \return int < 0 if something goes wrong
 int gpioGetInput(unsigned int pin);
 
+// ----------------------
+// PWM channels
+// ----------------------
+
+bool pwmInit(unsigned int chan);
+bool pwmPeriod(unsigned int chan, unsigned int period);
+bool pwmDutyCycle(unsigned int chan, unsigned int percent);
+bool pwmChangeState(unsigned int chan, char *state);
+bool pwmEnable(unsigned int chan);
+bool pwmDisable(unsigned int chan);
+
 #endif // __SENSEHAT_H__

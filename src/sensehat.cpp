@@ -87,6 +87,7 @@ static struct gpiod_chip *gpio_chip;
 const uint8_t gpio_pinlist[GPIOLIST] = {5, 6, 16, 17, 22, 26, 27};
 static struct gpiod_line *gpio_line[GPIOLIST];
 
+
 // ----------------------
 // Initialization
 // ----------------------
@@ -110,7 +111,7 @@ bool senseInit() {
 	// Dictionnary file
 	int txtFile =-1;
 	// PNG parameters
-	FILE * pngFile;
+	FILE *pngFile;
 	png_uint_32 png_width;
 	png_uint_32 png_height;
 	int png_bit_depth;
@@ -1262,3 +1263,121 @@ int gpioGetInput(unsigned int pin) {
 
 	return val;
 }
+
+// -------------------------------------------------------------
+// PWM
+// The 2 default PWM channels are available if the line below is present in the
+// /boot/config.txt file:
+// dtoverlay=pwm-2chan
+// PWM0 on pin #18
+// ---------------------------
+
+#define BUFLEN 48
+
+bool _chanOk(unsigned int line) {
+	bool retOk = true;
+
+	if (line != 0 && line != 1) {
+		puts("Allowed PWM channels are 0 or 1");
+		retOk = false;
+	}
+	return retOk;
+}
+
+bool pwmInit(unsigned int chan) {
+	FILE *fd;
+	bool retOk = true;
+
+	if (_chanOk(chan)) {
+		fd = fopen("/sys/class/pwm/pwmchip0/export", "w");
+		if (! fd) {
+			printf("Failed to open export file.\n%s\n", strerror(errno));
+			retOk = false;
+		}
+		else {
+			fprintf(fd, "%u", chan);
+			fclose(fd);
+		}
+	}
+	return retOk;
+}
+
+bool pwmPeriod(unsigned int chan, unsigned int period) {
+	FILE *fd;
+	bool retOk = true;
+	char buf[(BUFLEN)];
+
+	if (_chanOk(chan)) {
+		sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/period", chan);
+		fd = fopen(buf, "w");
+		if (! fd) {
+			printf("Failed to open channel %u period file.\n%s\n", chan,
+					strerror(errno));
+			retOk = false;
+		}
+		else {
+			// usec to nanosec
+			period *= 1000;
+			fprintf(fd, "%u", period);
+			fclose(fd);
+		}
+	}
+	return retOk;
+}
+
+bool pwmDutyCycle(unsigned int chan, unsigned int percent) {
+	FILE *fd;
+	bool retOk = true;
+	char buf[(BUFLEN)];
+
+	if (_chanOk(chan)) {
+		sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/duty_cycle", chan);
+		fd = fopen(buf, "w");
+		if (! fd) {
+			printf("Failed to open channel %u duty_cycle file.\n%s\n", chan,
+					strerror(errno));
+			retOk = false;
+		}
+		else {
+			// percent to nanosec period
+			percent *= 100000;
+			fprintf(fd, "%u", percent);
+			fclose(fd);
+		}
+	}
+	return retOk;
+}
+
+bool pwmChangeState(unsigned int chan, char *state) {
+	FILE *fd;
+	bool retOk = true;
+	char buf[(BUFLEN)];
+
+	if (_chanOk(chan)) {
+		sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/enable", chan);
+		fd = fopen(buf, "w");
+		if (! fd) {
+			printf("Failed to open channel %u enable file.\n%s\n", chan,
+					strerror(errno));
+			retOk = false;
+		}
+		else {
+			fprintf(fd, state);
+			fclose(fd);
+		}
+	}
+	return retOk;
+}
+
+bool pwmEnable(unsigned int chan) {
+	char status[2] = "1";
+
+	return pwmChangeState(chan, status);
+}
+
+bool pwmDisable(unsigned int chan) {
+	char status[2] = "0";
+
+	return pwmChangeState(chan, status);
+}
+
