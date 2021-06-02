@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>
+#include <cstdlib>
 
 #include <sensehat.h>
 
@@ -56,19 +57,19 @@ int main(int argc, char **argv) {
 			pwmEnable(0);
 			do {
 				percent = 0;
-				cout << "Duty cycle: " << percent << "%" << endl;
-				do {
+				for (percent = 0; percent <= 100; percent +=2) {
+					if ((percent % 10) == 0)
+						cout << "Duty cycle: " << percent << "%" << endl;
 					pwmDutyCycle(0, percent);
-					sleep_for(milliseconds(50));
-					percent += 2;
-				} while(percent < 100);
+					sleep_for(milliseconds(10));
+				}
 
-				cout << "Duty cycle: " << percent << "%" << endl;
-				do {
+				for (percent = 100; percent >= UINT_MAX; percent -=2) {
+					if ((percent % 10) == 0)
+						cout << "Duty cycle: " << percent << "%" << endl;
 					pwmDutyCycle(0, percent);
-					sleep_for(milliseconds(50));
-					percent -= 2;
-				} while(percent > 0);
+					sleep_for(milliseconds(10));
+				}
 				count++;
 			} while (count < NB_CYCLE);
 			pwmDisable(0);
