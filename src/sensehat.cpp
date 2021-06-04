@@ -61,8 +61,8 @@ const uint8_t gamma8[] = {
 
 // Text dictionnary and corresponding pixel maps
 #define NBCHARS 92
-static const char txtDictFilename[] = "/usr/local/lib/sense_hat_text.txt";
-static const char txtPNGFilename[] = "/usr/local/lib/sense_hat_text.png";
+#define TXT_DICT_FILENAME "/usr/local/lib/sense_hat_text.txt"
+#define TXT_PNG_FILENAME "/usr/local/lib/sense_hat_text.png"
 static char txtDict[NBCHARS];
 static size_t txtDictLen;
 // PNG pointers and rows
@@ -76,7 +76,6 @@ static RTIMU *imu = RTIMU::createIMU(settings);
 static RTPressure *pressure = RTPressure::createPressure(settings);
 
 // Joystick event collection
-static const char joystickFilename[] = "/dev/input/event1";
 static int jsFile = -1;
 static struct input_event _jsEvent;
 static struct timeval _jstv;
@@ -91,6 +90,38 @@ static struct gpiod_line *gpio_line[GPIOLIST];
 // ----------------------
 // Initialization
 // ----------------------
+
+// Internal. Parse input devices file and extract event file handler number.
+// Returns event file handler number as int.
+// Returns -1 if Sense HAT joystick is not found.
+int _getJsEvDevNumber() {
+	char line[256] = {0};
+	char *ev_pos;
+	bool match = false;
+	int num = -1;
+
+	FILE *fd = fopen("/proc/bus/input/devices", "r");
+	if (! fd)
+		printf("Failed to open event devices file.\n%s\n", strerror(errno));
+	else {
+		while(fscanf(fd, "%[^\n] ", line) != EOF && !match) {
+			if (strstr(line, "rpi-sense-joy") != 0)
+				// Sense HAT joystick device name found
+				while(fscanf(fd, "%[^\n] ", line) != EOF && !match)
+					if (strstr(line, "Handlers") != 0) {
+						// Handlers list found
+						match = true;
+						ev_pos = strstr(line, "event");
+						sscanf(ev_pos, "%*[^0123456789]%d", &num);
+						printf("Joystick points to device event%d\n", num);
+					}
+		}
+		if (!match)
+			puts("Failed to find Sense HAT joystick device name");
+		fclose(fd);		
+	}
+	return num;
+}
 
 // Turn off all LEDs
 void senseClear() {
@@ -119,6 +150,9 @@ bool senseInit() {
 	int png_interlace_method;
 	int png_compression_method;
 	int png_filter_method;
+	// Joystick input event filename
+	char joystickFilename[20] = "/dev/input/event", js_ev_num_str[4];
+	int js_ev_num;
 
 	// LED matrix
 	ledFile = open(LEDFILEPATH, O_RDWR);
@@ -146,7 +180,7 @@ bool senseInit() {
 	}
 
 	// Image text dictionnary
-	txtFile = open(txtDictFilename, O_RDONLY);
+	txtFile = open((TXT_DICT_FILENAME), O_RDONLY);
 	if (txtFile < 0) {
 		printf("Failed to open image text dictionnary.\n%s\n", strerror(errno));
 		retOk = false;
@@ -157,7 +191,7 @@ bool senseInit() {
 	}
 
 	// PNG image file
-	pngFile = fopen(txtPNGFilename, "rb");
+	pngFile = fopen((TXT_PNG_FILENAME), "rb");
 	if (! pngFile) {
 		printf("Failed to open PNG image file.\n%s\n", strerror(errno));
 		retOk = false;
@@ -202,11 +236,17 @@ bool senseInit() {
 	imu->setCompassEnable(true);
 
 	// Joystick file handler
-	jsFile = open(joystickFilename, O_RDONLY);
-	if (jsFile < 0) {
-		printf("Failed to open joystick file handle.\n%s\n", strerror(errno));
-		retOk = false;
+	if ((js_ev_num = _getJsEvDevNumber()) > 0) {
+		sprintf(js_ev_num_str, "%d", js_ev_num);
+		strcat(joystickFilename, js_ev_num_str);
+		jsFile = open(joystickFilename, O_RDONLY);
+		if (jsFile < 0) {
+			printf("Failed to open joystick file handle.\n%s\n", strerror(errno));
+			retOk = false;
+		}
 	}
+	else
+		retOk = false;
 
 	// GPIO chip selection
 	gpio_chip = gpiod_chip_open_by_name("gpiochip0");
