@@ -56,7 +56,6 @@ int main(int argc, char **argv) {
 			count = 0;
 			pwmEnable(0);
 			do {
-				percent = 0;
 				for (percent = 0; percent <= 100; percent +=2) {
 					if ((percent % 10) == 0)
 						cout << "Duty cycle: " << percent << "%" << endl;

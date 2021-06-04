@@ -76,7 +76,7 @@ static RTIMU *imu = RTIMU::createIMU(settings);
 static RTPressure *pressure = RTPressure::createPressure(settings);
 
 // Joystick event collection
-static const char joystickFilename[] = "/dev/input/event0";
+static const char joystickFilename[] = "/dev/input/event1";
 static int jsFile = -1;
 static struct input_event _jsEvent;
 static struct timeval _jstv;
@@ -660,8 +660,7 @@ bool _isSpace(rgb_pixels_t key, rgb_pixel_t bg) {
 // Foreground and background colors are defined in two rgb_pixel_t arrays
 void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 	const unsigned int speed = 100;
-	int i, j, msgPos, msgLen;
-	int signWidth, width;
+	unsigned int i, j, msgPos, msgLen, signWidth, width;
 	bool emptyCol;
 
 	rgb_pixels_t scroll, sign;
