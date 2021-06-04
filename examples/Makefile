@@ -6,14 +6,14 @@ LIBDEP=/usr/local/lib/libsensehat-c++.so.0
 # -----------------------------------------------------------
 # C++ language test programs
 CXX_SOURCES=$(wildcard *.cpp)
-CXX_TARGETS=$(CXX_SOURCES:.cpp=.o) 
+CXX_TARGETS=$(CXX_SOURCES:.cpp=) 
 
 all: ${CXX_TARGETS}
 
-%.o : %.cpp ${LIBDEP}
+%: %.cpp ${LIBDEP}
 	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
 
 # -----------------------------------------------------------
 clean:
-	rm -f *o
+	rm -f ${CXX_TARGETS}
 
