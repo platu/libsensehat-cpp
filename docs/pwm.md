@@ -36,7 +36,7 @@ pwm_bcm2835            16384  2
 
 ## Shell export versus library function
 
-At the very first run it is advised to the `export` job manually as it takes
+At the very first run it is advised to do the `export` job manually as it takes
 "some time" to load the chip configuration within the `/sys/class/pwm/pwmchip0`
 tree.
 
