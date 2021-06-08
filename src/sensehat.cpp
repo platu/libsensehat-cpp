@@ -236,7 +236,7 @@ bool senseInit() {
 	imu->setCompassEnable(true);
 
 	// Joystick file handler
-	if ((js_ev_num = _getJsEvDevNumber()) > 0) {
+	if ((js_ev_num = _getJsEvDevNumber()) >= 0) {
 		sprintf(js_ev_num_str, "%d", js_ev_num);
 		strcat(joystickFilename, js_ev_num_str);
 		jsFile = open(joystickFilename, O_RDONLY);
@@ -1401,7 +1401,7 @@ bool pwmChangeState(unsigned int chan, char *state) {
 			retOk = false;
 		}
 		else {
-			fprintf(fd, state);
+			fprintf(fd, "%s",state);
 			fclose(fd);
 		}
 	}

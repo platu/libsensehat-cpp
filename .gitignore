@@ -1,7 +1,10 @@
 *.o
 *.so*
 *.ini
+!**/Makefile
+!**/*.cc
+!**/*.cpp
+!**/*.md
+.vscode
 **/*.o
 **/*
-!**/*.c
-.vscode
