@@ -2,12 +2,18 @@
 
 ## GitHub identity
 
+Specific SSH key generated for GitHub repository access.
+
 ```bash
+ssh-keygen -t ed25519 -a 200 -f ~/.ssh/id_ed25519_github.pub
+
+cat >> ~/.ssh/config << 'EOF'
 AddKeysToAgent  yes
 
 Host github.com
 	HostName github.com
 	IdentityFile ~/.ssh/id_ed25519_github.pub
+EOF
 ```
 
 ## SSH agent setup
