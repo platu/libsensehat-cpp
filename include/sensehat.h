@@ -328,6 +328,11 @@ void senseSetJoystickWaitTime(long int sec, long int msec);
 /// \return bool true if something happened
 bool senseGetJoystickEvent(stick_t *ev);
 
+/// \brief Wait for any joystick ENTER event
+/// \details This is a blocking function 
+/// \return boolean true if the ENTER action happens on joystick
+bool senseWaitForJoystickEnter();
+
 // ----------------------
 // GPIO pins
 // ----------------------

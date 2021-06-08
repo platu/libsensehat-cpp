@@ -1217,9 +1217,26 @@ bool senseGetJoystickEvent(stick_t *ev) {
 	return jsAction;
 }
 
+// Wait for joystick KEY_ENTER event
+bool senseWaitForJoystickEnter() {
+	bool enter = false;
+	stick_t joystick;
+
+	do {
+		joystick = senseWaitForJoystick();
+
+		if (joystick.action == KEY_ENTER && joystick.state == KEY_PRESSED)
+			enter = true;
+	} while (!enter);
+
+	return enter;
+}
+
+
 // ----------------------
 // GPIO pins
 // ----------------------
+
 
 // Check that the GPIO pin number belongs to the list defined in gpio_pinlist
 // array
