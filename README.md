@@ -3,7 +3,7 @@
 ## Foreword 
 
 This repository aims to resume the [Python Sense
-HAT](https://github.com/astro-pi/python-sense-hat) API in C++ programming
+HAT](https://github.com/astro-pi/python-sense-hat) API in C/C++ programming
 language. The functions provided by this library are intended for students who
 are taking their first steps in programming. Therefore, we use a very small
 subset of C++ programming language.
@@ -74,13 +74,36 @@ required system groups.
  ```
  Depending on the number of example programs, compilation may take some time.
 
-You're done ! It is now time to open example files and run your own tests. There is a generic [Makefile](examples/Makefile) in the [examples](examples/) directory that you can copy and adapt to your needs.
+	You're done ! It is now time to open example files and run your own tests.
+	There is a generic [Makefile](examples/Makefile) in the [examples](examples/)
+	directory that you can copy and adapt to your needs.
+
+	```bash
+	pi@rpixx:~/libsensehat-cpp $ ./examples/01_setRGB565pixel
+	Settings file RTIMULib.ini loaded
+	Using fusion algorithm RTQF
+	IMU is opening
+	min/max compass calibration not in use
+	Ellipsoid compass calibration not in use
+	Accel calibration not in use
+	LSM9DS1 init complete
+	Joystick points to device event0
+	-------------------------------
+	Sense Hat initialization Ok.
+	  [ f800 ]   [ fc00 ]   [ ffe0 ]   [ 7e0 ]   [ 7ff ]   [ 1f ]   [ f81f ]   [ fc10 ]
+	Waiting for keypress.
+	-------------------------------
+	Sense Hat shut down.
+	```
 
 <img src="https://inetdoc.net/images/sensehat.jpg" width="384px" />
 
 ## Example programs
 
-Almost every function has its own example program that illustrates how it works. Source file numbering in the directory named [examples](examples/) designates the category of functions. Here is a list of these categories:
+Almost every function has its own example program that illustrates how it
+works. Source file numbering in the directory named [examples](examples/)
+designates the category of functions. Here is a list of these categories:
+
 * 01 Get or set a single pixel
 * 02 Get or set all pixels
 * 03 Flip or rotate all pixels
@@ -89,9 +112,11 @@ Almost every function has its own example program that illustrates how it works.
 * 06 LSM9DS1 IMU Orientation and compass
 * 07 Joystick events
 * 08 GPIO read input or write output on Raspberry Pi pins subset
+* 09 2 PWM channels 
 
 ## Library addons
 
-Once the Sense HAT standard header is replaced by a stacking header, GPIO and PWM pins are available.
+Once the Sense HAT standard header is replaced by a stacking header, GPIO and
+PWM pins are available.
 
 <img src="https://inetdoc.net/images/sensehat_stacking.jpg" width="384px" />
