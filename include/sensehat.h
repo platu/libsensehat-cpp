@@ -358,11 +358,37 @@ int gpioGetInput(unsigned int pin);
 // PWM channels
 // ----------------------
 
+/// \brief Initialize PWM channel
+/// \param[in] channel number 0 or 1
+/// \return boolean true if initialization is accepted. Beware of setup time at first run!
 bool pwmInit(unsigned int chan);
+
+/// \brief Set PWM channel period in usec
+/// \param[in] channel number 0 or 1
+/// \param[in] period in microseconds
+/// \return boolean true if setup is accepted.
 bool pwmPeriod(unsigned int chan, unsigned int period);
+
+/// \brief Set PWM channel duty cycle in percent
+/// \param[in] channel number 0 or 1
+/// \param[in] duty cycle [0..100] %
+/// \return boolean true if setup is accepted.
 bool pwmDutyCycle(unsigned int chan, unsigned int percent);
+
+/// \brief Set PWM state to enable or disable
+/// \param[in] channel number 0 or 1
+/// \param[in] state "0" or "1"
+/// \return boolean true if setup is accepted.
 bool pwmChangeState(unsigned int chan, char *state);
+
+/// \brief Enable PWM channel
+/// \param[in] channel number 0 or 1
+/// \return boolean true if setup is accepted.
 bool pwmEnable(unsigned int chan);
+
+/// \brief Disable PWM channel
+/// \param[in] channel number 0 or 1
+/// \return boolean true if setup is accepted.
 bool pwmDisable(unsigned int chan);
 
 #endif // __SENSEHAT_H__

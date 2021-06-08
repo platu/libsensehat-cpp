@@ -6,14 +6,18 @@
  *
  * Function prototypes:
  *
- * bool gpioSetConfig(unsigned int pin, gpio_dir_t direction);
- *                 GPIO pin number -^   in/out -^
+ * bool pwmInit(unsigned int chan);
+ *         PWM channel 0 or 1 -^
  *
- * int gpioGetInput(unsigned int pin);
- * ^- read val   GPIO pin number -^
+ * bool pwmPeriod(unsigned int chan, unsigned int period);
+ *          PWM channel 0 or 1 -^       usec period -^
  *
- * The program counts 10 events from input pin number
- * Available GPIO pin numbers: 5, 6, 16, 17, 22, 26, 27 
+ * bool pwmDutyCycle(unsigned int chan, unsigned int percent);
+ *          PWM channel 0 or 1 -^   duty cycle 0 to 100% -^
+ *
+ * bool pwmEnable(unsigned int chan);
+ * bool pwmDisable(unsigned int chan);
+ *            PWM channel 0 or 1 -^
  *
  * _PWM_PIN_----_330_resistor_----_LED_----|GND
  *
@@ -52,13 +56,16 @@ int main(int argc, char **argv) {
 			 << "Sense Hat initialization Ok." << endl;
 
 		if (pwmInit(chan)) {
+			// Set frequency to 100Hz -> period to 10000 usec
 			pwmPeriod(chan, 10000);
 			count = 0;
+			// Enable PWM channel output
 			pwmEnable(chan);
 			do {
 				for (percent = 0; percent <= 100; percent +=2) {
 					if ((percent % 10) == 0)
 						cout << "Duty cycle: " << percent << "%" << endl;
+					// Set increasing duty cycle
 					pwmDutyCycle(chan, percent);
 					sleep_for(milliseconds(10));
 				}
@@ -66,11 +73,13 @@ int main(int argc, char **argv) {
 				for (percent = 100; percent >= UINT_MAX; percent -=2) {
 					if ((percent % 10) == 0)
 						cout << "Duty cycle: " << percent << "%" << endl;
+					// Set decreasing duty cycle
 					pwmDutyCycle(chan, percent);
 					sleep_for(milliseconds(10));
 				}
 				count++;
 			} while (count < NB_CYCLE);
+			// Disable PWM channel output
 			pwmDisable(chan);
 		}
 
