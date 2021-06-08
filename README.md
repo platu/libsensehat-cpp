@@ -50,16 +50,19 @@ required system groups.
  ```
 
 2. Install development library packages
+
  ```bash
  $ sudo apt install libi2c-dev libpng-dev libgpiod-dev
  ```
 
 3. Clone this repository
+
  ```bash
  $ git clone https://github.com/platu/libsensehat-cpp.git
  ```
 
 4. Build the library and compile the example programs
+
  ```bash
  $ cd libsensehat-cpp/
  pi@rpixx:~/libsensehat-cpp $ make
@@ -72,29 +75,30 @@ required system groups.
  make[1] : on entre dans le répertoire « /home/etu/libsensehat-cpp/examples »
  g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -o 01_setRGBpixel.o 01_setRGBpixel.cpp -lsensehat-c++ -lpng -li2c -lm -lRTIMULib
  ```
+
  Depending on the number of example programs, compilation may take some time.
 
-	You're done ! It is now time to open example files and run your own tests.
-	There is a generic [Makefile](examples/Makefile) in the [examples](examples/)
-	directory that you can copy and adapt to your needs.
+ You're done ! It is now time to open example files and run your own tests.
+ There is a generic [Makefile](examples/Makefile) in the [examples](examples/)
+ directory that you can copy and adapt to your needs.
 
-	```bash
-	pi@rpixx:~/libsensehat-cpp $ ./examples/01_setRGB565pixel
-	Settings file RTIMULib.ini loaded
-	Using fusion algorithm RTQF
-	IMU is opening
-	min/max compass calibration not in use
-	Ellipsoid compass calibration not in use
-	Accel calibration not in use
-	LSM9DS1 init complete
-	Joystick points to device event0
-	-------------------------------
-	Sense Hat initialization Ok.
-	  [ f800 ]   [ fc00 ]   [ ffe0 ]   [ 7e0 ]   [ 7ff ]   [ 1f ]   [ f81f ]   [ fc10 ]
-	Waiting for keypress.
-	-------------------------------
-	Sense Hat shut down.
-	```
+ ```bash
+ pi@rpixx:~/libsensehat-cpp $ ./examples/01_setRGB565pixel
+ Settings file RTIMULib.ini loaded
+ Using fusion algorithm RTQF
+ IMU is opening
+ min/max compass calibration not in use
+ Ellipsoid compass calibration not in use
+ Accel calibration not in use
+ LSM9DS1 init complete
+ Joystick points to device event0
+ -------------------------------
+ Sense Hat initialization Ok.
+   [ f800 ]   [ fc00 ]   [ ffe0 ]   [ 7e0 ]   [ 7ff ]   [ 1f ]   [ f81f ]   [ fc10 ]
+ Waiting for keypress.
+ -------------------------------
+ Sense Hat shut down.
+ ```
 
 <img src="https://inetdoc.net/images/sensehat.jpg" width="384px" />
 
