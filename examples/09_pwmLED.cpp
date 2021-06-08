@@ -52,26 +52,26 @@ int main(int argc, char **argv) {
 			 << "Sense Hat initialization Ok." << endl;
 
 		if (pwmInit(chan)) {
-			pwmPeriod(0, 10000);
+			pwmPeriod(chan, 10000);
 			count = 0;
-			pwmEnable(0);
+			pwmEnable(chan);
 			do {
 				for (percent = 0; percent <= 100; percent +=2) {
 					if ((percent % 10) == 0)
 						cout << "Duty cycle: " << percent << "%" << endl;
-					pwmDutyCycle(0, percent);
+					pwmDutyCycle(chan, percent);
 					sleep_for(milliseconds(10));
 				}
 
 				for (percent = 100; percent >= UINT_MAX; percent -=2) {
 					if ((percent % 10) == 0)
 						cout << "Duty cycle: " << percent << "%" << endl;
-					pwmDutyCycle(0, percent);
+					pwmDutyCycle(chan, percent);
 					sleep_for(milliseconds(10));
 				}
 				count++;
 			} while (count < NB_CYCLE);
-			pwmDisable(0);
+			pwmDisable(chan);
 		}
 
 		senseShutdown();
