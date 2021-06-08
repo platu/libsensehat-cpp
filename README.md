@@ -1,12 +1,23 @@
-# Yet another (Raspberry Pi + Sense HAT) library in C++ programming language
+# Yet another (Raspberry Pi + Sense HAT) library in C/C++ programming language
 
 ## Foreword 
-This repository aims to resume the [Python Sense HAT](https://github.com/astro-pi/python-sense-hat) API in C++ programming language. The functions provided by this library are intended for students who are taking their first steps in programming. Therefore, we use a very small subset of C++ programming language.
+
+This repository aims to resume the [Python Sense
+HAT](https://github.com/astro-pi/python-sense-hat) API in C++ programming
+language. The functions provided by this library are intended for students who
+are taking their first steps in programming. Therefore, we use a very small
+subset of C++ programming language.
+
 * No classes. Okaaaayyy! I know. Don't slap me, even virtually.
 * Typed input/output through iostream. Almost avoids burdens of C stdio formatting.
-* Use of IMU RTIMULib library already written in C++. Much more convenient to get magnetic field measures from LSM9DS1 registers.
+* Use of IMU RTIMULib library already written in C++. Much more convenient to
+  get magnetic field measures from LSM9DS1 registers.
 
-The code in this repository is more a compilation than an original development. Many thanks are due to the developers of the following projects:
+The code in this repository has started as a compilation from different other
+repositories. It then evolved with the addition of GPIO and PWM functions to
+become a full-fledged library. Many thanks are due to the developers of the
+following projects:
+
 * [libsense](https://github.com/moshegottlieb/libsense)
 * [Raspberry Pi Sense-HAT add-on board](https://github.com/davebm1/c-sense-hat)
 * [Sense Hat Unchained](https://github.com/bitbank2/sense_hat_unchained)
@@ -15,8 +26,11 @@ The code in this repository is more a compilation than an original development. 
 
 Open a terminal on your Raspberry Pi.
 
-1. Your Raspberry Pi user account must belong to a few system groups to access hardware devices and install the library file once it is compiled.
-The result of the `id` command below shows the user account belongs to the required system groups.
+1. Your Raspberry Pi user account must belong to a few system groups to access
+   hardware devices and install the library file once it is compiled.
+
+The result of the `id` command below shows the user account belongs to the
+required system groups.
  ```bash
  $ id | egrep -o '(input|i2c|gpio|spi|sudo)'
  sudo

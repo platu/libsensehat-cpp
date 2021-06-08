@@ -45,7 +45,7 @@ echo 0 /sys/class/pwm/pwmchip0/export
 echo 1 /sys/class/pwm/pwmchip0/export
 ```
 
-Once this is done, PWM functions are available for programs.
+Once this is done, PWM functions are available for programming.
 
 ```bash
 ls /sys/class/pwm/pwmchip0/pwm0
