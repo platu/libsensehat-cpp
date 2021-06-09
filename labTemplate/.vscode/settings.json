@@ -1,3 +1,10 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+    "makefile.extensionOutputFolder": "./.vscode",
+	"makefile.launchConfigurations": [
+        {
+            "cwd": "/home/${env:USERNAME}/cpp/labTemplate",
+            "binaryPath": "/home/${env:USERNAME}/cpp/labTemplate/lab01",
+            "binaryArgs": []
+        }
+    ]
 }
