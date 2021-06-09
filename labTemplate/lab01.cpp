@@ -35,17 +35,23 @@ int main() {
 		{ W, W, W, R, W, W, W, W } }
 	};
 
+	int count;
+
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 
-		senseRGBClear(0, 204, 128);
- 
-		senseSetRGB565pixels(question_mark);
+		count = 0; 
 
-		sleep_for(seconds(5));
+		do {
+			senseSetRGB565pixels(question_mark);
 
-		senseFlip_v(true);
+			sleep_for(seconds(1));
+
+			senseFlip_v(true);
+
+			count = count + 1;
+		} (count < 5);
 
 		senseWaitForJoystickEnter();
 
