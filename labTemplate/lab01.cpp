@@ -21,10 +21,10 @@ using namespace std::chrono; // system_clock, seconds, milliseconds
 
 int main() {
 
-	const rgb565_pixel_t R = 0xf800; // Red
-	const rgb565_pixel_t W = 0xffff; // White
+	const rgb_pixel_t R = { .color = {255, 0, 0} }; // Red
+	const rgb_pixel_t W = { .color = {255, 255, 255} }; // White
 
-	rgb565_pixels_t question_mark = { .array = {
+	rgb_pixels_t question_mark_RedOnWhite = { .array = {
 		{ W, W, W, R, R, W, W, W },
 		{ W, W, R, W, W, R, W, W },
 		{ W, W, W, W, W, R, W, W },
@@ -38,26 +38,25 @@ int main() {
 	int count;
 
 	if(senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
+		cout << "Sense Hat initialization Ok." << endl;
 
 		count = 0; 
 
 		do {
-			senseSetRGB565pixels(question_mark);
+			senseSetRGBpixels(question_mark_RedOnWhite);
 
 			sleep_for(seconds(1));
 
 			senseFlip_v(true);
 
 			count = count + 1;
-		} (count < 5);
+		} while (count < 5);
 
+		cout << "Press joystick button to quit." << endl;
 		senseWaitForJoystickEnter();
 
 		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
+		cout << "Sense Hat shut down." << endl;
 	}
 
 	return EXIT_SUCCESS;
