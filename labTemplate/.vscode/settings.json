@@ -1,0 +1,10 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/pi/libsensehat-cpp/examples",
+            "binaryPath": "/home/pi/libsensehat-cpp/examples/09_pwmLED.o",
+            "binaryArgs": []
+        }
+    ]
+}

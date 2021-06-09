@@ -1,0 +1,1124 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+cd examples && make
+# GNU Make 4.2.1
+# Built for aarch64-unknown-linux-gnu
+# Copyright (C) 1988-2016 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Fri Jun  4 18:22:27 2021
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# default
+.SHELLFLAGS := -c
+# environment
+XDG_SESSION_CLASS = user
+# environment
+VSCODE_AGENT_FOLDER = /home/pi/.vscode-server
+# environment
+XDG_SESSION_TYPE = tty
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# default
+MAKE_VERSION := 4.2.1
+# makefile
+CURDIR := /home/pi/libsensehat-cpp/examples
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en","availableLanguages":{}}
+# environment
+_ = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/node
+# makefile (from 'Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
+# 'override' directive
+GNUMAKEFLAGS := 
+# makefile (from 'Makefile', line 2)
+CXXFLAGS = -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++2a
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+VSCODE_CWD = /home/pi
+# makefile (from 'Makefile', line 3)
+LIBLIST = -lsensehat-c++ -lpng -li2c -lm -lRTIMULib -lgpiod
+# environment
+SSH_CONNECTION = 2a01:cb19:8cb6:db00:b422:e730:b2d8:d4e8 53352 2a01:cb19:8cb6:db00:fc71:7cf8:6e34:b0d3 22
+# environment
+PATH = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+TEXTDOMAIN = Linux-PAM
+# environment
+VSCODE_LOG_STACK = false
+# environment
+VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-54492da3-c6a1-48f6-9132-a00dce5cbfb8.sock
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# environment
+LS_COLORS = 
+# environment
+SSH_AUTH_SOCK = /run/user/1000/vscode-ssh-auth-sock-67214768
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /home/pi/libsensehat-cpp/examples
+# default
+.LOADED := 
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/server/remoteExtensionHostProcess
+# environment
+HOME = /home/pi
+# environment
+LOGNAME = pi
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# automatic
++F = $(notdir $+)
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+MAKELEVEL := 1
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+SHLVL = 1
+# makefile (from 'Makefile', line 4)
+LIBDEP = /usr/local/lib/libsensehat-c++.so.0
+# environment
+XDG_SESSION_ID = 12
+# environment
+USER = pi
+# makefile
+.DEFAULT_GOAL := all
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# makefile (from 'Makefile', line 8)
+CXX_SOURCES = $(wildcard *.cpp)
+# default
+MAKE_COMMAND := make
+# environment
+OLDPWD = /home/pi/libsensehat-cpp
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+LANGUAGE = fr_FR.UTF-8
+# makefile
+MAKEFLAGS = pqrRw
+# environment
+MFLAGS = -pqrRw
+# environment
+SSH_CLIENT = 2a01:cb19:8cb6:db00:b422:e730:b2d8:d4e8 53352 22
+# environment
+MAIL = /var/mail/pi
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+BROWSER = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/bin/helpers/browser.sh
+# environment
+NO_AT_BRIDGE = 1
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+GCC_COLORS = error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+VSCODE_INJECT_NODE_MODULE_LOOKUP_PATH = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/remote/node_modules
+# makefile (from 'Makefile', line 9)
+CXX_TARGETS = $(CXX_SOURCES:.cpp=.o) 
+# default
+.RECIPEPREFIX := 
+# default
+MAKE_HOST := aarch64-unknown-linux-gnu
+# environment
+LANG = C
+# environment
+VSCODE_EXTHOST_WILL_SEND_SOCKET = true
+# variable set hash-table stats:
+# Load=77/1024=8%, Rehash=0, Collisions=10/107=9%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 45826, inode 391256): 56 files, no impossibilities.
+# /usr/local/lib (device 45826, inode 21075): 9 files, no impossibilities so far.
+
+# 65 files, no impossibilities in 2 directories.
+
+# Implicit Rules
+
+%.o: %.cpp /usr/local/lib/libsensehat-c++.so.0
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# 1 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+04_showLetter.o: 04_showLetter.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '04_showLetter'
+#  Last modified 2021-06-04 16:38:44.245223806
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+08_gpioInput.o: 08_gpioInput.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '08_gpioInput'
+#  Last modified 2021-06-04 16:38:28.605282281
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+06_getIMUGyro_LSM9DS1.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:40:56.316252287
+#  File has been updated.
+#  Successfully updated.
+
+06_setPixelToNorth.o: 06_setPixelToNorth.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '06_setPixelToNorth'
+#  Last modified 2021-06-04 16:38:05.069370254
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+02_setRGBpixelsRainbow.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:14:55.830364266
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+07_blocking_WaitForJoystick.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:25:31.299965256
+#  File has been updated.
+#  Successfully updated.
+
+all: 02_setRGBpixelsRainbow.o 02_setRGB565pixelsQuestionMark.o 01_getRGBpixel.o 07_printJoystickActions.o 06_getIMUOrientation_LSM9DS1.o 06_setPixelToNorth.o 01_setRGBpixel.o 02_setRGBClear.o 06_getIMUAccel_LSM9DS1.o 09_pwmLED.o 07_blocking_WaitForJoystick.o 08_gpioInput.o 08_gpioOutputBlink.o 07_non_blocking_GetJoystickEvent.o 04_showMessage.o 04_showLetter.o 02_setRGB565LowLight.o 02_setRGBpixelsQuestionMark.o 03_flip_H_and_V.o 05_getTempHumid_HTS221.o 01_getRGB565pixel.o 06_getIMUGyro_LSM9DS1.o 01_setRGB565pixel.o 05_getTempPress_LPS25H.o 03_rotate.o 02_setRGBLowLight.o
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+07_printJoystickActions.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:17:30.413765134
+#  File has been updated.
+#  Successfully updated.
+
+03_flip_H_and_V.o: 03_flip_H_and_V.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '03_flip_H_and_V'
+#  Last modified 2021-06-04 16:38:54.729184602
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+02_setRGBLowLight.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:43:28.627905475
+#  File has been updated.
+#  Successfully updated.
+
+01_setRGBpixel.o: 01_setRGBpixel.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '01_setRGBpixel'
+#  Last modified 2021-06-04 16:38:08.509357397
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+02_setRGBpixelsQuestionMark.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:38:18.924653449
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+02_setRGB565LowLight.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:37:39.196763303
+#  File has been updated.
+#  Successfully updated.
+
+ 
+01_setRGB565pixel.o: 01_setRGB565pixel.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '01_setRGB565pixel'
+#  Last modified 2021-06-04 16:39:09.373129832
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+09_pwmLED.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-06-03 14:30:40.629231362
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+02_setRGBClear.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:20:19.213368966
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+02_setRGB565pixelsQuestionMark.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:15:46.206134471
+#  File has been updated.
+#  Successfully updated.
+
+08_gpioOutputBlink.o: 08_gpioOutputBlink.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '08_gpioOutputBlink'
+#  Last modified 2021-06-04 16:38:32.709266938
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:13:32.106846822
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+/usr/local/lib/libsensehat-c++.so.0:
+#  Implicit rule search has been done.
+#  Last modified 2021-06-04 16:37:41.657457734
+#  File has been updated.
+#  Successfully updated.
+
+05_getTempPress_LPS25H.o: 05_getTempPress_LPS25H.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '05_getTempPress_LPS25H'
+#  Last modified 2021-06-04 16:39:12.925116546
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+05_getTempHumid_HTS221.o: 05_getTempHumid_HTS221.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '05_getTempHumid_HTS221'
+#  Last modified 2021-06-04 16:38:58.177171707
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+07_non_blocking_GetJoystickEvent.o: 07_non_blocking_GetJoystickEvent.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '07_non_blocking_GetJoystickEvent'
+#  Last modified 2021-06-04 16:38:36.85725143
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+06_getIMUAccel_LSM9DS1.o: 06_getIMUAccel_LSM9DS1.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '06_getIMUAccel_LSM9DS1'
+#  Last modified 2021-06-04 16:38:16.893326061
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+04_showMessage.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:36:27.500971974
+#  File has been updated.
+#  Successfully updated.
+
+06_getIMUGyro_LSM9DS1.o: 06_getIMUGyro_LSM9DS1.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '06_getIMUGyro_LSM9DS1'
+#  Last modified 2021-06-04 16:39:05.949142639
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+06_getIMUOrientation_LSM9DS1.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:18:09.273655813
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+01_getRGBpixel.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:16:25.241981283
+#  File has been updated.
+#  Successfully updated.
+
+02_setRGBpixelsRainbow.o: 02_setRGBpixelsRainbow.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '02_setRGBpixelsRainbow'
+#  Last modified 2021-06-04 16:37:46.137440996
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+03_rotate.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:42:57.119974447
+#  File has been updated.
+#  Successfully updated.
+
+07_blocking_WaitForJoystick.o: 07_blocking_WaitForJoystick.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '07_blocking_WaitForJoystick'
+#  Last modified 2021-06-04 16:38:24.425297907
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+01_getRGB565pixel.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:40:14.652353704
+#  File has been updated.
+#  Successfully updated.
+
+07_printJoystickActions.o: 07_printJoystickActions.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '07_printJoystickActions'
+#  Last modified 2021-06-04 16:37:56.709401494
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+02_setRGBLowLight.o: 02_setRGBLowLight.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '02_setRGBLowLight'
+#  Last modified 2021-06-04 16:39:19.897090466
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+04_showLetter.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:37:02.900867182
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+08_gpioInput.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:32:59.373671841
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+06_setPixelToNorth.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:18:48.785557063
+#  File has been updated.
+#  Successfully updated.
+
+02_setRGBpixelsQuestionMark.o: 02_setRGBpixelsQuestionMark.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '02_setRGBpixelsQuestionMark'
+#  Last modified 2021-06-04 16:38:51.24519763
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+02_setRGB565LowLight.o: 02_setRGB565LowLight.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '02_setRGB565LowLight'
+#  Last modified 2021-06-04 16:38:47.713210838
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+09_pwmLED.o: 09_pwmLED.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '09_pwmLED'
+#  Last modified 2021-06-04 16:38:20.93331096
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+02_setRGBClear.o: 02_setRGBClear.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '02_setRGBClear'
+#  Last modified 2021-06-04 16:38:12.689341775
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+02_setRGB565pixelsQuestionMark.o: 02_setRGB565pixelsQuestionMark.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '02_setRGB565pixelsQuestionMark'
+#  Last modified 2021-06-04 16:37:49.69342771
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 18):
+	rm -f *o
+
+# Not a target:
+03_flip_H_and_V.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:38:53.484560929
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+01_setRGBpixel.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:19:43.39343791
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+01_setRGB565pixel.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:41:49.120128055
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+08_gpioOutputBlink.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:33:04.637652081
+#  File has been updated.
+#  Successfully updated.
+
+04_showMessage.o: 04_showMessage.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '04_showMessage'
+#  Last modified 2021-06-04 16:38:40.669237177
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+05_getTempPress_LPS25H.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:42:26.572042616
+#  File has been updated.
+#  Successfully updated.
+
+06_getIMUOrientation_LSM9DS1.o: 06_getIMUOrientation_LSM9DS1.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '06_getIMUOrientation_LSM9DS1'
+#  Last modified 2021-06-04 16:38:00.9093858
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+01_getRGBpixel.o: 01_getRGBpixel.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '01_getRGBpixel'
+#  Last modified 2021-06-04 16:37:53.173414707
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+05_getTempHumid_HTS221.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:39:27.944471303
+#  File has been updated.
+#  Successfully updated.
+
+03_rotate.o: 03_rotate.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '03_rotate'
+#  Last modified 2021-06-04 16:39:16.417103484
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+07_non_blocking_GetJoystickEvent.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:33:50.965483258
+#  File has been updated.
+#  Successfully updated.
+
+01_getRGB565pixel.o: 01_getRGB565pixel.cpp /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: '01_getRGB565pixel'
+#  Last modified 2021-06-04 16:39:01.793158183
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 14):
+	${CXX} ${CXXFLAGS} -o $@ $< ${LIBLIST}
+
+# Not a target:
+06_getIMUAccel_LSM9DS1.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 09:24:46.812284228
+#  File has been updated.
+#  Successfully updated.
+
+# files hash-table stats:
+# Load=58/1024=6%, Rehash=0, Collisions=0/225=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 99 / storage = 1980 B / avg = 20 B
+# current buf: size = 8162 B / used = 1980 B / count = 99 / avg = 20 B
+
+# strcache performance: lookups = 236 / hit rate = 58%
+# hash-table stats:
+# Load=99/8192=1%, Rehash=0, Collisions=2/236=1%
+# Finished Make data base on Fri Jun  4 18:22:27 2021
+
+# GNU Make 4.2.1
+# Built for aarch64-unknown-linux-gnu
+# Copyright (C) 1988-2016 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Fri Jun  4 18:22:27 2021
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# default
+.SHELLFLAGS := -c
+# environment
+XDG_SESSION_CLASS = user
+# environment
+VSCODE_AGENT_FOLDER = /home/pi/.vscode-server
+# environment
+XDG_SESSION_TYPE = tty
+# environment
+VSCODE_LOG_NATIVE = false
+# makefile (from 'Makefile', line 40)
+LIBRARY = lib/${LIBRARY_NAME}
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# makefile (from 'Makefile', line 14)
+INCLUDES = $(wildcard include/*.h)
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+ 
+# automatic
+@F = $(notdir $@)
+# default
+MAKE_VERSION := 4.2.1
+# makefile
+CURDIR := /home/pi/libsensehat-cpp
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en","availableLanguages":{}}
+# environment
+_ = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/node
+# makefile (from 'Makefile', line 26)
+IMAGES = $(wildcard src/sense_hat_text.*)
+# makefile (from 'Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
+# 'override' directive
+GNUMAKEFLAGS := 
+# makefile (from 'Makefile', line 2)
+CXXFLAGS = -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++2a
+# makefile (from 'Makefile', line 36)
+SOURCE_NAME = sensehat
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+VSCODE_CWD = /home/pi
+# environment
+SSH_CONNECTION = 2a01:cb19:8cb6:db00:b422:e730:b2d8:d4e8 53352 2a01:cb19:8cb6:db00:fc71:7cf8:6e34:b0d3 22
+# environment
+PATH = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+TEXTDOMAIN = Linux-PAM
+# makefile (from 'Makefile', line 38)
+LIBRARY_SOURCE = src/${SOURCE_NAME}.cpp
+# environment
+VSCODE_LOG_STACK = false
+# environment
+VSCODE_IPC_HOOK_CLI = /run/user/1000/vscode-ipc-54492da3-c6a1-48f6-9132-a00dce5cbfb8.sock
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# environment
+LS_COLORS = 
+# environment
+SSH_AUTH_SOCK = /run/user/1000/vscode-ssh-auth-sock-67214768
+# automatic
+%F = $(notdir $%)
+# makefile (from 'Makefile', line 52)
+LIBRARY_DIST = ${LIBDIR}/$(notdir ${LIBRARY})
+# makefile (from 'Makefile', line 15)
+INCLUDES_DIST = $(addprefix ${INCLUDEDIR}/, $(notdir ${INCLUDES}))
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /home/pi/libsensehat-cpp
+# default
+.LOADED := 
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# makefile (from 'Makefile', line 27)
+IMAGES_DIST = $(addprefix ${LIBDIR}/, $(notdir ${IMAGES}))
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/server/remoteExtensionHostProcess
+# environment
+HOME = /home/pi
+# environment
+LOGNAME = pi
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# automatic
++F = $(notdir $+)
+# makefile (from 'Makefile', line 4)
+PREFIX = /usr/local
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+SHLVL = 1
+# makefile (from 'Makefile', line 37)
+LIBRARY_NAME = lib${SOURCE_NAME}-c++.so
+# environment
+XDG_SESSION_ID = 12
+# environment
+USER = pi
+# makefile
+.DEFAULT_GOAL := all
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := make
+# makefile (from 'Makefile', line 5)
+LIBDIR = ${PREFIX}/lib
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+LANGUAGE = fr_FR.UTF-8
+# makefile
+MAKEFLAGS = pqrR
+# environment
+MFLAGS = -pqrR
+# environment
+SSH_CLIENT = 2a01:cb19:8cb6:db00:b422:e730:b2d8:d4e8 53352 22
+# environment
+MAIL = /var/mail/pi
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+BROWSER = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/bin/helpers/browser.sh
+# environment
+NO_AT_BRIDGE = 1
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# makefile (from 'Makefile', line 39)
+OBJECT = $(LIBRARY_SOURCE:.cpp=.o)
+# environment
+GCC_COLORS = error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01
+# environment
+LC_ALL = C
+# makefile (from 'Makefile', line 6)
+INCLUDEDIR = ${PREFIX}/include
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+VSCODE_INJECT_NODE_MODULE_LOOKUP_PATH = /home/pi/.vscode-server/bin/054a9295330880ed74ceaedda236253b4f39a335/remote/node_modules
+# default
+.RECIPEPREFIX := 
+# default
+MAKE_HOST := aarch64-unknown-linux-gnu
+# environment
+LANG = C
+# environment
+VSCODE_EXTHOST_WILL_SEND_SOCKET = true
+# variable set hash-table stats:
+# Load=86/1024=8%, Rehash=0, Collisions=12/161=7%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# include (device 45826, inode 391282): 7 files, no impossibilities.
+# . (device 45826, inode 391200): 15 files, no impossibilities.
+# src (device 45826, inode 391290): 6 files, no impossibilities.
+
+# 28 files, no impossibilities in 3 directories.
+
+# Implicit Rules
+
+/usr/local/include/%: %
+#  recipe to execute (from 'Makefile', line 20):
+	sudo cp $^ ${INCLUDEDIR}/
+
+# 1 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+# Not a target:
+include/LSM9DS1_Registers.h:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-26 18:56:27.388840447
+#  File has been updated.
+#  Successfully updated.
+
+includes: /usr/local/include/sensehat.h /usr/local/include/LSM9DS1_Registers.h /usr/local/include/HTS221_Registers.h /usr/local/include/LSM9DS1_Types.h /usr/local/include/LPS25H_Registers.h
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Successfully updated.
+
+all: library examples
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/5=0%
+
+/usr/local/lib/sense_hat_text.txt: src/sense_hat_text.txt src/sense_hat_text.png
+#  Implicit rule search has not been done.
+#  Last modified 2021-05-30 18:43:13.156893397
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 32):
+	sudo cp $? ${LIBDIR}
+
+# Not a target:
+src/sense_hat_text.txt:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-26 18:56:27.388840447
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+include/sensehat.h:
+#  Implicit rule search has been done.
+#  Last modified 2021-06-01 17:49:33.22966016
+#  File has been updated.
+#  Successfully updated.
+
+distclean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 73):
+	sudo rm -rf ${LIBRARY_DIST}.0 ${IMAGES_DIST} ${INCLUDES_DIST}
+	sudo sh -c "cd ${LIBDIR} && rm -f ${LIBRARY_NAME}"
+	sudo ldconfig
+
+# Not a target:
+include/LPS25H_Registers.h:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-26 18:56:27.388840447
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-30 18:43:11.137085173
+#  File has been updated.
+#  Successfully updated.
+
+/usr/local/lib/libsensehat-c++.so.0: lib/libsensehat-c++.so.0
+#  Implicit rule search has not been done.
+#  Last modified 2021-06-04 16:37:41.657457734
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 57):
+	sudo cp $< $@
+	sudo sh -c "cd ${LIBDIR} && ln -sf ${LIBRARY_NAME}.0 ${LIBRARY_NAME}"
+	sudo ldconfig
+
+/usr/local/lib/sense_hat_text.png: src/sense_hat_text.txt src/sense_hat_text.png
+#  Implicit rule search has not been done.
+#  Last modified 2021-05-30 18:43:13.156893397
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 32):
+	sudo cp $? ${LIBDIR}
+
+# Not a target:
+src/sense_hat_text.png:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-26 18:56:27.388840447
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+include/LSM9DS1_Types.h:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-26 18:56:27.388840447
+#  File has been updated.
+#  Successfully updated.
+
+ 
+# Not a target:
+src/sensehat.cpp:
+#  Implicit rule search has been done.
+#  Last modified 2021-06-04 16:37:29.849501843
+#  File has been updated.
+#  Successfully updated.
+
+lib/libsensehat-c++.so.0: src/sensehat.o
+#  Implicit rule search has not been done.
+#  Last modified 2021-06-04 16:37:41.593457973
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 48):
+	${CXX} ${CXXFLAGS} -g -shared -Wl,-soname,${LIBRARY_NAME} -o $@ $<
+
+/usr/local/include/LSM9DS1_Registers.h: include/LSM9DS1_Registers.h
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'LSM9DS1_Registers.h'
+#  Last modified 2021-05-30 18:43:13.004907828
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 20):
+	sudo cp $^ ${INCLUDEDIR}/
+
+images: /usr/local/lib/sense_hat_text.txt /usr/local/lib/sense_hat_text.png
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Successfully updated.
+
+library: lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+include/HTS221_Registers.h:
+#  Implicit rule search has been done.
+#  Last modified 2021-05-26 18:56:27.384840419
+#  File has been updated.
+#  Successfully updated.
+
+/usr/local/include/sensehat.h: include/sensehat.h
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'sensehat.h'
+#  Last modified 2021-06-01 17:49:39.589609523
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 20):
+	sudo cp $^ ${INCLUDEDIR}/
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+/usr/local/include/LPS25H_Registers.h: include/LPS25H_Registers.h
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'LPS25H_Registers.h'
+#  Last modified 2021-05-30 18:43:13.116897195
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 20):
+	sudo cp $^ ${INCLUDEDIR}/
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 68):
+	rm -f *o src/*.o examples/*.o lib/*.so*
+
+/usr/local/include/LSM9DS1_Types.h: include/LSM9DS1_Types.h
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'LSM9DS1_Types.h'
+#  Last modified 2021-05-30 18:43:13.080900613
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 20):
+	sudo cp $^ ${INCLUDEDIR}/
+
+src/sensehat.o: src/sensehat.cpp include/sensehat.h include/LSM9DS1_Registers.h include/HTS221_Registers.h include/LSM9DS1_Types.h include/LPS25H_Registers.h
+#  Implicit rule search has not been done.
+#  Last modified 2021-06-04 16:37:41.145459646
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 45):
+	${CXX} ${CXXFLAGS} -c -fPIC -o $@ $< -lpng
+
+examples: install
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: ''
+#  Last modified 2021-06-04 16:39:19.465092082
+#  File has been updated.
+#  Successfully updated.
+# automatic
+# @ := examples
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := install
+# automatic
+# | := 
+# automatic
+# < := install
+# automatic
+# ^ := install
+# automatic
+# ? := install
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=2/13=15%
+#  recipe to execute (from 'Makefile', line 64):
+	cd examples && $(MAKE)
+
+/usr/local/include/HTS221_Registers.h: include/HTS221_Registers.h
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'HTS221_Registers.h'
+#  Last modified 2021-05-30 18:43:13.04090441
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 20):
+	sudo cp $^ ${INCLUDEDIR}/
+
+install: includes images /usr/local/lib/libsensehat-c++.so.0
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Successfully updated.
+
+# files hash-table stats:
+# Load=29/1024=3%, Rehash=0, Collisions=0/121=0%
+# VPATH Search Paths
+
+vpath %.h include
+
+# 1 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 56 / storage = 906 B / avg = 16 B
+# current buf: size = 8162 B / used = 906 B / count = 56 / avg = 16 B
+
+# strcache performance: lookups = 119 / hit rate = 52%
+# hash-table stats:
+# Load=56/8192=1%, Rehash=0, Collisions=3/119=3%
+# Finished Make data base on Fri Jun  4 18:22:27 2021
+
+ 
