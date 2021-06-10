@@ -29,6 +29,7 @@ then
 	sed -i "s/lab01/$lab/g" $lab/.vscode/settings.json
 fi
 
+sed -i "s/labTemplate/$lab/g" $lab/.vscode/settings.json
 sed -i "s/__USER__/$USER/g" $lab/.vscode/settings.json
 
 cd $cwd
