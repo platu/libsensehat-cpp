@@ -169,12 +169,14 @@ void senseRGBClear(uint8_t R, uint8_t G, uint8_t B);
 const auto senseSetPixels = senseSetRGBpixels;
 
 /// \brief Horizontal flip of all pixels
+/// \param[in] bool true to redraw all pixels
 /// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type
-rgb_pixels_t senseFlip_h(bool);
+rgb_pixels_t senseFlip_h(bool redraw);
 
 /// \brief Vertical flip of all pixels
+/// \param[in] bool true to redraw all pixels
 /// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type 
-rgb_pixels_t senseFlip_v(bool);
+rgb_pixels_t senseFlip_v(bool redraw);
 
 /// \brief Rotate all pixels clockwise with a defined angle value
 /// \param[in] angle [90, 180, 270]

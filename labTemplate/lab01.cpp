@@ -47,7 +47,7 @@ int main() {
 
 			sleep_for(seconds(1));
 
-			senseFlip_v(true);
+			question_mark_RedOnWhite = senseFlip_v(false);
 
 			count = count + 1;
 		} while (count < 5);

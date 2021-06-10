@@ -7,7 +7,7 @@ INCLUDEDIR=${PREFIX}/include
 
 # -----------------------------------------------------------
 #  jobs
-all: library examples
+all: library examples script
 
 # -----------------------------------------------------------
 # include files
@@ -62,6 +62,17 @@ ${LIBRARY_DIST}.0: ${LIBRARY}.0
 #  example programs
 examples: install
 	cd examples && $(MAKE)
+
+# -----------------------------------------------------------
+#  Student lab environment shell script install
+SCRIPT=getLab.sh
+SCRIPT_DIST=${PREFIX}/sbin/${SCRIPT}
+
+script: ${SCRIPT_DIST}
+
+${SCRIPT_DIST}: ${SCRIPT}
+	sudo cp $< $@
+	sudo chmod +x $@
 
 # -----------------------------------------------------------
 clean:
