@@ -1,4 +1,4 @@
-# Yet another (Raspberry Pi + Sense HAT) library in C/C++ programming language
+# Yet another Raspberry Pi + Sense HAT library in C/C++ programming language
 
 ## Foreword 
 
@@ -12,6 +12,8 @@ subset of C++ programming language.
 * Typed input/output through iostream. Almost avoids burdens of C stdio formatting.
 * Use of IMU RTIMULib library already written in C++. Much more convenient to
   get magnetic field measures from LSM9DS1 registers.
+* Use of [libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/) for GPIO functions.
+* Use of sysfs for PWM0 and PWM1 output channels.
 
 The code in this repository has started as a compilation from different other
 repositories. It then evolved with the addition of GPIO and PWM functions to
