@@ -393,4 +393,12 @@ bool pwmEnable(unsigned int chan);
 /// \return boolean true if setup is accepted.
 bool pwmDisable(unsigned int chan);
 
+// --------------------------
+// TCS34725 color detection
+// --------------------------
+
+bool tcs34725Enable();
+void tcs34725disable();
+
+
 #endif // __SENSEHAT_H__

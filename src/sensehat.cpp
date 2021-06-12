@@ -20,6 +20,7 @@
 #include "../include/LPS25H_Registers.h"
 #include "../include/LSM9DS1_Registers.h"
 #include "../include/LSM9DS1_Types.h"
+#include "../include/TCS34725_Registers.h"
 #include "../include/sensehat.h"
 
 // Led file handle
@@ -50,14 +51,15 @@ const uint8_t gamma8[] = {
 	177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
 	215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
 
-#define I2C_BUS_NUMBER 1
-// I2C devices addresses
+#define I2C_ADDONS_BUS 0
+#define I2C_SENSE_HAT_BUS 1
+// Sense HAT I2C devices addresses
 #define HTS221_ADDRESS 0x5f
 #define LPS25H_ADDRESS 0x5c
 #define LSM9DS1_ADDRESS_G 0x6a
 #define LSM9DS1_ADDRESS_M 0x1c
 
-#define FILENAMELENGTH 20
+#define FILENAMELENGTH 50
 
 // Text dictionnary and corresponding pixel maps
 #define NBCHARS 92
@@ -86,6 +88,9 @@ static struct gpiod_chip *gpio_chip;
 const uint8_t gpio_pinlist[GPIOLIST] = {5, 6, 16, 17, 22, 26, 27};
 static struct gpiod_line *gpio_line[GPIOLIST];
 
+// TCS34725 color detection
+static tcs34725IntegrationTime_t tcs34725IntegrationTime;
+static int tcs34725File = -1;
 
 // ----------------------
 // Initialization
@@ -276,6 +281,12 @@ void senseShutdown() {
 	}
 	// Close GPIO chip communication
 	gpiod_chip_close(gpio_chip);
+
+	// Close TCS34725 file handle
+	if (tcs34725File != -1) {
+		tcs34725disable();
+		tcs34725File = -1;
+	}
 }
 
 // ----------------------
@@ -792,7 +803,7 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 	int32_t i2c_status;
 
 	// I2C bus
-	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_BUS_NUMBER);
+	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_SENSE_HAT_BUS);
 	humFile = open(filename, O_RDWR);
 	if (humFile < 0) {
 		printf("Failed to open I2C bus.\n%s\n", strerror(errno));
@@ -944,7 +955,7 @@ bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 	int32_t i2c_status;
 
 	// I2C bus
-	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_BUS_NUMBER);
+	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_SENSE_HAT_BUS);
 	preFile = open(filename, O_RDWR);
 	if (preFile < 0) {
 		printf("Failed to open I2C bus.\n%s\n", strerror(errno));
@@ -1324,11 +1335,10 @@ int gpioGetInput(unsigned int pin) {
 // PWM
 // The 2 default PWM channels are available if the line below is present in the
 // /boot/config.txt file:
-// dtoverlay=pwm-2chan
-// PWM0 on pin #18
+// dtoverlay=pwm-2chan,pin2=13,func2=4
+// PWM0 on pin # BCM18
+// PWM1 on pin # BCM13
 // ---------------------------
-
-#define BUFLEN 48
 
 bool _chanOk(unsigned int line) {
 	bool retOk = true;
@@ -1361,7 +1371,7 @@ bool pwmInit(unsigned int chan) {
 bool pwmPeriod(unsigned int chan, unsigned int period) {
 	FILE *fd;
 	bool retOk = true;
-	char buf[(BUFLEN)];
+	char buf[(FILENAMELENGTH-1)];
 
 	if (_chanOk(chan)) {
 		sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/period", chan);
@@ -1384,7 +1394,7 @@ bool pwmPeriod(unsigned int chan, unsigned int period) {
 bool pwmDutyCycle(unsigned int chan, unsigned int percent) {
 	FILE *fd;
 	bool retOk = true;
-	char buf[(BUFLEN)];
+	char buf[(FILENAMELENGTH-1)];
 
 	if (_chanOk(chan)) {
 		sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/duty_cycle", chan);
@@ -1407,7 +1417,7 @@ bool pwmDutyCycle(unsigned int chan, unsigned int percent) {
 bool pwmChangeState(unsigned int chan, char *state) {
 	FILE *fd;
 	bool retOk = true;
-	char buf[(BUFLEN)];
+	char buf[(FILENAMELENGTH-1)];
 
 	if (_chanOk(chan)) {
 		sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/enable", chan);
@@ -1437,3 +1447,68 @@ bool pwmDisable(unsigned int chan) {
 	return pwmChangeState(chan, status);
 }
 
+// -------------------------------------------------------------
+// TCS34725 color detection
+// This sensor is plugged on i2c-0 bus which is actived in /boot/config.txt
+// file:
+// dtoverlay=pwm-2chan
+// ---------------------------
+
+bool tcs34725Enable() {
+	char filename[FILENAMELENGTH];
+	bool retOk = true;
+
+	// I2C bus
+	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_ADDONS_BUS);
+	tcs34725File = open(filename, O_RDWR);
+	if (tcs34725File < 0) {
+		printf("Failed to open I2C bus.\n%s\n", strerror(errno));
+		retOk = false;
+	}
+	else if (ioctl(tcs34725File, I2C_SLAVE, TCS34725_ADDRESS) < 0) {
+		printf("Unable to open TCS34725 color detection device as slave\n%s\n", strerror(errno));
+		close(tcs34725File);
+		retOk = false;
+	}
+	else {
+		i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, TCS34725_ENABLE_PON);
+		_msecSleep(3);
+		i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN);
+		/*
+		 * Set a delay for the integration time.
+		 * This is only necessary in the case where enabling and then
+		 * immediately trying to read values back. This is because setting
+		 * AEN triggers an automatic integration, so if a read RGBC is
+		 * performed too quickly, the data is not yet valid and all 0's are
+		 * returned
+		 */
+		switch (tcs34725IntegrationTime) {
+		case TCS34725_INTEGRATIONTIME_2_4MS:
+			_msecSleep(3);
+			break;
+		case TCS34725_INTEGRATIONTIME_24MS:
+			_msecSleep(24);
+			break;
+		case TCS34725_INTEGRATIONTIME_50MS:
+			_msecSleep(50);
+			break;
+		case TCS34725_INTEGRATIONTIME_101MS:
+			_msecSleep(101);
+			break;
+		case TCS34725_INTEGRATIONTIME_154MS:
+			_msecSleep(154);
+			break;
+		case TCS34725_INTEGRATIONTIME_700MS:
+			_msecSleep(700);
+			break;
+		}
+	}
+	return retOk;
+}
+
+void tcs34725disable() {
+	/* Turn the device off to save power */
+	uint8_t reg = i2c_smbus_read_byte_data(tcs34725File, TCS34725_ENABLE);
+	i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, reg & ~(TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN));
+	close(tcs34725File);
+}
