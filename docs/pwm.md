@@ -65,7 +65,7 @@ systemd unit.
  EOF
  ```
 
-2. Make,it executable
+2. It has to be executable
 
  ```bash
  sudo chmod +x /usr/local/sbin/pwm-export.sh
