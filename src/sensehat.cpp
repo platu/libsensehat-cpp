@@ -16,11 +16,6 @@
 #include <linux/fb.h>
 #include <linux/input.h>
 
-#include "../include/HTS221_Registers.h"
-#include "../include/LPS25H_Registers.h"
-#include "../include/LSM9DS1_Registers.h"
-#include "../include/LSM9DS1_Types.h"
-#include "../include/TCS34725_Registers.h"
 #include "../include/sensehat.h"
 
 // Led file handle
@@ -90,6 +85,7 @@ static struct gpiod_line *gpio_line[GPIOLIST];
 
 // TCS34725 color detection
 static tcs34725IntegrationTime_t tcs34725IntegrationTime;
+static tcs34725Gain_t tcs34725Gain;
 static int tcs34725File = -1;
 
 // ----------------------
@@ -283,10 +279,7 @@ void senseShutdown() {
 	gpiod_chip_close(gpio_chip);
 
 	// Close TCS34725 file handle
-	if (tcs34725File != -1) {
-		tcs34725disable();
-		tcs34725File = -1;
-	}
+	colorDetectShutdown();
 }
 
 // ----------------------
@@ -1454,9 +1447,13 @@ bool pwmDisable(unsigned int chan) {
 // dtoverlay=pwm-2chan
 // ---------------------------
 
-bool tcs34725Enable() {
+bool colorDetectInit(tcs34725IntegrationTime_t it, tcs34725Gain_t gain) {
 	char filename[FILENAMELENGTH];
 	bool retOk = true;
+
+	// set internal parameters
+	tcs34725IntegrationTime = it;
+	tcs34725Gain = gain;
 
 	// I2C bus
 	snprintf(filename, FILENAMELENGTH-1, "/dev/i2c-%d", I2C_ADDONS_BUS);
@@ -1471,44 +1468,53 @@ bool tcs34725Enable() {
 		retOk = false;
 	}
 	else {
-		i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, TCS34725_ENABLE_PON);
-		_msecSleep(3);
-		i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN);
-		/*
-		 * Set a delay for the integration time.
-		 * This is only necessary in the case where enabling and then
-		 * immediately trying to read values back. This is because setting
-		 * AEN triggers an automatic integration, so if a read RGBC is
-		 * performed too quickly, the data is not yet valid and all 0's are
-		 * returned
-		 */
-		switch (tcs34725IntegrationTime) {
-			case TCS34725_INTEGRATIONTIME_2_4MS:
-				_msecSleep(3);
-				break;
-			case TCS34725_INTEGRATIONTIME_24MS:
-				_msecSleep(24);
-				break;
-			case TCS34725_INTEGRATIONTIME_50MS:
-				_msecSleep(50);
-				break;
-			case TCS34725_INTEGRATIONTIME_101MS:
-				_msecSleep(101);
-				break;
-			case TCS34725_INTEGRATIONTIME_154MS:
-				_msecSleep(154);
-				break;
-			case TCS34725_INTEGRATIONTIME_700MS:
-				_msecSleep(700);
-				break;
-			}
+		uint8_t id = i2c_smbus_read_byte_data(tcs34725File, TCS34725_ID);
+		if ((id != 0x4d) && (id != 0x44) && (id != 0x10)) {
+			retOk = false;
+		}
+		else {
+			i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, TCS34725_ENABLE_PON);
+			_msecSleep(3);
+			i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN);
+			/*
+			 * Set a delay for the integration time.
+			 * This is only necessary in the case where enabling and then
+			 * immediately trying to read values back. This is because setting
+			 * AEN triggers an automatic integration, so if a read RGBC is
+			 * performed too quickly, the data is not yet valid and all 0's are
+			 * returned
+			 */
+			switch (tcs34725IntegrationTime) {
+				case TCS34725_INTEGRATIONTIME_2_4MS:
+					_msecSleep(3);
+					break;
+				case TCS34725_INTEGRATIONTIME_24MS:
+					_msecSleep(24);
+					break;
+				case TCS34725_INTEGRATIONTIME_50MS:
+					_msecSleep(50);
+					break;
+				case TCS34725_INTEGRATIONTIME_101MS:
+					_msecSleep(101);
+					break;
+				case TCS34725_INTEGRATIONTIME_154MS:
+					_msecSleep(154);
+					break;
+				case TCS34725_INTEGRATIONTIME_700MS:
+					_msecSleep(700);
+					break;
+				}
+		}
 	}
 	return retOk;
 }
 
-void tcs34725disable() {
+void colorDetectShutdown() {
 	/* Turn the device off to save power */
-	uint8_t reg = i2c_smbus_read_byte_data(tcs34725File, TCS34725_ENABLE);
-	i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, reg & ~(TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN));
-	close(tcs34725File);
+	if (tcs34725File != -1) {
+		uint8_t reg = i2c_smbus_read_byte_data(tcs34725File, TCS34725_ENABLE);
+		i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, reg & ~(TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN));
+		close(tcs34725File);
+		tcs34725File = -1;
+	}
 }

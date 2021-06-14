@@ -1,6 +1,12 @@
 #ifndef __SENSEHAT_H__
 #define __SENSEHAT_H__
 
+#include "../include/HTS221_Registers.h"
+#include "../include/LPS25H_Registers.h"
+#include "../include/LSM9DS1_Registers.h"
+#include "../include/LSM9DS1_Types.h"
+#include "../include/TCS34725_Registers.h"
+
 #include <cstdint>
 #include <cstdbool>
 
@@ -397,8 +403,8 @@ bool pwmDisable(unsigned int chan);
 // TCS34725 color detection
 // --------------------------
 
-bool tcs34725Enable();
-void tcs34725disable();
+bool colorDetectInit(tcs34725IntegrationTime_t it, tcs34725Gain_t gain);
+void colorDetectShutdown();
 
 
 #endif // __SENSEHAT_H__
