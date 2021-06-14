@@ -1483,25 +1483,25 @@ bool tcs34725Enable() {
 		 * returned
 		 */
 		switch (tcs34725IntegrationTime) {
-		case TCS34725_INTEGRATIONTIME_2_4MS:
-			_msecSleep(3);
-			break;
-		case TCS34725_INTEGRATIONTIME_24MS:
-			_msecSleep(24);
-			break;
-		case TCS34725_INTEGRATIONTIME_50MS:
-			_msecSleep(50);
-			break;
-		case TCS34725_INTEGRATIONTIME_101MS:
-			_msecSleep(101);
-			break;
-		case TCS34725_INTEGRATIONTIME_154MS:
-			_msecSleep(154);
-			break;
-		case TCS34725_INTEGRATIONTIME_700MS:
-			_msecSleep(700);
-			break;
-		}
+			case TCS34725_INTEGRATIONTIME_2_4MS:
+				_msecSleep(3);
+				break;
+			case TCS34725_INTEGRATIONTIME_24MS:
+				_msecSleep(24);
+				break;
+			case TCS34725_INTEGRATIONTIME_50MS:
+				_msecSleep(50);
+				break;
+			case TCS34725_INTEGRATIONTIME_101MS:
+				_msecSleep(101);
+				break;
+			case TCS34725_INTEGRATIONTIME_154MS:
+				_msecSleep(154);
+				break;
+			case TCS34725_INTEGRATIONTIME_700MS:
+				_msecSleep(700);
+				break;
+			}
 	}
 	return retOk;
 }
