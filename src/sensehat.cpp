@@ -1469,7 +1469,8 @@ bool colorDetectInit(tcs34725IntegrationTime_t it, tcs34725Gain_t gain) {
 	}
 	else {
 		uint8_t id = i2c_smbus_read_byte_data(tcs34725File, TCS34725_ID);
-		if ((id != 0x4d) && (id != 0x44) && (id != 0x10)) {
+		if ((id != 0x4d) && (id != 0x44) && (id != 0x10) && (id != 0x12)) {
+			printf("TCS34725 module identification failed: %hhx\n", id);
 			retOk = false;
 		}
 		else {
