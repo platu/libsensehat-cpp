@@ -2,8 +2,8 @@
 	"makefile.extensionOutputFolder": "./.vscode",
 	"makefile.launchConfigurations": [
 		{
-			"cwd": "/home/__USER__/cpp/labTemplate",
-			"binaryPath": "/home/__USER__/cpp/labTemplate/lab01",
+			"cwd": "/home/__USER__/cpp",
+			"binaryPath": "/home/__USER__/cpp/lab01",
 			"binaryArgs": []
 		}
 	]
