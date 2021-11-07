@@ -61,16 +61,20 @@ int main() {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 
-		for(count = 0; count < 64; count++) {
+		for(count = 0; count < 16; count++) {
 
 			rgb = senseUnPackPixel(clr);
+			cout << count 
+					<< " R: " << (unsigned)rgb.color[_R] 
+					<< " G: " << (unsigned)rgb.color[_G] 
+					<< " B: " << (unsigned)rgb.color[_B] << endl;
 			senseRGBClear(rgb.color[_R], rgb.color[_G], rgb.color[_B]);
 
 			clr >>= 1;
 			if (clr == 0)
 				clr = 0xf800;
 
-			sleep_for(milliseconds(200));
+			sleep_for(seconds(1));
 		}
 		cout << endl << "Waiting for keypress." << endl;
 		getch();

@@ -332,11 +332,15 @@ rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 
 // Turn on all pixels with the same RGB color
 void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
-
+	int x, y, i;
 	rgb_pixel_t rgb = { .color = {r, g, b}  };
 	rgb565_pixel_t rgb565 = sensePackPixel(rgb);
 
-	memset(pixelMap, rgb565, LEDBUFFER);
+	for(x = 0; x < SENSE_LED_WIDTH; x++)
+		for(y = 0; y < SENSE_LED_WIDTH; y++) {
+			i = (x*8)+y; // offset into array
+			*(pixelMap + i) = rgb565;
+		}
 }
 
 // Turn on a single pixel with RGB565 color format
