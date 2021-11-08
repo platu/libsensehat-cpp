@@ -36,7 +36,7 @@ int main() {
 	};
 
 	int count;
-	// End of vraiable declarations
+	// End of variables declarations
 	
 	if(senseInit()) {
 		cout << "Sense Hat initialization Ok." << endl;
