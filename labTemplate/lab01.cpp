@@ -39,6 +39,9 @@ int main() {
 
 	if(senseInit()) {
 		cout << "Sense Hat initialization Ok." << endl;
+		
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		// Insert your code below !
 
 		count = 0; 
 
@@ -55,6 +58,8 @@ int main() {
 		cout << "Press joystick button to quit." << endl;
 		senseWaitForJoystickEnter();
 
+		// Insert your code above !
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		senseShutdown();
 		cout << "Sense Hat shut down." << endl;
 	}
