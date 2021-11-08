@@ -39,7 +39,6 @@ int main() {
 
 	if(senseInit()) {
 		cout << "Sense Hat initialization Ok." << endl;
-		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Insert your code below !
 
