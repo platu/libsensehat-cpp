@@ -20,7 +20,7 @@ using namespace std::chrono; // system_clock, seconds, milliseconds
 
 
 int main() {
-
+	// Declare your variables below !
 	const rgb_pixel_t R = { .color = {255, 0, 0} }; // Red
 	const rgb_pixel_t W = { .color = {255, 255, 255} }; // White
 
@@ -36,7 +36,8 @@ int main() {
 	};
 
 	int count;
-
+	// End of vraiable declarations
+	
 	if(senseInit()) {
 		cout << "Sense Hat initialization Ok." << endl;
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
