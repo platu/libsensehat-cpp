@@ -17,26 +17,31 @@ using namespace std::this_thread; // sleep_for, sleep_until
 using namespace std::chrono; // system_clock, seconds, milliseconds
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Début déclaration des sous-programmes
+// Début sous-programmes
 
-// Fin déclaration des sous-programmes
+// Fin sous-programmes
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Début constantes
+
+// Fin constantes
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 int main() {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// Début déclaration des varaibles
+	// Début varaibles
 
-	// Fin déclaration des variables
+	// Fin variables
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 	if(senseInit()) {
 		cout << "Sense Hat initialization Ok." << endl;
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// Début instructions du programme
+		// Début instructions
 
 
-		// Fin instructions du programme
+		// Fin instructions
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		cout << "Press joystick button to quit." << endl;
 		senseWaitForJoystickEnter();
