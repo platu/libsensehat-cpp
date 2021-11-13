@@ -30,7 +30,7 @@ using namespace std::chrono; // system_clock, seconds, milliseconds
 
 int main() {
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// Début varaibles
+	// Début variables
 
 	// Fin variables
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

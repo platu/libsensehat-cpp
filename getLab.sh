@@ -9,6 +9,12 @@ else
 	lab="$1"
 fi
 
+if [[ -d ~/cpp/$lab ]]
+then
+	echo "The $HOME/cpp/$lab directory already exists"
+	exit 1
+fi
+
 echo "New lab: $lab in $HOME/cpp/$lab directory"
 
 mkdir -p ~/cpp
