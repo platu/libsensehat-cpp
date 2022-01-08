@@ -19,7 +19,6 @@
 #include "../include/sensehat.h"
 
 // Led file handle
-#define LEDFILEPATH "/dev/fb1"
 static int ledFile = -1;
 static bool lowLight_switch = false;
 static bool lowLight_state = false;
@@ -48,7 +47,7 @@ const uint8_t gamma8[] = {
 
 #define I2C_ADDONS_BUS 0
 #define I2C_SENSE_HAT_BUS 1
-// Sense HAT I2C devices addresses
+// Sense Hat I2C devices addresses
 #define HTS221_ADDRESS 0x5f
 #define LPS25H_ADDRESS 0x5c
 #define LSM9DS1_ADDRESS_G 0x6a
@@ -94,7 +93,7 @@ static int tcs34725File = -1;
 
 // Internal. Parse input devices file and extract event file handler number.
 // Returns event file handler number as int.
-// Returns -1 if Sense HAT joystick is not found.
+// Returns -1 if Sense Hat joystick is not found.
 int _getJsEvDevNumber() {
 	char line[256] = {0};
 	char *ev_pos;
@@ -107,7 +106,7 @@ int _getJsEvDevNumber() {
 	else {
 		while(fscanf(fd, "%[^\n] ", line) != EOF && !match) {
 			if (strstr(line, "rpi-sense-joy") != 0)
-				// Sense HAT joystick device name found
+				// Sense Hat joystick device name found
 				while(fscanf(fd, "%[^\n] ", line) != EOF && !match)
 					if (strstr(line, "Handlers") != 0) {
 						// Handlers list found
@@ -118,7 +117,34 @@ int _getJsEvDevNumber() {
 					}
 		}
 		if (!match)
-			puts("Failed to find Sense HAT joystick device name");
+			puts("Failed to find Sense Hat joystick device name");
+		fclose(fd);
+	}
+	return num;
+}
+//
+// Internal. Parse framebuffer devices file and extract RPi-Sense FB number.
+// Returns FB file number as int.
+// Returns -1 if RPi-Sense FB is not found.
+int _getFBnum() {
+	char line[256] = {0};
+	bool match = false;
+	int num = -1;
+
+	FILE *fd = fopen("/proc/fb", "r");
+	if (! fd)
+		printf("Failed to open event devices file.\n%s\n", strerror(errno));
+	else {
+		while(fscanf(fd, "%[^\n] ", line) != EOF && !match) {
+			if (strstr(line, "RPi-Sense FB") != 0) {
+				// Sense Hat framebuffer device name found
+				match = true;
+				sscanf(line, "%d", &num);
+				printf("Sense Hat led matrix points to device /dev/fb%d\n", num);
+			}
+		}
+		if (!match)
+			puts("Failed to find Sense Hat led matrix device name");
 		fclose(fd);		
 	}
 	return num;
@@ -129,7 +155,7 @@ void senseClear() {
 	memset(pixelMap, 0, LEDBUFFER);
 }
 
-// Sense HAT Initialization
+// Sense Hat Initialization
 // . file handles for leb framebuffer and joystick
 // . character set
 // . IMU
@@ -153,31 +179,37 @@ bool senseInit() {
 	int png_filter_method;
 	// Joystick input event filename
 	char joystickFilename[20] = "/dev/input/event", js_ev_num_str[4];
+	char framebufferFilename[20] = "/dev/fb", fb_num_str[4];
 	int js_ev_num;
+	int fb_num;
 
 	// LED matrix
-	ledFile = open(LEDFILEPATH, O_RDWR);
-	if (ledFile < 0) {
-		printf("Failed to open LED frame buffer file handle.\n%s\n",
-				strerror(errno));
-		retOk = false;
-	}
-	else if (ioctl(ledFile, FBIOGET_FSCREENINFO, &fix_info) < 0) {
-		printf("Unable to set LED frame buffer operation.\n%s\n",
-				strerror(errno));
-		retOk = false;
-	}
-	// Check the correct device has been found
-	else if  (strcmp(fix_info.id, "RPi-Sense FB") != 0) {
-		puts("RPi-Sense FB not found");
-		retOk = false;
-	}
-	// Map the led frame buffer device into memory
-	pixelMap = (uint16_t *)mmap(NULL, LEDBUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
-	if (pixelMap == MAP_FAILED) {
-		printf("Unable to map the LED matrix into memory.\n%s\n",
-				strerror(errno));
-		retOk = false;
+	if ((fb_num = _getFBnum()) >= 0) {
+		sprintf(fb_num_str, "%d", fb_num);
+		strcat(framebufferFilename, fb_num_str);
+		ledFile = open(framebufferFilename, O_RDWR);
+		if (ledFile < 0) {
+			printf("Failed to open LED frame buffer file handle.\n%s\n",
+					strerror(errno));
+			retOk = false;
+		}
+		else if (ioctl(ledFile, FBIOGET_FSCREENINFO, &fix_info) < 0) {
+			printf("Unable to set LED frame buffer operation.\n%s\n",
+					strerror(errno));
+			retOk = false;
+		}
+		// Check the correct device has been found
+		else if  (strcmp(fix_info.id, "RPi-Sense FB") != 0) {
+			puts("RPi-Sense FB not found");
+			retOk = false;
+		}
+		// Map the led frame buffer device into memory
+		pixelMap = (uint16_t *)mmap(NULL, LEDBUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
+		if (pixelMap == MAP_FAILED) {
+			printf("Unable to map the LED matrix into memory.\n%s\n",
+					strerror(errno));
+			retOk = false;
+		}
 	}
 
 	// Image text dictionnary
@@ -261,7 +293,7 @@ bool senseInit() {
 	return retOk;
 }
 
-// Free Sense HAT file handles
+// Free Sense Hat file handles
 void senseShutdown() {
 
 	senseClear();
