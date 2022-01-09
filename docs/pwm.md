@@ -46,7 +46,7 @@ systemd unit.
 1. Create the shell script
 
  ```bash
- cat << EOF | sudo tee -a /usr/local/sbin/pwm-export.sh
+ cat << 'EOF' | sudo tee -a /usr/local/sbin/pwm-export.sh
  #!/bin/bash
 
  # file: /usr/local/sbin/pwm-export.sh
