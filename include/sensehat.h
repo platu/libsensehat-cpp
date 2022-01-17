@@ -304,18 +304,18 @@ bool senseGetGyroRadians(double *pitch, double *roll, double *yaw);
 bool senseGetGyroDegrees(double *picth, double *roll, double *yaw);
 
 /// \brief Get accelerometer measurements along the 3 axis in g
-/// \param[out] pitch value in g
-/// \param[out] roll value in g
-/// \param[out] yaw value in g
+/// \param[out] x value in g
+/// \param[out] y value in g
+/// \param[out] z value in g
 /// \return bool false if somnething went wrong
-bool senseGetAccelG(double *pitch, double *roll, double *yaw);
+bool senseGetAccelG(double *x, double *y, double *z);
 
 /// \brief Get accelerometer measurements along the 3 axis in meter per second squared
-/// \param[out] pitch value in mpss
-/// \param[out] roll value in mpss
-/// \param[out] yaw value in mpss
+/// \param[out] x value in mpss
+/// \param[out] y value in mpss
+/// \param[out] z value in mpss
 /// \return bool false if somnething went wrong
-bool senseGetAccelMPSS(double *pitch, double *roll, double *yaw);
+bool senseGetAccelMPSS(double *x, double *y, double *z);
 
 // ----------------------
 // Joystick
