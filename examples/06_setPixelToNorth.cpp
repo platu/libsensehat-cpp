@@ -6,7 +6,7 @@
  * function.
  *
  * Function prototypes:
- * 
+ *
  * void senseSetIMUConfig(bool,          bool,           bool);
  *         compass_enabled-^ gyro_enabled-^ accel_enabled-^
  *
@@ -59,17 +59,17 @@ int main() {
 
 	unsigned int time = 0;
 	// list of leds located at the edge of the square
-	const unsigned int led_loop[LEDNB] = {4, 5, 6, 7, 15, 23, 31, 39, 47, 55,
+	const int led_loop[LEDNB] = {4, 5, 6, 7, 15, 23, 31, 39, 47, 55,
 		63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8, 0, 1, 2, 3};
 	float led_degree_ratio = LEDNB / 360.0;
 	double direction;
-	unsigned int led_index, prev_x, x, prev_y, y, offset; 
+	int led_index, prev_x, x, prev_y, y, offset;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
- 
+
 		// turn on all sensors for Compass
 		senseSetIMUConfig(true, true, true);
 
@@ -77,13 +77,13 @@ int main() {
 			sleep_for(milliseconds(500));
 			// reverse direction
 			direction = 360 - senseGetCompass();
-			cout << "Compass angle to north in degrees:\t" << 
-					fixed << setprecision(2) << direction << endl; 
+			cout << "Compass angle to north in degrees:\t" <<
+					fixed << setprecision(2) << direction << endl;
 
 			// select the led
-			led_index = (unsigned int) floor(led_degree_ratio * direction);
+			led_index = (int) floor(led_degree_ratio * direction);
 			offset = led_loop[led_index];
-			
+
 			// extract coordinates
 			y = offset / 8; // row
 			x = offset % 8; // column
@@ -92,7 +92,7 @@ int main() {
 			if (x != prev_x || y != prev_y)
 				senseSetRGB565pixel(prev_x, prev_y, 0);
 
-			// turn on the new led 
+			// turn on the new led
 			senseSetRGB565pixel(x, y, 255);
 
 			prev_x = x;

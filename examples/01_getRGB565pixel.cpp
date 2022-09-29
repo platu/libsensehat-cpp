@@ -8,9 +8,9 @@
  * Here we use a dedicated type named rgb565_pixel_t.
  *
  * Function prototype:
- * 
- * rgb565_pixel_t senserGetRGB565pixel(unsigned int, unsigned int);
- *       ^-- pixel color                    x -^          y -^
+ *
+ * rgb565_pixel_t senserGetRGB565pixel(int, int);
+ *       ^-- pixel color             x -^ y -^
  *
  * The program starts by filling colors on the Sense Hat LED matrix,
  * then the user is asked to choose one row and one column to read the color
@@ -53,8 +53,8 @@ int getch() {
 int main() {
 
 	rgb565_pixel_t pix2read, color, mask = 0xf800;
-	unsigned int x, y;
-	unsigned int row, col;
+	int x, y;
+	int row, col;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
@@ -71,7 +71,7 @@ int main() {
 			mask >>= 2;
 		}
 
-		// Next we ask the user to enter pixel row and column 
+		// Next we ask the user to enter pixel row and column
 		cout << "Enter the row and column numbers of the pixel to be read: ";
 		cin >> row >> col;
 		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

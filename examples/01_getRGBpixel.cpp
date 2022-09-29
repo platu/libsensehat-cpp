@@ -3,14 +3,14 @@
  * Source: https://github.com/platu/libsensehat-cpp
  *
  * This example program illustrates the senseGetRGBpixel() function that
- * reads one single pixel encoded in an array of three 8 bit integers. 
+ * reads one single pixel encoded in an array of three 8 bit integers.
  * The three integers represent the R(ed), G(reen), and B(lue) colors.
  * Here we use a dedicated type named rgb_pixel_t.
  *
  * Function prototype:
- * 
- * rgb_pixel_t senserGetRGBpixel(unsigned int, unsigned int);
- *    ^-- pixel color                 x -^          y -^
+ *
+ * rgb_pixel_t senserGetRGBpixel(int, int);
+ *    ^-- pixel color          x -^ y -^
  *
  * The program starts by filling colors on the Sense Hat LED matrix,
  * then the user is asked to choose one row and one column to read the color
@@ -54,8 +54,8 @@ int main() {
 
 	rgb565_pixel_t color, mask = 0xf800;
 	rgb_pixel_t readpx;
-	unsigned int x, y;
-	unsigned int row, col;
+	int x, y;
+	int row, col;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl

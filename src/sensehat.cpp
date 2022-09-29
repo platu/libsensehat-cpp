@@ -145,7 +145,7 @@ int _getFBnum() {
 		}
 		if (!match)
 			puts("Failed to find Sense Hat led matrix device name");
-		fclose(fd);		
+		fclose(fd);
 	}
 	return num;
 }
@@ -376,11 +376,11 @@ void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 // Turn on a single pixel with RGB565 color format
-bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) {
-	unsigned int i;
+bool senseSetRGB565pixel(int x, int y, rgb565_pixel_t rgb565) {
+	int i;
 	bool retOk = false;
 
-	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH)	{
+	if (x >= 0 && x < SENSE_LED_WIDTH && y>= 0 && y < SENSE_LED_WIDTH) {
 		i = (x*8)+y; // offset into array
 		*(pixelMap + i) = rgb565;
 		retOk = true;
@@ -389,12 +389,12 @@ bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565) 
 }
 
 // Turn on a single pixel with R, G, and B individual values
-bool senseSetRGBpixel(unsigned int x, unsigned int y, uint8_t red, uint8_t green, uint8_t blue) {
+bool senseSetRGBpixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
 	rgb565_pixel_t rgb565;
 	rgb_pixel_t pix = { .color = {red, green, blue} };
 	bool retOk = false;
 
-	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH) {
+	if (x >= 0 && x < SENSE_LED_WIDTH && y >= 0 && y < SENSE_LED_WIDTH) {
 		rgb565 = sensePackPixel(pix);
 		retOk = senseSetRGB565pixel(x, y, rgb565);
 	}
@@ -440,12 +440,12 @@ void senseSetRGBpixels(rgb_pixels_t pixelArray) {
 		}
 }
 
-// Read a single pixel color in RGB565 format 
-rgb565_pixel_t senseGetRGB565pixel(unsigned int x, unsigned int y) {
-	unsigned int i;
+// Read a single pixel color in RGB565 format
+rgb565_pixel_t senseGetRGB565pixel(int x, int y) {
+	int i;
 	rgb565_pixel_t rgb565pix;
 
-	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH) {
+	if (x >= 0 &&  x < SENSE_LED_WIDTH && y >= 0 && y < SENSE_LED_WIDTH) {
 		i = (x*8)+y; // offset into array
 		rgb565pix = *(pixelMap + i);
 	}
@@ -453,12 +453,12 @@ rgb565_pixel_t senseGetRGB565pixel(unsigned int x, unsigned int y) {
 	return rgb565pix;
 }
 
-// Read a single pixel color in a R, G, B array 
-rgb_pixel_t senseGetRGBpixel(unsigned int x, unsigned int y) {
-	unsigned int i;
+// Read a single pixel color in a R, G, B array
+rgb_pixel_t senseGetRGBpixel(int x, int y) {
+	int i;
 	rgb_pixel_t pix = { .color = {0, 0, 0} };
 
-	if (x < SENSE_LED_WIDTH && y < SENSE_LED_WIDTH) {
+	if (x >= 0 && x < SENSE_LED_WIDTH && y >= 0 && y < SENSE_LED_WIDTH) {
 		i = (x*8)+y; // offset into array
 		pix = senseUnPackPixel(*(pixelMap + i));
 	}
@@ -468,7 +468,7 @@ rgb_pixel_t senseGetRGBpixel(unsigned int x, unsigned int y) {
 
 // Returns an 8x8 array containing RGB565 pixels
 rgb565_pixels_t senseGetRGB565pixels() {
-	unsigned int x, y;
+	int x, y;
 	rgb565_pixels_t image;
 
 	for(y = 0; y < SENSE_LED_WIDTH; y++)
@@ -480,7 +480,7 @@ rgb565_pixels_t senseGetRGB565pixels() {
 
 // Returns an 8x8 array containing [R,G,B] pixels
 rgb_pixels_t senseGetRGBpixels() {
-	unsigned int x, y;
+	int x, y;
 	rgb_pixels_t image;
 
 	for(y = 0; y < SENSE_LED_WIDTH; y++)
@@ -599,7 +599,7 @@ rgb_pixels_t senseFlip_v(bool redraw) {
 
 	flipped = senseGetPixels();
 	for (i = 0; i < SENSE_LED_WIDTH; i++) {
-		start = 0; 
+		start = 0;
 		end = SENSE_LED_WIDTH-1;
 		while (start < end) {
 			// swap 2 pixels
@@ -628,7 +628,7 @@ rgb_pixels_t _fillCharPixels(char sign, rgb_pixel_t fgcolor, rgb_pixels_t signPi
 	// Look for character in the dictionnary
 	sign_p = (char *) memchr(txtDict, sign, txtDictLen);
 	if (sign_p != NULL) {
-		// Position of character in the dictionnary gives its PNG index 
+		// Position of character in the dictionnary gives its PNG index
 		pos = sign_p - txtDict;
 		for	(i = 0; i < 5; i++) {
 			// One PNG row is a column of pixel matrix
@@ -638,7 +638,7 @@ rgb_pixels_t _fillCharPixels(char sign, rgb_pixel_t fgcolor, rgb_pixels_t signPi
 				if (png_row[j*3] > 128)
 					signPixels.array[i][j] = fgcolor;
 		}
-		// Rotate 90 degrees anti clockwise 
+		// Rotate 90 degrees anti clockwise
 		signPixels = _rotate270(signPixels);
 	}
 	else
@@ -774,7 +774,7 @@ void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 				else
 					emptyCol = false;
 			}
-			// Compute character width with empty rightmost column 
+			// Compute character width with empty rightmost column
 			signWidth = 0;
 			for (i = 0; i < SENSE_LED_WIDTH; i++) {
 				width = 0;
@@ -1101,7 +1101,7 @@ bool senseGetOrientationDegrees(double *p, double *r, double *y) {
 	bool retOk = true;
 
 	if (senseGetOrientationRadians(p, r, y)) {
-		*p *= 180.0 / M_PI;  
+		*p *= 180.0 / M_PI;
 		*r *= 180.0 / M_PI;
 		*y *= 180.0 / M_PI;
 	}
@@ -1224,7 +1224,7 @@ void senseSetJoystickWaitTime(long int sec, long int msec) {
 bool senseGetJoystickEvent(stick_t *ev) {
 	bool jsAction = false;
 	int clicked;
-	struct timeval timeout = _jstv; 
+	struct timeval timeout = _jstv;
 	int _jsfd = jsFile;
 	fd_set _jsRead;
 

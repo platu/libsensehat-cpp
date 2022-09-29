@@ -8,9 +8,9 @@
  * Here we use a dedicated type named rgb565_pixel_t.
  *
  * Function prototype:
- * 
- * bool senseSetRGB565pixel(unsigned int, unsigned int, rgb565_pixel_t);
- *  ^-- status                 x -^           y -^    pixel color -^
+ *
+ * bool senseSetRGB565pixel(int, int, rgb565_pixel_t);
+ *  ^-- status            x -^ y -^  pixel color -^
  *
  * The program prints one rainbow color per column on the Sense Hat LED matrix.
  */
@@ -61,7 +61,7 @@ int main() {
 	const rgb565_pixel_t rainbow[8] = {red, orange, yellow, green, cyan, blue, purple, pink};
 	rgb565_pixel_t pix;
 
-	unsigned int x, y;
+	int x, y;
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl

@@ -5,9 +5,9 @@
  * This example program illustrates the senseWaitForJoystick() function.
  *
  * Function prototypes:
- * 
+ *
  * stick_t senseWaitForJoystick()
- *    ^- struct returned 
+ *    ^- struct returned
  *
  * The stick_t struct has three members
  *		timestamp	seconds and microseconds float number
@@ -16,7 +16,7 @@
  *
  * This program shows that there are many events for a single action.
  * The use of this blocking function requires to evaluate a combination of the
- * two members of the type stick_t: action and state 
+ * two members of the type stick_t: action and state
  */
 
 #include <iostream>
@@ -64,7 +64,7 @@ int main() {
 
 	const rgb_pixel_t rainbow[8] = {red, orange, yellow, green, cyan, blue, purple, pink};
 	rgb_pixel_t pix;
-	unsigned int row, col, index;
+	int row, col, index;
 	int event_count, click;
 	stick_t joystick;
 

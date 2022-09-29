@@ -13,14 +13,14 @@
 // I2C libraries -> Humidity/Pressure/Temperature
 #ifdef __cplusplus
 extern "C" {
-#endif	
+#endif
 
     #include <linux/i2c-dev.h>
     #include <i2c/smbus.h>
 
 #ifdef __cplusplus
 }
-#endif	
+#endif
 
 // PNG library -> Letters
 #include <png.h>
@@ -117,13 +117,13 @@ rgb_pixel_t senseUnPackPixel(rgb565_pixel_t rgb565);
 /// \param[in] x row number [0..7]
 /// \param[in] y column number [0..7]
 /// \return color attrubutes of the pixel encoded in RGB565 format: rgb565_pixel_t type
-rgb565_pixel_t senseGetRGB565pixel(unsigned int x, unsigned int y);
+rgb565_pixel_t senseGetRGB565pixel(int x, int y);
 
 /// \brief Read the color attributes of one single pixel from its coordinates
 /// \param[in] x row number [0..7]
 /// \param[in] y column number [0..7]
 /// \return color attributes of the pixel encoded in a array of 3 bytes: rgb_pixel_t type
-rgb_pixel_t senseGetRGBpixel(unsigned int x, unsigned int y);
+rgb_pixel_t senseGetRGBpixel(int x, int y);
 
 /// \brief Read the color attributes of one single pixel from its coordinates
 const auto senseGetPixel = senseGetRGBpixel;
@@ -132,7 +132,7 @@ const auto senseGetPixel = senseGetRGBpixel;
 /// \param[in] x row number [0..7]
 /// \param[in] y column number [0..7]
 /// \return bool false if something went wrong
-bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565);
+bool senseSetRGB565pixel(int x, int y, rgb565_pixel_t rgb565);
 
 /// \brief Write the color attributes of one single pixel with the 3 RGB values
 /// \param[in] x row number [0..7]
@@ -141,7 +141,7 @@ bool senseSetRGB565pixel(unsigned int x, unsigned int y, rgb565_pixel_t rgb565);
 /// \param[in] G green value
 /// \param[in] B blue value
 /// \return bool false if something went wrong
-bool senseSetRGBpixel(unsigned int x, unsigned int y, uint8_t R, uint8_t G, uint8_t B);
+bool senseSetRGBpixel(int x, int y, uint8_t R, uint8_t G, uint8_t B);
 
 /// \brief Write the color attributes of one single pixel with the 3 RGB values
 const auto senseSetPixel = senseSetRGBpixel;
@@ -181,12 +181,12 @@ rgb_pixels_t senseFlip_h(bool redraw);
 
 /// \brief Vertical flip of all pixels
 /// \param[in] bool true to redraw all pixels
-/// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type 
+/// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type
 rgb_pixels_t senseFlip_v(bool redraw);
 
 /// \brief Rotate all pixels clockwise with a defined angle value
 /// \param[in] angle [90, 180, 270]
-/// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type 
+/// \return 2 dimensional array of RGB color attributes of rgb_pixel_t type
 rgb_pixels_t senseRotation(unsigned int angle);
 
 /// \brief Print a single character with foreground and background color
@@ -265,9 +265,9 @@ double senseGetTemperatureFromPressure();
 // ----------------------
 
 /// \brief IMU features intialization
-/// \param[in] magn true to enable magnetometer 
-/// \param[in] gyro true to enable gyrometer 
-/// \param[in] accel true to enable accelerometer 
+/// \param[in] magn true to enable magnetometer
+/// \param[in] gyro true to enable gyrometer
+/// \param[in] accel true to enable accelerometer
 void senseSetIMUConfig(bool magn, bool gyro, bool accel);
 
 /// \brief Get IMU orientation in radians from the magnetometer
@@ -289,14 +289,14 @@ bool senseGetOrientationDegrees(double *pitch, double *roll, double *yaw);
 /// \return direction of north in degrees
 double senseGetCompass();
 
-/// \brief Get gyrometer measurements along the 3 axis in radians/s 
+/// \brief Get gyrometer measurements along the 3 axis in radians/s
 /// \param[out] pitch value in radians/s
 /// \param[out] roll value in radians/s
 /// \param[out] yaw value in radians/s
 /// \return bool false if somnething went wrong
 bool senseGetGyroRadians(double *pitch, double *roll, double *yaw);
 
-/// \brief Get gyrometer measurements along the 3 axis in degrees/s 
+/// \brief Get gyrometer measurements along the 3 axis in degrees/s
 /// \param[out] pitch value in degrees/s
 /// \param[out] roll value in degrees/s
 /// \param[out] yaw value in degrees/s
@@ -322,7 +322,7 @@ bool senseGetAccelMPSS(double *x, double *y, double *z);
 // ----------------------
 
 /// \brief Wait for any joystick event
-/// \details This is a blocking function 
+/// \details This is a blocking function
 /// \return stick_t structure contains timestamp, action and state of the joystick button
 stick_t senseWaitForJoystick();
 
@@ -337,7 +337,7 @@ void senseSetJoystickWaitTime(long int sec, long int msec);
 bool senseGetJoystickEvent(stick_t *ev);
 
 /// \brief Wait for any joystick ENTER event
-/// \details This is a blocking function 
+/// \details This is a blocking function
 /// \return boolean true if the ENTER action happens on joystick
 bool senseWaitForJoystickEnter();
 

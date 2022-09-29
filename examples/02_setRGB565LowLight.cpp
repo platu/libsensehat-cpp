@@ -8,7 +8,7 @@
  * Function prototype:
  *
  * void senseSetLowLight(bool low);
- *         low light switch -^           
+ *         low light switch -^ 
  *
  * The program prints a red question mark on a white background with the low
  * light switch enabled. Then the pixel map is read in order to show that the
@@ -49,7 +49,7 @@ int getch() {
 
 int main() {
 
-	unsigned int row, col;
+	int row, col;
 	const rgb565_pixel_t R = 0xf800; // Red
 	const rgb565_pixel_t W = 0xffff; // White
 
@@ -81,8 +81,9 @@ int main() {
 		// Show that the color values have decreased
 		for (row = 0; row < SENSE_LED_WIDTH; row++) {
 			for (col = 0; col < SENSE_LED_WIDTH; col++)
-				cout << "{ " << 
-					setw(3) << right << (unsigned int) question_mark.array[row][col] << "}, ";
+				cout << "{ " << setw(3) << right
+					<< question_mark.array[row][col]
+				       	<< " }, ";
 			cout << endl;
 		}
 		cout << endl << "Waiting for keypress." << endl;
