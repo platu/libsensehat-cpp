@@ -156,7 +156,7 @@ void senseClear() {
 }
 
 // Sense Hat Initialization
-// . file handles for leb framebuffer and joystick
+// . file handles for led framebuffer and joystick
 // . character set
 // . IMU
 // . GPIO chip
@@ -823,7 +823,7 @@ void senseShowMessage(std::string msg) {
 // -----------------------------
 
 // Read both temperature and relative humidity
-bool senseGetTempHumid(double *T_DegC, double *H_rH) {
+bool senseGetTempHumid(double &t_C, double &h_R) {
 	char filename[FILENAMELENGTH];
 	int humFile;
 	bool retOk = true;
@@ -937,10 +937,10 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 		int16_t H_T_OUT = h_t_out_h << 8 | h_t_out_l;
 
 		// Calculate ambient temperature
-		*T_DegC = (t_gradient_m * T_OUT) + t_intercept_c;
+		t_C = (t_gradient_m * T_OUT) + t_intercept_c;
 
 		// Calculate ambient humidity
-		*H_rH = (h_gradient_m * H_T_OUT) + h_intercept_c;
+		h_R = (h_gradient_m * H_T_OUT) + h_intercept_c;
 
 		// Power down the device
 		i2c_smbus_write_byte_data(humFile, HTS221_CTRL_REG1, 0x00);
@@ -954,7 +954,7 @@ bool senseGetTempHumid(double *T_DegC, double *H_rH) {
 double senseGetHumidity() {
 	double Temp, Humid;
 
-	if (!senseGetTempHumid(&Temp, &Humid))
+	if (!senseGetTempHumid(Temp, Humid))
 		Humid = 0.0;
 
 	return Humid;
@@ -964,7 +964,7 @@ double senseGetHumidity() {
 double senseGetTemperatureFromHumidity() {
 	double Temp, Humid;
 
-	if (!senseGetTempHumid(&Temp, &Humid))
+	if (!senseGetTempHumid(Temp, Humid))
 		Temp = 0.0;
 
 	return Temp;
@@ -975,7 +975,7 @@ double senseGetTemperatureFromHumidity() {
 // -----------------------------
 
 // Read both temperature and pressure
-bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
+bool senseGetTempPressure(double &t_C, double &p_hPa) {
 	char filename[FILENAMELENGTH];
 	int preFile;
 	bool retOk = true;
@@ -1031,8 +1031,8 @@ bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 		int32_t press_out = press_out_h << 16 | press_out_l << 8 | press_out_xl;
 
 		// calculate output values
-		*T_DegC = 42.5 + (temp_out / 480.0);
-		*P_hPa = press_out / 4096.0;
+		t_C = 42.5 + (temp_out / 480.0);
+		p_hPa = press_out / 4096.0;
 
 		// Power down the device
 		i2c_smbus_write_byte_data(preFile, LPS25H_CTRL_REG1, 0x00);
@@ -1046,7 +1046,7 @@ bool senseGetTempPressure(double *T_DegC, double *P_hPa) {
 double senseGetPressure() {
 	double Temp, Pressure;
 
-	if (!senseGetTempPressure(&Temp, &Pressure))
+	if (!senseGetTempPressure(Temp, Pressure))
 		Pressure = 0.0;
 
 	return Pressure;
@@ -1056,7 +1056,7 @@ double senseGetPressure() {
 double senseGetTemperatureFromPressure() {
 	double Temp, Pressure;
 
-	if (!senseGetTempPressure(&Temp, &Pressure))
+	if (!senseGetTempPressure(Temp, Pressure))
 		Temp = 0.0;
 
 	return Temp;
@@ -1074,7 +1074,7 @@ void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabl
 	imu->setAccelEnable(accel_enabled);
 }
 
-bool senseGetOrientationRadians(double *p, double *r, double *y) {
+bool senseGetOrientationRadians(double &p, double &r, double &y) {
 	bool retOk = true;
 
 	usleep((__useconds_t)(imu->IMUGetPollInterval() * 1000));
@@ -1083,9 +1083,9 @@ bool senseGetOrientationRadians(double *p, double *r, double *y) {
 		RTIMU_DATA imuData = imu->getIMUData() ;
 		if (imuData.fusionPoseValid) {
 			RTVector3 curr_pose = imuData.fusionPose ;
-			*p = curr_pose.x();
-			*r = curr_pose.y();
-			*y = -curr_pose.z();
+			p = curr_pose.x();
+			r = curr_pose.y();
+			y = -curr_pose.z();
 		}
 		else
 			retOk = false;
@@ -1096,13 +1096,13 @@ bool senseGetOrientationRadians(double *p, double *r, double *y) {
 	return retOk;
 }
 
-bool senseGetOrientationDegrees(double *p, double *r, double *y) {
+bool senseGetOrientationDegrees(double &p, double &r, double &y) {
 	bool retOk = true;
 
 	if (senseGetOrientationRadians(p, r, y)) {
-		*p *= 180.0 / M_PI;
-		*r *= 180.0 / M_PI;
-		*y *= 180.0 / M_PI;
+		p *= 180.0 / M_PI;
+		r *= 180.0 / M_PI;
+		y *= 180.0 / M_PI;
 	}
 	else
 		retOk = false;
@@ -1114,12 +1114,12 @@ double senseGetCompass() {
 	double p, r, y;
 
 	_msecSleep(20);
-	senseGetOrientationDegrees(&p, &r, &y);
+	senseGetOrientationDegrees(p, r, y);
 
 	return y + 180;
 }
 
-bool senseGetGyroRadians(double *p, double *r, double *y) {
+bool senseGetGyroRadians(double &p, double &r, double &y) {
 	bool retOk = true;
 
 	senseSetIMUConfig(false, true, false);
@@ -1129,9 +1129,9 @@ bool senseGetGyroRadians(double *p, double *r, double *y) {
 	if (imu->IMURead()) {
 		RTIMU_DATA imuData = imu->getIMUData() ;
 		if (imuData.gyroValid) {
-			*p = imuData.gyro.x();
-			*r = imuData.gyro.y();
-			*y = imuData.gyro.z();
+			p = imuData.gyro.x();
+			r = imuData.gyro.y();
+			y = imuData.gyro.z();
 		}
 		else retOk = false;
 	}
@@ -1141,13 +1141,13 @@ bool senseGetGyroRadians(double *p, double *r, double *y) {
 	return retOk;
 }
 
-bool senseGetGyroDegrees(double *p, double *r, double *y) {
+bool senseGetGyroDegrees(double &p, double &r, double &y) {
 	bool retOk = true;
 
 	if (senseGetGyroRadians(p, r, y)) {
-		*p *= 180.0 / M_PI;
-		*r *= 180.0 / M_PI;
-		*y *= 180.0 / M_PI;
+		p *= 180.0 / M_PI;
+		r *= 180.0 / M_PI;
+		y *= 180.0 / M_PI;
 	}
 	else
 		retOk = false;
@@ -1155,7 +1155,7 @@ bool senseGetGyroDegrees(double *p, double *r, double *y) {
 	return retOk;
 }
 
-bool senseGetAccelG(double *x, double *y, double *z) {
+bool senseGetAccelG(double &x, double &y, double &z) {
 	bool retOk = true;
 
 	senseSetIMUConfig(false, false, true);
@@ -1165,9 +1165,9 @@ bool senseGetAccelG(double *x, double *y, double *z) {
 	if (imu->IMURead()) {
 		RTIMU_DATA imuData = imu->getIMUData() ;
 		if (imuData.accelValid) {
-			*x = imuData.accel.x();
-			*y = imuData.accel.y();
-			*z = imuData.accel.z();
+			x = imuData.accel.x();
+			y = imuData.accel.y();
+			z = imuData.accel.z();
 		}
 		else
 			retOk = false;
@@ -1178,13 +1178,13 @@ bool senseGetAccelG(double *x, double *y, double *z) {
 	return retOk;
 }
 
-bool senseGetAccelMPSS(double *x, double *y, double *z) {
+bool senseGetAccelMPSS(double &x, double &y, double &z) {
 	bool retOk = true;
 
 	if (senseGetAccelG(x, y, z)) {
-		*x *= G_2_MPSS;
-		*y *= G_2_MPSS;
-		*z *= G_2_MPSS;
+		x *= G_2_MPSS;
+		y *= G_2_MPSS;
+		z *= G_2_MPSS;
 	}
 	else
 		retOk = false;
@@ -1220,7 +1220,7 @@ void senseSetJoystickWaitTime(long int sec, long int msec) {
 }
 
 // Get joystick event if any
-bool senseGetJoystickEvent(stick_t *ev) {
+bool senseGetJoystickEvent(stick_t &ev) {
 	bool jsAction = false;
 	int clicked;
 	struct timeval timeout = _jstv;
@@ -1246,9 +1246,9 @@ bool senseGetJoystickEvent(stick_t *ev) {
 		read(jsFile, &_jsEvent, sizeof(_jsEvent));
 		//EV_SYN is the event separator mark, not used
 		if (_jsEvent.type != EV_SYN) {
-			ev->action = _jsEvent.code;
-			ev->state = _jsEvent.value;
-			ev->timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
+			ev.action = _jsEvent.code;
+			ev.state = _jsEvent.value;
+			ev.timestamp = _jsEvent.time.tv_sec + _jsEvent.time.tv_usec / 1000000.0;
 			jsAction = true;
 		}
 	}
@@ -1442,7 +1442,7 @@ bool pwmDutyCycle(unsigned int chan, unsigned int percent) {
 	return retOk;
 }
 
-bool pwmChangeState(unsigned int chan, char *state) {
+bool pwmChangeState(unsigned int chan, std::string state) {
 	FILE *fd;
 	bool retOk = true;
 	char buf[(FILENAMELENGTH-1)];
@@ -1456,7 +1456,7 @@ bool pwmChangeState(unsigned int chan, char *state) {
 			retOk = false;
 		}
 		else {
-			fprintf(fd, "%s",state);
+			fprintf(fd, "%s", state.c_str());
 			fclose(fd);
 		}
 	}

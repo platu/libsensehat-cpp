@@ -6,17 +6,15 @@
  * sensor.
  *
  * Function prototypes:
- * 
+ *
  * void senseSetIMUConfig(bool,          bool,           bool);
  *         compass_enabled-^ gyro_enabled-^ accel_enabled-^
  *
- * bool senseGetOrientationRadians(double *, double *, double *);
- *                             roll-^    pitch-^     yaw-^
+ * bool senseGetOrientationRadians(double &pitch, double &roll, double &yaw);
  *
- * bool senseGetOrientationDegrees(double *, double *, double *);
- *                             roll-^    pitch-^     yaw-^
+ * bool senseGetOrientationDegrees(double &pitch, double &roll, double &yaw);
  *
- * The program simply calls the two functions
+ * The program simply calls one of the two functions
  */
 
 #include <iostream>
@@ -64,13 +62,13 @@ int main() {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
- 
+
 		for (time = 0; time < 60; time++) {
 			// wait for 500ms
 			sleep_for(milliseconds(500));
 			cout << "Accelerometer in G." << endl;
-			if (senseGetAccelG(&x, &y, &z)) {
-				cout << fixed << setprecision(6) 
+			if (senseGetAccelG(x, y, z)) {
+				cout << fixed << setprecision(6)
 					<< "x = " << x
 					<< " y = " << y
 					<< " z = " << z << endl;

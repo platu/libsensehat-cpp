@@ -5,7 +5,7 @@
  * This example program illustrates the senseGetJoystickEvent() function.
  *
  * Function prototypes:
- * 
+ *
  * senseSetJoystickWaitTime(long int, long int);
  *           duration in sec -^         ^- duration int milliseconds
  *
@@ -22,7 +22,7 @@
  * state are printed on terminal screen. If nothing happens on the joystick,
  * then a message is sent to the terminal screen evrey second.
  * In this example porgram, the time base is set to 20ms.
- * 
+ *
  * Time counter is intitialized with 60 x (5 x 20ms) = 3000
  * One second corresponds to 50 time counter increments.
  */
@@ -73,7 +73,7 @@ int main() {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
- 
+
 		event_count = 0;
 		cout << "Waiting for 60 seconds" << endl;
 		for(time = 1; time <= 3000; time++) {
@@ -82,7 +82,7 @@ int main() {
 			senseSetJoystickWaitTime(0, 20);
 
 			// non blocking function call
-			clicked = senseGetJoystickEvent(&joystick);
+			clicked = senseGetJoystickEvent(joystick);
 			if (clicked) {
 				do {
 					event_count++;
@@ -104,7 +104,7 @@ int main() {
 						case KEY_HELD:		cout << "\theld"; break;
 					}
 					cout << endl;
-					clicked = senseGetJoystickEvent(&joystick);
+					clicked = senseGetJoystickEvent(joystick);
 				} while (clicked);
 				sleep_until(system_clock::now() + milliseconds(20));
 			}

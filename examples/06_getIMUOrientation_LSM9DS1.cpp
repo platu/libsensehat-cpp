@@ -6,15 +6,12 @@
  * sensor.
  *
  * Function prototypes:
- * 
- * void senseSetIMUConfig(bool,          bool,           bool);
- *         compass_enabled-^ gyro_enabled-^ accel_enabled-^
  *
- * bool senseGetOrientationRadians(double *, double *, double *);
- *                             roll-^    pitch-^     yaw-^
+ * void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabled);
  *
- * bool senseGetOrientationDegrees(double *, double *, double *);
- *                             roll-^    pitch-^     yaw-^
+ * bool senseGetOrientationRadians(double &pitch, double &roll, double &yaw);
+ *
+ * bool senseGetOrientationDegrees(double &pitch, double &roll, double &yaw);
  *
  * The program simply calls the senseGetOrientationDegrees() function and print
  * the roll, picth and yaw measures.
@@ -65,15 +62,15 @@ int main() {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
- 
+
 		senseSetIMUConfig(true, true, true);
 
 		for (time = 0; time < 30; time++) {
 			sleep_for(milliseconds(500));
 
 			cout << "Orientation in degrees:\t";
-			if (senseGetOrientationDegrees(&x, &y, &z)) {
-				cout << fixed << setprecision(6) 
+			if (senseGetOrientationDegrees(x, y, z)) {
+				cout << fixed << setprecision(6)
 					<< "Roll=\t" << x
 					<< " Pitch=\t" << y
 					<< " Yaw=\t" << z << endl;

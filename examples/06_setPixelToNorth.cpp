@@ -7,8 +7,7 @@
  *
  * Function prototypes:
  *
- * void senseSetIMUConfig(bool,          bool,           bool);
- *         compass_enabled-^ gyro_enabled-^ accel_enabled-^
+ * void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabled);
  *
  * double senseGetCompass()
  *   ^- angle in degrees [0..360]

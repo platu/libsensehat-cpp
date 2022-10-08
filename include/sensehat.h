@@ -232,7 +232,7 @@ void senseShowMessage(std::string msg);
 /// \param[out] t_C temperature in °C
 /// \param[out] h_R relative humidity in %
 /// \return bool false if somnething went wrong
-bool senseGetTempHumid(double *t_C, double *h_R);
+bool senseGetTempHumid(double &t_C, double &h_R);
 
 /// \brief Get relative humidity measure in % from the HTS221 sensor
 /// \return relative humidity in %
@@ -250,7 +250,7 @@ double senseGetTemperatureFromHumidity();
 /// \param[out] t_C temperature in °C
 /// \param[out] p_hPa pressure in hPa
 /// \return bool false if somnething went wrong
-bool senseGetTempPressure(double *t_C, double *p_hPa);
+bool senseGetTempPressure(double &t_C, double &p_hPa);
 
 /// \brief Get pressure measure in hPa from the LPS25H sensor
 /// \return pressure in hPa
@@ -275,14 +275,14 @@ void senseSetIMUConfig(bool magn, bool gyro, bool accel);
 /// \param[out] roll value in radians
 /// \param[out] yaw value in radians
 /// \return bool false if somnething went wrong
-bool senseGetOrientationRadians(double *pitch, double *roll, double *yaw);
+bool senseGetOrientationRadians(double &pitch, double &roll, double &yaw);
 
 /// \brief Get IMU orientation in degrees from the magnetometer
 /// \param[out] pitch value in degrees
 /// \param[out] roll value in degrees
 /// \param[out] yaw value in degrees
 /// \return bool false if somnething went wrong
-bool senseGetOrientationDegrees(double *pitch, double *roll, double *yaw);
+bool senseGetOrientationDegrees(double &pitch, double &roll, double &yaw);
 
 /// \brief Get the direction of north in degrees from the magnetometer
 /// \details Calls senseSetIMUConfig to disable gyrometer and accelerometer
@@ -294,28 +294,28 @@ double senseGetCompass();
 /// \param[out] roll value in radians/s
 /// \param[out] yaw value in radians/s
 /// \return bool false if somnething went wrong
-bool senseGetGyroRadians(double *pitch, double *roll, double *yaw);
+bool senseGetGyroRadians(double &pitch, double &roll, double &yaw);
 
 /// \brief Get gyrometer measurements along the 3 axis in degrees/s
 /// \param[out] pitch value in degrees/s
 /// \param[out] roll value in degrees/s
 /// \param[out] yaw value in degrees/s
 /// \return bool false if somnething went wrong
-bool senseGetGyroDegrees(double *picth, double *roll, double *yaw);
+bool senseGetGyroDegrees(double &picth, double &roll, double &yaw);
 
 /// \brief Get accelerometer measurements along the 3 axis in g
 /// \param[out] x value in g
 /// \param[out] y value in g
 /// \param[out] z value in g
 /// \return bool false if somnething went wrong
-bool senseGetAccelG(double *x, double *y, double *z);
+bool senseGetAccelG(double &x, double &y, double &z);
 
 /// \brief Get accelerometer measurements along the 3 axis in meter per second squared
 /// \param[out] x value in mpss
 /// \param[out] y value in mpss
 /// \param[out] z value in mpss
 /// \return bool false if somnething went wrong
-bool senseGetAccelMPSS(double *x, double *y, double *z);
+bool senseGetAccelMPSS(double &x, double &y, double &z);
 
 // ----------------------
 // Joystick
@@ -334,7 +334,7 @@ void senseSetJoystickWaitTime(long int sec, long int msec);
 /// \brief Get joystick event if any
 /// \param[out] ev stick_t structure containing timestamp, action and state of the joystick button
 /// \return bool true if something happened
-bool senseGetJoystickEvent(stick_t *ev);
+bool senseGetJoystickEvent(stick_t &ev);
 
 /// \brief Wait for any joystick ENTER event
 /// \details This is a blocking function
@@ -387,7 +387,7 @@ bool pwmDutyCycle(unsigned int chan, unsigned int percent);
 /// \param[in] channel number 0 or 1
 /// \param[in] state "0" or "1"
 /// \return boolean true if setup is accepted.
-bool pwmChangeState(unsigned int chan, char *state);
+bool pwmChangeState(unsigned int chan, std::string state);
 
 /// \brief Enable PWM channel
 /// \param[in] channel number 0 or 1
