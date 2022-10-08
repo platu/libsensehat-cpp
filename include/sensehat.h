@@ -212,17 +212,17 @@ void senseShowLetter(char c);
 /// \param[in] msg line to print
 /// \param[in] fg foreground color encoded in RGB565 format
 /// \param[in] bg background color encoded in RGB565 format
-void senseShowRGB565ColoredMessage(char *msg, rgb565_pixel_t fg, rgb565_pixel_t bg);
+void senseShowRGB565ColoredMessage(std::string msg, rgb565_pixel_t fg, rgb565_pixel_t bg);
 
 /// \brief Print a scrolling text line with foreground and background color
 /// \param[in] msg line to print
 /// \param[in] fg foreground color of rgb_pixel_t type - array of 3 bytes
 /// \param[in] bg background color of rgb_pixel_t type - array of 3 bytes
-void senseShowRGBColoredMessage(char *msg, rgb_pixel_t fg, rgb_pixel_t bg);
+void senseShowRGBColoredMessage(std::string msg, rgb_pixel_t fg, rgb_pixel_t bg);
 
 /// \brief Print a scrolling text line with white foreground color on black background color
 /// \param[in] msg line to print
-void senseShowMessage(char *msg);
+void senseShowMessage(std::string msg);
 
 // ----------------------
 // HTS221 Humidity sensor

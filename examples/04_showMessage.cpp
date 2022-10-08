@@ -74,7 +74,6 @@ int main() {
 
 	const rgb_pixel_t c_set[10] = {black, white, red, orange, yellow, green, cyan, blue, purple, pink};
 	string msg;
-	char *scroll;
 	unsigned int fg, bg;
 
 	if(senseInit()) {
@@ -105,11 +104,7 @@ int main() {
 					<< "Choose 2 colors: ";
 				cin >> fg >> bg;
 				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				// msg string to scroll char *
-				scroll = strdup(msg.c_str());
-				// start scrolling on pixel array
-				senseShowRGBColoredMessage(scroll, c_set[fg-1], c_set[bg-1]);
-				free(scroll);
+				senseShowRGBColoredMessage(msg, c_set[fg-1], c_set[bg-1]);
 			}
 		} while (msg != "q");
 		cout << endl << "Waiting for keypress." << endl;

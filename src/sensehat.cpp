@@ -738,9 +738,9 @@ bool _isSpace(rgb_pixels_t key, rgb_pixel_t bg) {
 
 // Scrolls a string of characters from left to right
 // Foreground and background colors are defined in two rgb_pixel_t arrays
-void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
+void senseShowRGBColoredMessage(std::string msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 	const unsigned int speed = 100;
-	unsigned int i, j, msgPos, msgLen, signWidth, width;
+	unsigned int i, j, msgPos, signWidth, width;
 	bool emptyCol;
 
 	rgb_pixels_t scroll, sign;
@@ -751,8 +751,7 @@ void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 			sign.array[i][j] = bg;
 		}
 
-	msgLen = strlen(msg);
-	for (msgPos = 0; msgPos < msgLen; msgPos++) {
+	for (msgPos = 0; msgPos < msg.length(); msgPos++) {
 		// New character sign
 		sign = _fillCharPixels(msg[msgPos], fg, sign);
 
@@ -805,14 +804,14 @@ void senseShowRGBColoredMessage(char * msg, rgb_pixel_t fg, rgb_pixel_t bg) {
 
 // Scrolls a string of characters from left to right
 // Foreground and background colors are encoded in RGB565 format
-void senseShowRGB565ColoredMessage(char * msg, rgb565_pixel_t fg, rgb565_pixel_t bg) {
+void senseShowRGB565ColoredMessage(std::string msg, rgb565_pixel_t fg, rgb565_pixel_t bg) {
 
 	senseShowRGBColoredMessage(msg, senseUnPackPixel(fg), senseUnPackPixel(bg));
 }
 
 // Scrolls a string of characters from left to right
 // White foreground on black background
-void senseShowMessage(char * msg) {
+void senseShowMessage(std::string msg) {
 	const rgb_pixel_t white = { .color = {255, 255, 255} };
 	const rgb_pixel_t black = { .color = {0, 0, 0} };
 
