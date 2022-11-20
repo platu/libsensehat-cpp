@@ -34,7 +34,7 @@ int main() {
 
 	// Fin variables
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
+
 	if(senseInit()) {
 		cout << "Sense Hat initialization Ok." << endl;
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

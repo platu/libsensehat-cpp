@@ -37,13 +37,13 @@ int main() {
 
 	int count;
 	// End of variables declarations
-	
+
 	if(senseInit()) {
 		cout << "Sense Hat initialization Ok." << endl;
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Insert your code below !
 
-		count = 0; 
+		count = 0;
 
 		do {
 			senseSetRGBpixels(question_mark_RedOnWhite);
