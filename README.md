@@ -34,12 +34,13 @@ Open a terminal on your Raspberry Pi.
 The result of the `id` command below shows the user account belongs to the
 required system groups.
  ```bash
- $ id | egrep -o '(input|i2c|gpio|spi|sudo)'
+ $ id | egrep -o '(input|i2c|gpio|spi|sudo|video)'
  sudo
  input
  gpio
  i2c
  spi
+ video
  ```
 
   Check that the sense-hat packages are already there.
