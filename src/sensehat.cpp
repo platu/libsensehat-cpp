@@ -122,7 +122,7 @@ int _getJsEvDevNumber() {
 	}
 	return num;
 }
-//
+
 // Internal. Parse framebuffer devices file and extract RPi-Sense FB number.
 // Returns FB file number as int.
 // Returns -1 if RPi-Sense FB is not found.
