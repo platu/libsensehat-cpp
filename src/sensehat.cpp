@@ -23,7 +23,7 @@ static int ledFile = -1;
 static bool lowLight_switch = false;
 static bool lowLight_state = false;
 static uint16_t *pixelMap;
-#define LEDBUFFER (SENSE_PIXELS * sizeof(uint16_t))
+static size_t screensize = 0;
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
@@ -161,7 +161,7 @@ int _getFBnum()
 // Turn off all LEDs
 void senseClear()
 {
-	memset(pixelMap, 0, LEDBUFFER);
+	memset(pixelMap, 0, screensize);
 }
 
 // Sense Hat Initialization
@@ -173,9 +173,10 @@ bool senseInit()
 {
 
 	struct fb_fix_screeninfo fix_info;
-	// Return code set to true by default.
+	struct fb_var_screeninfo vinfo;
+	// Initialisation boolean set to true by default.
 	// Set to false if any initialization step goes wrong.
-	bool retOk = true;
+	bool initOk = true;
 	// Dictionnary file
 	int txtFile = -1;
 	// PNG parameters
@@ -196,6 +197,7 @@ bool senseInit()
 	// LED matrix
 	if ((fb_num = _getFBnum()) >= 0)
 	{
+		// Open LED matrix file descriptor
 		sprintf(fb_num_str, "%d", fb_num);
 		strcat(framebufferFilename, fb_num_str);
 		ledFile = open(framebufferFilename, O_RDWR);
@@ -203,98 +205,130 @@ bool senseInit()
 		{
 			printf("Failed to open LED frame buffer file handle.\n%s\n",
 				   strerror(errno));
-			retOk = false;
+			initOk = false;
 		}
-		else if (ioctl(ledFile, FBIOGET_FSCREENINFO, &fix_info) < 0)
+
+		// Get framebuffer device identity
+		if (initOk && ioctl(ledFile, FBIOGET_FSCREENINFO, &fix_info) < 0)
 		{
 			printf("Unable to set LED frame buffer operation.\n%s\n",
 				   strerror(errno));
-			retOk = false;
+			initOk = false;
 		}
+
 		// Check the correct device has been found
-		else if (strcmp(fix_info.id, "RPi-Sense FB") != 0)
+		if (initOk && strcmp(fix_info.id, "RPi-Sense FB") != 0)
 		{
 			puts("RPi-Sense FB not found");
-			retOk = false;
+			initOk = false;
 		}
-		// Map the led frame buffer device into memory
-		pixelMap = (uint16_t *)mmap(NULL, LEDBUFFER, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
-		if (pixelMap == MAP_FAILED)
+
+		// Get screen ie LED matrix information
+		if (initOk && ioctl(ledFile, FBIOGET_VSCREENINFO, &vinfo) == -1)
 		{
-			printf("Unable to map the LED matrix into memory.\n%s\n",
+			printf("Unable to get screen information.\n%s\n",
 				   strerror(errno));
-			retOk = false;
+			initOk = false;
+		}
+
+		// Print LED matrix screen size
+		if (initOk)
+		{
+			printf("%dx%d, %dbpp\n", vinfo.xres_virtual, vinfo.yres_virtual, vinfo.bits_per_pixel);
+
+			// Figure out the size of the screen in bytes
+			screensize = vinfo.xres_virtual * vinfo.yres_virtual * vinfo.bits_per_pixel / 8;
+
+			// Map the led frame buffer device into memory
+			pixelMap = (uint16_t *)mmap(NULL, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
+			if (pixelMap == MAP_FAILED)
+			{
+				printf("Unable to map the LED matrix into memory.\n%s\n",
+					   strerror(errno));
+				initOk = false;
+			}
+		}
+
+		if (!initOk)
+			close(ledFile);
+	}
+
+	// Build LED matrix character set
+	if (initOk)
+	{
+		// Image text dictionnary
+		txtFile = open(TXT_DICT_FILENAME, O_RDONLY);
+		if (txtFile < 0)
+		{
+			printf("Failed to open image text dictionnary.\n%s\n", strerror(errno));
+			initOk = false;
+		}
+		else
+		{
+			txtDictLen = (size_t)read(txtFile, txtDict, NBCHARS);
+			close(txtFile);
+		}
+
+		// PNG image file
+		pngFile = fopen(TXT_PNG_FILENAME, "rb");
+		if (!pngFile)
+		{
+			printf("Failed to open PNG image file.\n%s\n", strerror(errno));
+			initOk = false;
+		}
+		else if (!(png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)))
+		{
+			printf("Cannot create PNG read structure.\n%s\n", strerror(errno));
+			initOk = false;
+		}
+		else if (!(png_info_ptr = png_create_info_struct(png_ptr)))
+		{
+			printf("Cannot create PNG info structure.\n%s\n", strerror(errno));
+			initOk = false;
+		}
+		else
+		{
+			png_init_io(png_ptr, pngFile);
+			png_read_png(png_ptr, png_info_ptr, 0, 0);
+			png_get_IHDR(png_ptr, png_info_ptr, &png_width, &png_height, &png_bit_depth,
+						 &png_color_type, &png_interlace_method, &png_compression_method,
+						 &png_filter_method);
+			png_rows = png_get_rows(png_ptr, png_info_ptr);
+			fclose(pngFile);
 		}
 	}
 
-	// Image text dictionnary
-	txtFile = open((TXT_DICT_FILENAME), O_RDONLY);
-	if (txtFile < 0)
+	// IMU setup
+	if (initOk)
 	{
-		printf("Failed to open image text dictionnary.\n%s\n", strerror(errno));
-		retOk = false;
-	}
-	else
-	{
-		txtDictLen = (size_t)read(txtFile, txtDict, NBCHARS);
-		close(txtFile);
-	}
-
-	// PNG image file
-	pngFile = fopen((TXT_PNG_FILENAME), "rb");
-	if (!pngFile)
-	{
-		printf("Failed to open PNG image file.\n%s\n", strerror(errno));
-		retOk = false;
-	}
-	else if (!(png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)))
-	{
-		printf("Cannot create PNG read structure.\n%s\n", strerror(errno));
-		retOk = false;
-	}
-	else if (!(png_info_ptr = png_create_info_struct(png_ptr)))
-	{
-		printf("Cannot create PNG info structure.\n%s\n", strerror(errno));
-		retOk = false;
-	}
-	else
-	{
-		png_init_io(png_ptr, pngFile);
-		png_read_png(png_ptr, png_info_ptr, 0, 0);
-		png_get_IHDR(png_ptr, png_info_ptr, &png_width, &png_height, &png_bit_depth,
-					 &png_color_type, &png_interlace_method, &png_compression_method,
-					 &png_filter_method);
-		png_rows = png_get_rows(png_ptr, png_info_ptr);
-		fclose(pngFile);
-	}
-
-	if (retOk)
-	{
-		// IMU
 		std::cout << "IMU is opening" << std::endl;
 
 		if ((imu == NULL) || (imu->IMUType() == RTIMU_TYPE_NULL))
 		{
 			std::cout << "Error, couldn't open IMU" << std::endl;
-			retOk = false;
+			initOk = false;
 		}
+
 		// Initialise the imu object
-		imu->IMUInit();
+		if (initOk)
+		{
+			imu->IMUInit();
 
-		//  set up pressure sensor
-		if (pressure != NULL)
-			pressure->pressureInit();
+			//  set up pressure sensor
+			if (pressure != NULL)
+				pressure->pressureInit();
 
-		// Set the Fusion coefficient
-		imu->setSlerpPower(0.02);
-		// Enable the sensors
-		imu->setGyroEnable(true);
-		imu->setAccelEnable(true);
-		imu->setCompassEnable(true);
+			// Set the Fusion coefficient
+			imu->setSlerpPower(0.02);
+			// Enable the sensors
+			imu->setGyroEnable(true);
+			imu->setAccelEnable(true);
+			imu->setCompassEnable(true);
+		}
 	}
 
 	// Joystick file handler
-	if (retOk && (js_ev_num = _getJsEvDevNumber()) >= 0)
+	if (initOk && (js_ev_num = _getJsEvDevNumber()) >= 0)
 	{
 		sprintf(js_ev_num_str, "%d", js_ev_num);
 		strcat(joystickFilename, js_ev_num_str);
@@ -302,27 +336,27 @@ bool senseInit()
 		if (jsFile < 0)
 		{
 			printf("Failed to open joystick file handle.\n%s\n", strerror(errno));
-			retOk = false;
+			initOk = false;
 		}
 	}
 	else
-		retOk = false;
+		initOk = false;
 
 	// GPIO chip selection
-	if (retOk)
+	if (initOk)
 	{
 		gpio_chip = gpiod_chip_open_by_name("gpiochip0");
 		if (!gpio_chip)
 		{
 			printf("GPIO chip opening failure.\n%s\n", strerror(errno));
-			retOk = false;
+			initOk = false;
 		}
 	}
 
-	if (retOk)
+	if (initOk)
 		senseClear();
 
-	return retOk;
+	return initOk;
 }
 
 // Free Sense Hat file handles
@@ -330,6 +364,7 @@ void senseShutdown()
 {
 
 	senseClear();
+	munmap(pixelMap, screensize);
 	// Close led I2C file handle
 	if (ledFile != -1)
 	{
