@@ -12,7 +12,7 @@
  * Function prototype:
  *
  * void senseSetPixels(rgb_pixels_t );
- *             all pixels map -^           
+ *             all pixels map -^
  *
  * The program prints many many pixel maps with small color increments which
  * simulate ceiling ambient light system.
@@ -84,26 +84,26 @@ int main() {
 					red = rainbow.array[x][y].color[_R];
 					green = rainbow.array[x][y].color[_G];
 					blue = rainbow.array[x][y].color[_B];
-		
+
 					if ((red == 255) && (green < 255) && (blue == 0))
-						green += 1;
+						green++;
 					if ((green == 255) && (red > 0) && (blue == 0))
-						red -= 1;
+						red--;
 					if ((green == 255) && (blue < 255) && (red == 0))
-						blue += 1;
+						blue++;
 					if ((blue == 255) && (green > 0) && (red == 0))
-						green -= 1;
+						green--;
 					if ((blue == 255) && (red < 255) && (green == 0))
-						red += 1;
+						red++;
 					if ((red == 255) && (blue > 0) && (green == 0))
-						blue -= 1;
+						blue--;
 
 					rainbow.array[x][y].color[_R] = red;
 					rainbow.array[x][y].color[_G] = green;
 					rainbow.array[x][y].color[_B] = blue;
 				}
 			senseSetPixels(rainbow);
-			sleep_until(system_clock::now() + milliseconds(2));
+			sleep_until(system_clock::now() + milliseconds(1));
 			if (loop < 2000 && loop % 200 == 0) {
 				cout << setw(4) << loop << " loops left / ";
 				end = steady_clock::now();
