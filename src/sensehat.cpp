@@ -198,7 +198,7 @@ bool senseInit()
 	if ((fb_num = _getFBnum()) >= 0)
 	{
 		// Open LED matrix file descriptor
-		sprintf(fb_num_str, "%d", fb_num);
+		sprintf(fb_num_str, "%hd", fb_num);
 		strcat(framebufferFilename, fb_num_str);
 		ledFile = open(framebufferFilename, O_RDWR);
 		if (ledFile < 0)
@@ -1764,7 +1764,7 @@ void colorDetectShutdown()
 	if (tcs34725File != -1)
 	{
 		uint8_t reg = i2c_smbus_read_byte_data(tcs34725File, TCS34725_ENABLE);
-		i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, reg & ~(TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN));
+		i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE, (__u8)(reg & ~(TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN)));
 		close(tcs34725File);
 		tcs34725File = -1;
 	}
