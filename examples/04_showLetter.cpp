@@ -4,7 +4,7 @@
  *
  * This example program illustrates the senseShowRGBColoredLetter() function
  * that prints a character on the LED matrix.
- * 
+ *
  * When the function senseShowLetter() is called with no color specified,
  * the character is printed with white foreground and black background.
  *

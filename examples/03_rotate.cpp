@@ -10,7 +10,7 @@
  * Function prototype:
  *
  * rgb_pixels_t senseRotation(unsigned int);
- *                     rotation angle -^           
+ *                     rotation angle -^
  *
  * This program prints a red question mark on a white background then the user
  * is asked to give the rotation angle. The program ends with angle value 0.

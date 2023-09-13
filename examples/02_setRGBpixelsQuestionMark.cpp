@@ -12,7 +12,7 @@
  * Function prototype:
  *
  * void senseSetRGBpixels(rgb_pixels_t );
- *             all pixels map -^           
+ *             all pixels map -^
  *
  * The program prints a red question mark on a white background.
  */

@@ -64,10 +64,10 @@ int main() {
 		for(count = 0; count < 16; count++) {
 
 			rgb = senseUnPackPixel(clr);
-			cout << count 
-					<< " R: " << (unsigned)rgb.color[_R] 
-					<< " G: " << (unsigned)rgb.color[_G] 
-					<< " B: " << (unsigned)rgb.color[_B] << endl;
+			cout << count
+				<< " R: " << (unsigned)rgb.color[_R]
+				<< " G: " << (unsigned)rgb.color[_G]
+				<< " B: " << (unsigned)rgb.color[_B] << endl;
 			senseRGBClear(rgb.color[_R], rgb.color[_G], rgb.color[_B]);
 
 			clr >>= 1;

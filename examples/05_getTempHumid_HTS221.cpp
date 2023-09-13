@@ -7,7 +7,7 @@
  * humidity measurement.
  *
  * Function prototypes:
- * 
+ *
  * double senseGetTemperatureFromHumidity();
  *   ^- temperature
  *

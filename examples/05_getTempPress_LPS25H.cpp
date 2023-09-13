@@ -7,7 +7,7 @@
  * measurement in hecto Pascal.
  *
  * Function prototypes:
- * 
+ *
  * double senseGetTemperatureFromPressure();
  *   ^- temperature
  *
@@ -57,7 +57,7 @@ int main() {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
- 
+
 		Temp = senseGetTemperatureFromPressure();
 		cout << fixed << setprecision(2) << "Temp (from humid) = " << Temp << "°C" << endl;
 

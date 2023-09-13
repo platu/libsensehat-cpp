@@ -162,6 +162,7 @@ int _getFBnum()
 void senseClear()
 {
 	memset(pixelMap, 0, screensize);
+	usleep(1000 * 10); // wait for 10ms
 }
 
 // Sense Hat Initialization
@@ -240,7 +241,7 @@ bool senseInit()
 			screensize = vinfo.xres_virtual * vinfo.yres_virtual * vinfo.bits_per_pixel / 8;
 
 			// Map the led frame buffer device into memory
-			pixelMap = (uint16_t *)mmap(NULL, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, 0);
+			pixelMap = (uint16_t *)mmap(NULL, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, ledFile, (off_t)0);
 			if (pixelMap == MAP_FAILED)
 			{
 				printf("Unable to map the LED matrix into memory.\n%s\n",

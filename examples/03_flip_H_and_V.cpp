@@ -12,7 +12,7 @@
  *
  * rgb_pixels_t senseFlip_h(bool);
  * rgb_pixels_t senseFlip_v(bool);
- *            redraw switch -^           
+ *            redraw switch -^
  *
  * This program prints a red question mark on a white background then the image
  * is flipped after keypress.

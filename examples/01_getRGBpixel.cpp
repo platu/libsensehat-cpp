@@ -72,7 +72,7 @@ int main() {
 			mask >>= 2;
 		}
 
-		// Next we ask the user to enter pixel row and column 
+		// Next we ask the user to enter pixel row and column
 		cout << "Enter the row and column numbers of the pixel to be read: ";
 		cin >> row >> col;
 		cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

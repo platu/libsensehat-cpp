@@ -4,7 +4,7 @@
  *
  * This example program illustrates the senseShowRGBcoloredMessage() function
  * that scrolls a character string on the LED matrix.
- * 
+ *
  * When the fucntion senseShowMessage() is called with no color specified,
  * the character string is printed with white foreground and black background.
  *
