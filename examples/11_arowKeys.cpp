@@ -85,16 +85,16 @@ arrowKey getArrowKey() {
 			case 'A':
 				code = UP;
 				break;
-			case 'B': 
+			case 'B':
 				code = DOWN;
 				break;
-			case 'C': 
+			case 'C':
 				code = RIGHT;
 				break;
-			case 'D': 
+			case 'D':
 				code = LEFT;
 				break;
-			default: 
+			default:
 				code = OTHER;
 		}
 	}
@@ -109,18 +109,18 @@ int main() {
 
 	if(senseInit()) {
 		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
+			<< "Sense Hat initialization Ok." << endl;
 
-    	// Console initialization
-    	clearConsole();
-    	gotoxy(1,2);
-    	cout << "Identify arrow keys" << endl;
+	    	// Console initialization
+	    	clearConsole();
+	    	gotoxy(1,2);
+	    	cout << "Identify arrow keys" << endl;
 
 		// Main task
 		do {
 			gotoxy(5,4);
 			cout << '.';
-	
+
 			// Detect if a key is pressed then get the arrow key code from the
 			// keyboard buffer
 			if (keypressed()) {
@@ -128,16 +128,16 @@ int main() {
 					case UP:
 						cout << "accelerate";
 						break;
-					case DOWN: 
+					case DOWN:
 						cout << "slow down";
 						break;
-					case RIGHT: 
+					case RIGHT:
 						cout << "turn right";
 						break;
-					case LEFT: 
+					case LEFT:
 						cout << "turn left";
 						break;
-					default: 
+					default:
 						cout << "unknown" << endl;
 						stop = true;
 						break;
@@ -146,12 +146,12 @@ int main() {
 			}
 
 			sleep_until(system_clock::now() + milliseconds(20));
-	
+
 		} while (!stop);
 
 		senseShutdown();
 		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
+			<< "Sense Hat shut down." << endl;
 	}
 
 	return EXIT_SUCCESS;
