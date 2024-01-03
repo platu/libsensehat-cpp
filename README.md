@@ -34,7 +34,9 @@ Open a terminal on your Raspberry Pi.
 The result of the `id` command below shows the user account belongs to the
 required system groups.
  ```bash
- $ id | egrep -o '(input|i2c|gpio|spi|sudo|video)'
+ id | egrep -o '(input|i2c|gpio|spi|sudo|video)'
+ ```
+ ```bash=
  sudo
  input
  gpio
@@ -45,38 +47,30 @@ required system groups.
 
   Check that the sense-hat packages are already there.
  ```bash
- $ apt search sense-hat | grep install
+ apt search sense-hat | grep install
+ ```
 
- python-sense-hat/testing,now 2.2.0-1 armhf  [installé]
- python3-sense-hat/testing,now 2.2.0-1 armhf  [installé]
- sense-hat/testing,now 1.2 all  [installé]
+ ```bash=
+ python3-sense-hat/stable,stable,now 2.6.0-1 all  [installé, automatique]
+ sense-hat/stable,stable,now 1.4 all  [installé]
  ```
 
 2. Install development library packages
 
  ```bash
- $ sudo apt install libi2c-dev libpng-dev libgpiod-dev
+ sudo apt install libi2c-dev libpng-dev libgpiod-dev
  ```
 
 3. Clone this repository
 
  ```bash
- $ git clone https://github.com/platu/libsensehat-cpp.git
+ git clone https://github.com/platu/libsensehat-cpp.git
  ```
 
 4. Build the library and compile the example programs
 
  ```bash
- $ cd libsensehat-cpp/
- pi@rpixx:~/libsensehat-cpp $ make
- g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -c -fPIC -o src/sensehat.o src/sensehat.cpp -lpng
- g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -g -shared -Wl,-soname,libsensehat-c++.so -o lib/libsensehat-c++.so.0 src/sensehat.o
- sudo cp lib/libsensehat-c++.so.0 /usr/local/lib/libsensehat-c++.so.0
- sudo sh -c "cd /usr/local/lib && ln -sf libsensehat-c++.so.0 libsensehat-c++.so"
- sudo ldconfig
- cd examples && make
- make[1] : on entre dans le répertoire « /home/etu/libsensehat-cpp/examples »
- g++ -Wall -Wextra -Werror -pedantic -std=gnu++2a -o 01_setRGBpixel.o 01_setRGBpixel.cpp -lsensehat-c++ -lpng -li2c -lm -lRTIMULib
+ cd libsensehat-cpp/ && make
  ```
 
  Depending on the number of example programs, compilation may take some time.
@@ -86,18 +80,23 @@ required system groups.
  directory that you can copy and adapt to your needs.
 
  ```bash
- pi@rpixx:~/libsensehat-cpp $ ./examples/01_setRGB565pixel
+ ./examples/01_setRGB565pixel
+ ```
+
+ ```bash=
  Settings file RTIMULib.ini loaded
  Using fusion algorithm RTQF
+ Sense Hat led matrix points to device /dev/fb0
+ 8x8, 16bpp
  IMU is opening
- min/max compass calibration not in use
- Ellipsoid compass calibration not in use
+ Using min/max compass calibration
+ Using ellipsoid compass calibration
  Accel calibration not in use
  LSM9DS1 init complete
- Joystick points to device event0
+ Joystick points to device event2
  -------------------------------
  Sense Hat initialization Ok.
-   [ f800 ]   [ fc00 ]   [ ffe0 ]   [ 7e0 ]   [ 7ff ]   [ 1f ]   [ f81f ]   [ fc10 ]
+   [ f800 ]   [ fc00 ]   [ ffe0 ]   [ 7e0 ]   [ 7ff ]   [ 1f ]   [ f81f ]   [ fc10 ] 
  Waiting for keypress.
  -------------------------------
  Sense Hat shut down.
@@ -120,6 +119,8 @@ designates the category of functions. Here is a list of these categories:
 * 07 Joystick events
 * 08 GPIO read input or write output on Raspberry Pi pins subset
 * 09 2 PWM channels 
+* 10 Color detection based on TCS34725 (work in progress ...)
+* 11 Console keyboard events routines
 
 ## Library addons
 
