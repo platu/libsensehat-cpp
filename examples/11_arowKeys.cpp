@@ -23,40 +23,52 @@ using namespace std::chrono; // system_clock, milliseconds
 int main() {
 
 	bool stop = false;
+	int key_count = 0;
+	char c;
 
 	if(senseInit()) {
-		cout << "-------------------------------" << endl
-			<< "Sense Hat initialization Ok." << endl;
+		std::cout << "-------------------------------" << std::endl
+			<< "Sense Hat initialization Ok." << std::endl;
 
-	    	// Console initialization
-	    	clearConsole();
-	    	gotoxy(1,2);
-	    	cout << "Identify arrow keys" << endl;
+		// Console initialization
+		clearConsole();
+		gotoxy(1,2);
+		std::cout << "Identify arrow keys" << std::endl;
 
 		// Main task
 		do {
 			gotoxy(5,4);
-			cout << '.';
+			std::cout << '>';
 
-			// Detect if a key is pressed then get the arrow key code from the
+			// Get the number of keys in the
 			// keyboard buffer
-			if (keypressed()) {
+			key_count = keypressed();
+
+			// Print the key ascii code if a single key is pressed
+			if (key_count == 1) {
+				c = std::cin.get();
+				std::cout << "key = [" << c << "]"; // Display the character
+				// Stop the program if 'q' is pressed
+				if (toupper(c) == 'Q') 
+					stop = true;
+			}
+			// Detect arrow keys if the key count is greater than 1
+			else if (key_count > 1) {
 				switch(getArrowKey()) {
 					case UP:
-						cout << "accelerate";
+						std::cout << "accelerate";
 						break;
 					case DOWN:
-						cout << "slow down";
+						std::cout << "slow down";
 						break;
 					case RIGHT:
-						cout << "turn right";
+						std::cout << "turn right";
 						break;
 					case LEFT:
-						cout << "turn left";
+						std::cout << "turn left";
 						break;
 					default:
-						cout << "unknown" << endl;
-						stop = true;
+						std::cout << "unknown" << endl;
 						break;
 				}
 				clearEOL();
@@ -65,9 +77,10 @@ int main() {
 			sleep_until(system_clock::now() + milliseconds(20));
 
 		} while (!stop);
+		std::cout << endl;
 
 		senseShutdown();
-		cout << "-------------------------------" << endl
+		std::cout << "-------------------------------" << endl
 			<< "Sense Hat shut down." << endl;
 	}
 

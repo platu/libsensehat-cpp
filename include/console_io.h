@@ -2,7 +2,7 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 
-/// \brief Arrow key code list
+//! \brief Arrow key code list
 enum arrowKey {UP, DOWN, LEFT, RIGHT, OTHER};
 
 /// \brief Clear the console screen and place the cursor at the top left
