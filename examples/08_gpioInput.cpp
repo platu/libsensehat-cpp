@@ -14,7 +14,7 @@
  * ^- read val   GPIO pin number -^
  *
  * The program counts 10 events from input pin number
- * Available GPIO pin numbers: 5, 6, 16, 17, 22, 26, 27 
+ * Available GPIO pin numbers: 5, 6, 16, 17, 22, 26, 27
  *
  * _GPIO_PIN_----_push_button_----_4.7k_resistor_----> 3.3V
  *
@@ -30,11 +30,10 @@
 #define NB_EV 10
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // system_clock, milliseconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;	   // system_clock, milliseconds
 
 int main(int argc, char **argv) {
-
 	int opt, prev, val;
 	char *eptr;
 	unsigned int count, pin = 5;
@@ -47,7 +46,7 @@ int main(int argc, char **argv) {
 			cerr << "Usage: " << argv[0] << " [-p] GPIO pin number." << endl;
 	}
 
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 

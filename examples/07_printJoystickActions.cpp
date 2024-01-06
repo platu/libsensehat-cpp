@@ -30,45 +30,46 @@
 using namespace std;
 
 int getch() {
-	int c=0;
+	int c = 0;
 
 	struct termios org_opts, new_opts;
-	int res=0;
+	int res = 0;
 
 	//----- store current settings -------------
-	res=tcgetattr(STDIN_FILENO, &org_opts);
-	assert(res==0);
+	res = tcgetattr(STDIN_FILENO, &org_opts);
+	assert(res == 0);
 	//----- set new terminal parameters --------
 	memcpy(&new_opts, &org_opts, sizeof(new_opts));
-	new_opts.c_lflag &= (tcflag_t)~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
+	new_opts.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
+									 ECHOPRT | ECHOKE | ICRNL);
 	tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
 	//------ wait for a single key -------------
-	c=getchar();
+	c = getchar();
 	//------ restore current settings- ---------
-	res=tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-	assert(res==0);
+	res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
+	assert(res == 0);
 
 	return c;
 }
 
 int main() {
+	const rgb_pixel_t red = {.color = {255, 0, 0}};
+	const rgb_pixel_t orange = {.color = {255, 128, 0}};
+	const rgb_pixel_t yellow = {.color = {255, 255, 0}};
+	const rgb_pixel_t green = {.color = {0, 255, 0}};
+	const rgb_pixel_t cyan = {.color = {0, 255, 255}};
+	const rgb_pixel_t blue = {.color = {0, 0, 255}};
+	const rgb_pixel_t purple = {.color = {255, 0, 255}};
+	const rgb_pixel_t pink = {.color = {255, 128, 128}};
 
-	const rgb_pixel_t red = { .color = {255, 0, 0} };
-	const rgb_pixel_t orange = { .color = {255, 128, 0} };
-	const rgb_pixel_t yellow = { .color = {255, 255, 0} };
-	const rgb_pixel_t green = { .color = {0, 255, 0} };
-	const rgb_pixel_t cyan = { .color = {0, 255, 255} };
-	const rgb_pixel_t blue = { .color = {0, 0, 255} };
-	const rgb_pixel_t purple = { .color = {255, 0, 255} };
-	const rgb_pixel_t pink = { .color = {255, 128, 128} };
-
-	const rgb_pixel_t rainbow[8] = {red, orange, yellow, green, cyan, blue, purple, pink};
+	const rgb_pixel_t rainbow[8] = {red,  orange, yellow, green,
+									cyan, blue,	  purple, pink};
 	rgb_pixel_t pix;
 	int row, col, index;
 	int event_count, click;
 	stick_t joystick;
 
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
@@ -78,7 +79,7 @@ int main() {
 		pix = rainbow[index];
 		senseSetPixel(row, col, pix.color[_R], pix.color[_G], pix.color[_B]);
 		click = 0;
- 
+
 		cout << "Waiting for 60 joystick events" << endl;
 		event_count = 0;
 		do {
@@ -93,43 +94,44 @@ int main() {
 				senseSetPixel(row, col, 0, 0, 0);
 
 				// Push to change color index
-				if (joystick.action == KEY_ENTER && joystick.state == KEY_RELEASED) {
+				if (joystick.action == KEY_ENTER &&
+					joystick.state == KEY_RELEASED) {
 					index++;
-					if (index == SENSE_LED_WIDTH)
-						index = 0;
+					if (index == SENSE_LED_WIDTH) index = 0;
 					pix = rainbow[index];
 				}
 
 				// Activate the pixel above
-				if (joystick.action == KEY_UP && joystick.state == KEY_RELEASED) {
+				if (joystick.action == KEY_UP &&
+					joystick.state == KEY_RELEASED) {
 					row--;
-					if (row == 0)
-						row = 7;
+					if (row == 0) row = 7;
 				}
 
 				// Activate the pixel below
-				if (joystick.action == KEY_DOWN && joystick.state == KEY_RELEASED) {
+				if (joystick.action == KEY_DOWN &&
+					joystick.state == KEY_RELEASED) {
 					row++;
-					if (row == SENSE_LED_WIDTH)
-						row = 0;
+					if (row == SENSE_LED_WIDTH) row = 0;
 				}
 
 				// Activate the pixel on the left
-				if (joystick.action == KEY_LEFT && joystick.state == KEY_RELEASED) {
+				if (joystick.action == KEY_LEFT &&
+					joystick.state == KEY_RELEASED) {
 					col--;
-					if (col == 0)
-						col = 7;
+					if (col == 0) col = 7;
 				}
 
 				// Activate the pixel on the right
-				if (joystick.action == KEY_RIGHT && joystick.state == KEY_RELEASED) {
+				if (joystick.action == KEY_RIGHT &&
+					joystick.state == KEY_RELEASED) {
 					col++;
-					if (col == SENSE_LED_WIDTH)
-						col = 0;
+					if (col == SENSE_LED_WIDTH) col = 0;
 				}
 
 				// Turn on new pixel
-				senseSetPixel(row, col, pix.color[_R], pix.color[_G], pix.color[_B]);
+				senseSetPixel(row, col, pix.color[_R], pix.color[_G],
+							  pix.color[_B]);
 			}
 
 		} while (event_count < 60);

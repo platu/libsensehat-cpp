@@ -38,45 +38,46 @@
 using namespace std;
 
 int getch() {
-	int c=0;
+	int c = 0;
 
 	struct termios org_opts, new_opts;
-	int res=0;
+	int res = 0;
 
 	//----- store current settings -------------
-	res=tcgetattr(STDIN_FILENO, &org_opts);
-	assert(res==0);
+	res = tcgetattr(STDIN_FILENO, &org_opts);
+	assert(res == 0);
 	//----- set new terminal parameters --------
 	memcpy(&new_opts, &org_opts, sizeof(new_opts));
-	new_opts.c_lflag &= (tcflag_t)~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
+	new_opts.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
+									 ECHOPRT | ECHOKE | ICRNL);
 	tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
 	//------ wait for a single key -------------
-	c=getchar();
+	c = getchar();
 	//------ restore current settings- ---------
-	res=tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-	assert(res==0);
+	res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
+	assert(res == 0);
 
 	return c;
 }
 
 int main() {
+	const rgb_pixel_t black = {.color = {0, 0, 0}};
+	const rgb_pixel_t white = {.color = {255, 255, 255}};
+	const rgb_pixel_t red = {.color = {255, 0, 0}};
+	const rgb_pixel_t orange = {.color = {255, 128, 0}};
+	const rgb_pixel_t yellow = {.color = {255, 255, 0}};
+	const rgb_pixel_t green = {.color = {0, 255, 0}};
+	const rgb_pixel_t cyan = {.color = {0, 255, 255}};
+	const rgb_pixel_t blue = {.color = {0, 0, 255}};
+	const rgb_pixel_t purple = {.color = {255, 0, 255}};
+	const rgb_pixel_t pink = {.color = {255, 128, 128}};
 
-	const rgb_pixel_t black = { .color = {0, 0, 0} };
-	const rgb_pixel_t white = { .color = {255, 255, 255} };
-	const rgb_pixel_t red = { .color = {255, 0, 0} };
-	const rgb_pixel_t orange = { .color = {255, 128, 0} };
-	const rgb_pixel_t yellow = { .color = {255, 255, 0} };
-	const rgb_pixel_t green = { .color = {0, 255, 0} };
-	const rgb_pixel_t cyan = { .color = {0, 255, 255} };
-	const rgb_pixel_t blue = { .color = {0, 0, 255} };
-	const rgb_pixel_t purple = { .color = {255, 0, 255} };
-	const rgb_pixel_t pink = { .color = {255, 128, 128} };
-
-	const rgb_pixel_t c_set[10] = {black, white, red, orange, yellow, green, cyan, blue, purple, pink};
+	const rgb_pixel_t c_set[10] = {black, white, red,  orange, yellow,
+								   green, cyan,	 blue, purple, pink};
 	string msg;
 	unsigned int fg, bg;
 
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
@@ -88,23 +89,25 @@ int main() {
 			cout << "First, enter the message to scroll: ";
 			getline(cin, msg);
 			if (msg != "q") {
-				cout << "Second, choose the foreground and background colors" << endl
-					<< "according to the following list:" << endl
-					<< "1:\tblack" << endl
-					<< "2:\twhite" << endl
-					<< "3:\tred" <<endl
-					<< "4:\torange" << endl
-					<< "5:\tyellow" << endl
-					<< "6:\tgreen" <<endl
-					<< "7:\tcyan" << endl
-					<< "8:\tblue" << endl
-					<< "9:\tpurple" << endl
-					<< "10:\tpink" << endl
-					<< "For instance: 2 1 print the characters white on black." << endl
-					<< "Choose 2 colors: ";
+				cout << "Second, choose the foreground and background colors"
+					 << endl
+					 << "according to the following list:" << endl
+					 << "1:\tblack" << endl
+					 << "2:\twhite" << endl
+					 << "3:\tred" << endl
+					 << "4:\torange" << endl
+					 << "5:\tyellow" << endl
+					 << "6:\tgreen" << endl
+					 << "7:\tcyan" << endl
+					 << "8:\tblue" << endl
+					 << "9:\tpurple" << endl
+					 << "10:\tpink" << endl
+					 << "For instance: 2 1 print the characters white on black."
+					 << endl
+					 << "Choose 2 colors: ";
 				cin >> fg >> bg;
 				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				senseShowRGBColoredMessage(msg, c_set[fg-1], c_set[bg-1]);
+				senseShowRGBColoredMessage(msg, c_set[fg - 1], c_set[bg - 1]);
 			}
 		} while (msg != "q");
 		cout << endl << "Waiting for keypress." << endl;

@@ -10,30 +10,29 @@
  * console.
  */
 
-#include <iostream>
-#include <thread> // sleep_for, sleep_until
-
-#include <sensehat.h>
 #include <console_io.h>
+#include <sensehat.h>
+
+#include <iostream>
+#include <thread>  // sleep_for, sleep_until
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // system_clock, milliseconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;	   // system_clock, milliseconds
 
 // Main program
 int main() {
-
 	bool stop;
 	int key_count;
 	char c;
 
-	if(senseInit()) {
+	if (senseInit()) {
 		std::cout << "-------------------------------" << endl
-			<< "Sense Hat initialization Ok." << endl;
+				  << "Sense Hat initialization Ok." << endl;
 
-		clearConsole(); // Clear the console
+		clearConsole();	 // Clear the console
 		std::cout << "Keyboard key event detection" << endl
-			<< "Hit 'q' to quit." << endl;
+				  << "Hit 'q' to quit." << endl;
 
 		//---------------------------------------------------------------------
 		// Initializations
@@ -43,7 +42,7 @@ int main() {
 		//---------------------------------------------------------------------
 		// Main task
 		do {
-			gotoxy(5,4); // Move cursor to column 5, raw 4
+			gotoxy(5, 4);  // Move cursor to column 5, raw 4
 			std::cout << '>';
 
 			// Get the number of keys in the keyboard buffer
@@ -54,11 +53,10 @@ int main() {
 			// Print the key ascii code if a single key is pressed
 			if (key_count == 1) {
 				c = std::cin.get();
-				std::cout << "key = [" << c << "]"; // Display the character
-                clearEOL();
+				std::cout << "key = [" << c << "]";	 // Display the character
+				clearEOL();
 				// Stop the program if 'q' is pressed
-				if (toupper(c) == 'Q') 
-					stop = true;
+				if (toupper(c) == 'Q') stop = true;
 			}
 
 			// ---------------------------------------------------------------
@@ -70,7 +68,7 @@ int main() {
 
 		senseShutdown();
 		std::cout << "-------------------------------" << endl
-			<< "Sense Hat shut down." << endl;
+				  << "Sense Hat shut down." << endl;
 	}
 
 	return EXIT_SUCCESS;

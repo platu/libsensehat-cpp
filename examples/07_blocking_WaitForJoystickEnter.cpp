@@ -5,7 +5,7 @@
  * This example program illustrates the senseWaitForJoystick() function.
  *
  * Function prototype:
- * 
+ *
  * bool senseWaitForJoystickEnter()
  *  ^- true if joystick button is pressed
  *
@@ -22,16 +22,13 @@
 
 using namespace std;
 
-
 int main() {
-
-
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 
 		senseRGBClear(0, 204, 128);
- 
+
 		senseWaitForJoystickEnter();
 
 		senseShutdown();

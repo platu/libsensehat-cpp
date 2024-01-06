@@ -17,47 +17,47 @@
  * value of this pixel.
  */
 
-#include <iostream>
-#include <iomanip>
-#include <limits>
-
-#include <termios.h>
 #include <assert.h>
+#include <termios.h>
+
+#include <iomanip>
+#include <iostream>
+#include <limits>
 
 #include <sensehat.h>
 
 using namespace std;
 
 int getch() {
-	int c=0;
+	int c = 0;
 
 	struct termios org_opts, new_opts;
-	int res=0;
+	int res = 0;
 
 	//----- store current settings -------------
-	res=tcgetattr(STDIN_FILENO, &org_opts);
-	assert(res==0);
+	res = tcgetattr(STDIN_FILENO, &org_opts);
+	assert(res == 0);
 	//----- set new terminal parameters --------
 	memcpy(&new_opts, &org_opts, sizeof(new_opts));
-	new_opts.c_lflag &= (tcflag_t)~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
+	new_opts.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
+									 ECHOPRT | ECHOKE | ICRNL);
 	tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
 	//------ wait for a single key -------------
-	c=getchar();
+	c = getchar();
 	//------ restore current settings- ---------
-	res=tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-	assert(res==0);
+	res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
+	assert(res == 0);
 
 	return c;
 }
 
 int main() {
-
 	rgb565_pixel_t color, mask = 0xf800;
 	rgb_pixel_t readpx;
 	int x, y;
 	int row, col;
 
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
@@ -80,16 +80,15 @@ int main() {
 		// Finally, we read the pixel in RGB565 format
 		readpx = senseGetRGBpixel(row, col);
 		cout << "Here is the color encoded in RGB format." << endl
-			<< "Hexadecimal:\t" << hex << setw(3)
-			<< (uint16_t)readpx.color[_R] << ", "
-			<< (uint16_t)readpx.color[_G] << ", "
-			<< (uint16_t)readpx.color[_B] << endl
-			<< "Decimal:\t" << dec << setw(3)
-			<< (uint16_t)readpx.color[_R] << ", "
-			<< (uint16_t)readpx.color[_G] << ", "
-			<< (uint16_t)readpx.color[_B] << endl;
+			 << "Hexadecimal:\t" << hex << setw(3) << (uint16_t)readpx.color[_R]
+			 << ", " << (uint16_t)readpx.color[_G] << ", "
+			 << (uint16_t)readpx.color[_B] << endl
+			 << "Decimal:\t" << dec << setw(3) << (uint16_t)readpx.color[_R]
+			 << ", " << (uint16_t)readpx.color[_G] << ", "
+			 << (uint16_t)readpx.color[_B] << endl;
 		senseClear();
-		senseSetRGBpixel(row, col, readpx.color[_R], readpx.color[_G], readpx.color[_B]);
+		senseSetRGBpixel(row, col, readpx.color[_R], readpx.color[_G],
+						 readpx.color[_B]);
 
 		cout << endl << "Waiting for keypress." << endl;
 		getch();

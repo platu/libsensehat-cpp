@@ -18,12 +18,11 @@
 #include <sensehat.h>
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // system_clock, milliseconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;	   // system_clock, milliseconds
 
 int main() {
-
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 

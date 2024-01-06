@@ -34,11 +34,10 @@
 #define NB_CYCLE 5
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // system_clock, milliseconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;	   // system_clock, milliseconds
 
 int main(int argc, char **argv) {
-
 	int opt, count;
 	char *eptr;
 	unsigned int chan = 0, percent = 0;
@@ -51,7 +50,7 @@ int main(int argc, char **argv) {
 			cerr << "Usage: " << argv[0] << " [-p] GPIO pin number." << endl;
 	}
 
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 
@@ -62,7 +61,7 @@ int main(int argc, char **argv) {
 			// Enable PWM channel output
 			pwmEnable(chan);
 			do {
-				for (percent = 0; percent <= 100; percent +=2) {
+				for (percent = 0; percent <= 100; percent += 2) {
 					if ((percent % 10) == 0)
 						cout << "Duty cycle: " << percent << "%" << endl;
 					// Set increasing duty cycle
@@ -70,7 +69,7 @@ int main(int argc, char **argv) {
 					sleep_for(milliseconds(10));
 				}
 
-				for (percent = 100; percent >= UINT_MAX; percent -=2) {
+				for (percent = 100; percent >= UINT_MAX; percent -= 2) {
 					if ((percent % 10) == 0)
 						cout << "Duty cycle: " << percent << "%" << endl;
 					// Set decreasing duty cycle

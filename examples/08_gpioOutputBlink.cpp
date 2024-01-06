@@ -14,7 +14,7 @@
  *                 GPIO pin number -^   on/off -^
  *
  * The program set output on/off 10 times. This is the typical blink led test.
- * Available GPIO pin numbers: 5, 6, 16, 17, 22, 26, 27 
+ * Available GPIO pin numbers: 5, 6, 16, 17, 22, 26, 27
  *
  * _GPIO_PIN_----_LED_----_330_resistor_---|GND
  *
@@ -30,8 +30,8 @@
 #define NB_EV 10
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // system_clock, milliseconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;	   // system_clock, milliseconds
 
 gpio_state_t toggle(gpio_state_t v) {
 	if (v == on)
@@ -39,9 +39,8 @@ gpio_state_t toggle(gpio_state_t v) {
 	else
 		return on;
 }
-	
-int main(int argc, char **argv) {
 
+int main(int argc, char **argv) {
 	int opt;
 	char *eptr;
 	unsigned int count, pin = 5;
@@ -55,12 +54,12 @@ int main(int argc, char **argv) {
 			cerr << "Usage: " << argv[0] << " [-p] GPIO pin number." << endl;
 	}
 
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 
 		if (gpioSetConfig(pin, out)) {
-			for(count = 0; count < NB_EV; count++) {
+			for (count = 0; count < NB_EV; count++) {
 				cout << "GPIO pin: " << pin << " -> " << val << endl;
 				gpioSetOutput(pin, val);
 

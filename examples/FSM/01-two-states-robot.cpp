@@ -4,7 +4,7 @@
  *
  * This example program is a minimalistic robot simulator with two states:
  * - state RUN: the robot moves forward
- * - state STOP: the robot stops 
+ * - state STOP: the robot stops
  * Keyboard keys are used to change the state of the robot.
  * - 'r' key: RUN state
  * - 's' key: STOP state
@@ -15,95 +15,93 @@
  * console.
  */
 
-#include <iostream>
-#include <thread> // sleep_for, sleep_until
-
-#include <sensehat.h>
 #include <console_io.h>
+#include <sensehat.h>
+
+#include <iostream>
+#include <thread>  // sleep_for, sleep_until
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // system_clock, milliseconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;	   // system_clock, milliseconds
 
-enum State {RUN, STOP};
+enum State { RUN, STOP };
 
 // Main program
 int main() {
+	State current_state, next_state;
+	bool quit;
+	int key_count;
+	char c;
 
-    State current_state, next_state;
-    bool quit;
-    int key_count;
-    char c;
-
-    if(senseInit()) {
+	if (senseInit()) {
 		std::cout << "-------------------------------" << std::endl
-			<< "Sense Hat initialization Ok." << std::endl;
+				  << "Sense Hat initialization Ok." << std::endl;
 
 		//---------------------------------------------------------------------
-        // Initializations
-        current_state = STOP;
-        next_state = STOP;
-        quit = false;
-        key_count = 0;
-		clearConsole(); // Clear the console
-        gotoxy(5,4); // Move cursor to column 5, raw 4
-        std::cout << '>' << ends;
-        gotoxy(7,4); // Move cursor to column 7, raw 4
+		// Initializations
+		current_state = STOP;
+		next_state = STOP;
+		quit = false;
+		key_count = 0;
+		clearConsole();	 // Clear the console
+		gotoxy(5, 4);	 // Move cursor to column 5, raw 4
+		std::cout << '>' << ends;
+		gotoxy(7, 4);  // Move cursor to column 7, raw 4
 
 		//---------------------------------------------------------------------
 		// Main task
 		do {
-            // ---------------------------------------------------------------
+			// ---------------------------------------------------------------
 			// Event detection
 			key_count = keypressed();
 
-            // check if a single key is pressed. We have an event!
+			// check if a single key is pressed. We have an event!
 			if (key_count == 1) {
 				c = std::cin.get();
-			    gotoxy(7,4); // Move cursor to column 5, raw 4
-                clearEOL();
-				std::cout << "key = [" << c << "]"; // Display the character
+				gotoxy(7, 4);  // Move cursor to column 5, raw 4
+				clearEOL();
+				std::cout << "key = [" << c << "]";	 // Display the character
 
-                // -----------------------------------------------------------
-                // State machine evolution
-                switch (toupper(c)) {
-                    case 'R':
-                        next_state = RUN;
-                        break;
-                    case 'S':
-                        next_state = STOP;
-                        break;
-                    case 'Q':
-                        quit = true;
-                        break;
-                }
+				// -----------------------------------------------------------
+				// State machine evolution
+				switch (toupper(c)) {
+					case 'R':
+						next_state = RUN;
+						break;
+					case 'S':
+						next_state = STOP;
+						break;
+					case 'Q':
+						quit = true;
+						break;
+				}
 
-                // -----------------------------------------------------------
-                // State transition and Robot action
-                if (next_state != current_state) {
-			        gotoxy(5,7); // Move cursor to column 5, raw 7
-                    clearEOL();
-			        std::cout << "Robot state: ";
-                    switch (next_state) {
-                        case RUN:
-                            std::cout << "RUN";
-                            // TODO: move the robot forward
-                            
-                            break;
-                        case STOP:
-                            std::cout << "STOP";
-                            // TODO: stop the robot
+				// -----------------------------------------------------------
+				// State transition and Robot action
+				if (next_state != current_state) {
+					gotoxy(5, 7);  // Move cursor to column 5, raw 7
+					clearEOL();
+					std::cout << "Robot state: ";
+					switch (next_state) {
+						case RUN:
+							std::cout << "RUN";
+							// TODO: move the robot forward
 
-                            break;
-                    }
-                    current_state = next_state;
-                }
+							break;
+						case STOP:
+							std::cout << "STOP";
+							// TODO: stop the robot
 
+							break;
+					}
+					current_state = next_state;
+				}
 
-                // Reset the cursor position and key count
-                gotoxy(7,4); // Move cursor to column 7, raw 4
-                key_count = 0;
-            }
+				// Reset the cursor position and key count
+				gotoxy(7, 4);  // Move cursor to column 7, raw 4
+				key_count = 0;
+			}
 			// ---------------------------------------------------------------
 			// Wait 20 ms before next iteration
 			sleep_until(system_clock::now() + milliseconds(20));
@@ -111,10 +109,10 @@ int main() {
 		} while (!quit);
 		std::cout << endl;
 
-        senseShutdown();
+		senseShutdown();
 		std::cout << "-------------------------------" << endl
-			<< "Sense Hat shut down." << endl;
-    }
+				  << "Sense Hat shut down." << endl;
+	}
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

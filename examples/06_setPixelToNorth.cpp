@@ -7,7 +7,8 @@
  *
  * Function prototypes:
  *
- * void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool accel_enabled);
+ * void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled, bool
+ * accel_enabled);
  *
  * double senseGetCompass()
  *   ^- angle in degrees [0..360]
@@ -27,27 +28,28 @@
 #include <sensehat.h>
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // nanoseconds, system_clock, seconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;	   // nanoseconds, system_clock, seconds
 
 int getch() {
-	int c=0;
+	int c = 0;
 
 	struct termios org_opts, new_opts;
-	int res=0;
+	int res = 0;
 
 	//----- store current settings -------------
-	res=tcgetattr(STDIN_FILENO, &org_opts);
-	assert(res==0);
+	res = tcgetattr(STDIN_FILENO, &org_opts);
+	assert(res == 0);
 	//----- set new terminal parameters --------
 	memcpy(&new_opts, &org_opts, sizeof(new_opts));
-	new_opts.c_lflag &= (tcflag_t)~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
+	new_opts.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
+									 ECHOPRT | ECHOKE | ICRNL);
 	tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
 	//------ wait for a single key -------------
-	c=getchar();
+	c = getchar();
 	//------ restore current settings- ---------
-	res=tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-	assert(res==0);
+	res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
+	assert(res == 0);
 
 	return c;
 }
@@ -55,16 +57,16 @@ int getch() {
 #define LEDNB 28
 
 int main() {
-
 	unsigned int time = 0;
 	// list of leds located at the edge of the square
-	const int led_loop[LEDNB] = {4, 5, 6, 7, 15, 23, 31, 39, 47, 55,
-		63, 62, 61, 60, 59, 58, 57, 56, 48, 40, 32, 24, 16, 8, 0, 1, 2, 3};
+	const int led_loop[LEDNB] = {4,	 5,	 6,	 7,	 15, 23, 31, 39, 47, 55,
+								 63, 62, 61, 60, 59, 58, 57, 56, 48, 40,
+								 32, 24, 16, 8,	 0,	 1,	 2,	 3};
 	float led_degree_ratio = LEDNB / 360.0;
 	double direction;
 	int led_index, prev_x, x, prev_y, y, offset;
 
-	if(senseInit()) {
+	if (senseInit()) {
 		cout << "-------------------------------" << endl
 			 << "Sense Hat initialization Ok." << endl;
 		senseClear();
@@ -76,16 +78,16 @@ int main() {
 			sleep_for(milliseconds(500));
 			// reverse direction
 			direction = 360 - senseGetCompass();
-			cout << "Compass angle to north in degrees:\t" <<
-					fixed << setprecision(2) << direction << endl;
+			cout << "Compass angle to north in degrees:\t" << fixed
+				 << setprecision(2) << direction << endl;
 
 			// select the led
-			led_index = (int) floor(led_degree_ratio * direction);
+			led_index = (int)floor(led_degree_ratio * direction);
 			offset = led_loop[led_index];
 
 			// extract coordinates
-			y = offset / 8; // row
-			x = offset % 8; // column
+			y = offset / 8;	 // row
+			x = offset % 8;	 // column
 
 			// turns off the previous led
 			if (x != prev_x || y != prev_y)
