@@ -23,26 +23,32 @@ using namespace std::chrono; // system_clock, milliseconds
 // Main program
 int main() {
 
-	bool stop = false;
-	int key_count = 0;
+	bool stop;
+	int key_count;
 	char c;
 
 	if(senseInit()) {
-		std::cout << "-------------------------------" << std::endl
-			<< "Sense Hat initialization Ok." << std::endl;
+		std::cout << "-------------------------------" << endl
+			<< "Sense Hat initialization Ok." << endl;
 
-		// Console initialization
-		clearConsole();
-		gotoxy(1,2);
-		std::cout << "Identify arrow keys" << std::endl;
+		clearConsole(); // Clear the console
+		std::cout << "Keyboard key event detection" << endl
+			<< "Hit 'q' to quit." << endl;
 
+		//---------------------------------------------------------------------
+		// Initializations
+		stop = false;
+		key_count = 0;
+
+		//---------------------------------------------------------------------
 		// Main task
 		do {
-			gotoxy(5,4);
+			gotoxy(5,4); // Move cursor to column 5, raw 4
 			std::cout << '>';
 
-			// Get the number of keys in the
-			// keyboard buffer
+			// Get the number of keys in the keyboard buffer
+			// (0 if no key pressed)
+			// This is the event detection function
 			key_count = keypressed();
 
 			// Print the key ascii code if a single key is pressed
@@ -55,6 +61,8 @@ int main() {
 					stop = true;
 			}
 
+			// ---------------------------------------------------------------
+			// Wait 20 ms before next iteration
 			sleep_until(system_clock::now() + milliseconds(20));
 
 		} while (!stop);
