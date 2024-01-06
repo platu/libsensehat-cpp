@@ -8,7 +8,7 @@ introduction to Finiet State Machine (FSM) C++ coding.
 As we want to simulate FSM, we need a way to code an event driven program. The
 very starting point is to detect key pressed on a keyboard.
 
-Here is a first example code : [00_non-blocking-kb.cpp](00_non-blocking-kb.cpp)
+Here is a first example code : [00_non-blocking-kb.cpp](./00_non-blocking-kb.cpp)
 
 This program uses the `keypressed()` function as an event detector.
 If nothing happens in the main task, the task is just an empty loop.
@@ -25,11 +25,11 @@ Whenever the `q` key is pressed, the program exits from the main task and quits.
 
 ## First two states FSM
 
-The next step is to code a FSM with two states. There we start simulating a
+The next step is to code a minimalistic FSM. There we start simulating a
 robot with two states : `STOP` and `RUN`.
 
 The robot is supposed to be stopped at the beginning.
 When the `r` key is pressed, the robot starts running. 
 When the `s` key is pressed, the robot stops.
 
-Here is the code : [01_two-states-robot.cpp](01_two-states-robot.cpp)
+Here is the code : [01_two-states-robot.cpp](./01_two-states-robot.cpp)

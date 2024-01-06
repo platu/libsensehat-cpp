@@ -35,8 +35,8 @@ int main() {
 	char c;
 
 	if (senseInit()) {
-		std::cout << "-------------------------------" << std::endl
-				  << "Sense Hat initialization Ok." << std::endl;
+		std::cout << "-------------------------------" << endl
+				  << "Sense Hat initialization Ok." << endl;
 
 		//---------------------------------------------------------------------
 		// Initializations
@@ -59,7 +59,7 @@ int main() {
 			// check if a single key is pressed. We have an event!
 			if (key_count == 1) {
 				c = std::cin.get();
-				gotoxy(7, 4);  // Move cursor to column 5, raw 4
+				gotoxy(7, 4);  // Move cursor to column 7, raw 4
 				clearEOL();
 				std::cout << "key = [" << c << "]";	 // Display the character
 
