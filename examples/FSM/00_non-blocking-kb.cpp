@@ -23,7 +23,7 @@ using namespace std::chrono;	   // system_clock, milliseconds
 // Main program
 int main() {
 	bool stop;
-	int key_count;
+	int key_count, time, cycle_count;
 	char c;
 
 	if (senseInit()) {
@@ -38,6 +38,8 @@ int main() {
 		// Initializations
 		stop = false;
 		key_count = 0;
+		time = 0;
+		cycle_count = 0;
 
 		//---------------------------------------------------------------------
 		// Main task
@@ -51,6 +53,7 @@ int main() {
 			key_count = keypressed();
 
 			// Print the key ascii code if a single key is pressed
+			// An event has been detected
 			if (key_count == 1) {
 				c = std::cin.get();
 				std::cout << "key = [" << c << "]";	 // Display the character
@@ -62,6 +65,18 @@ int main() {
 			// ---------------------------------------------------------------
 			// Wait 20 ms before next iteration
 			sleep_until(system_clock::now() + milliseconds(20));
+			cycle_count++;
+
+			// Print time every 50 cycles of 20 ms
+			// This is the background task which illustrates the non-blocking
+			// use of event driven functions
+			if (cycle_count == 50) {
+				cycle_count = 0;
+				time += 1;
+				gotoxy(5, 6);  // Move cursor to column 5, raw 6
+				std::cout << "time = " << time << "s";
+				clearEOL();
+			}
 
 		} while (!stop);
 		std::cout << endl;
