@@ -23,6 +23,14 @@ keyboard character is displayed on the console.
 
 Whenever the `q` key is pressed, the program exits from the main task and quits.
 
+There is a second example code :
+[00_non-blocking-kb+js.cpp](./00_non-blocking-kb+js.cpp)
+
+Here, another kind of event is detected : the joystick button pressed event.
+
+This stands for the emergency stop button of the robot. When the button is
+pressed, the porgram exits from the main task and quits.
+
 ## First two states FSM
 
 The next step is to code a minimalistic FSM. There we start simulating a
@@ -31,5 +39,16 @@ robot with two states : `STOP` and `RUN`.
 The robot is supposed to be stopped at the beginning.
 When the `r` key is pressed, the robot starts running. 
 When the `s` key is pressed, the robot stops.
+When the `q` key is pressed, the program exits from the main task and quits.
 
 Here is the code : [01_two-states-robot.cpp](./01_two-states-robot.cpp)
+
+Another example code is provided :
+[01_two-states-robot+js-emergency-stop.cpp](./01_two-states-robot+js-emergeny-stop.cpp)
+
+This code adds functions for state machine evolution and actions.
+
+Within the main loop, events are detected and encoded.
+
+If an event has occured, the state machine evolution function `evolve()` is
+called. Finally, the action function is called if the state has changed.
