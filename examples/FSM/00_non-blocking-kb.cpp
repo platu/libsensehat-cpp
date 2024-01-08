@@ -64,7 +64,7 @@ int main() {
 
 			// ---------------------------------------------------------------
 			// Wait 20 ms before next iteration
-			sleep_until(system_clock::now() + milliseconds(20));
+			sleep_for(milliseconds(20));
 			cycle_count++;
 
 			// Print time every 50 cycles of 20 ms
