@@ -20,65 +20,40 @@
 #include <chrono>
 #include <thread>
 
-#include <termios.h>
-#include <assert.h>
-
+#include <console_io.h>
 #include <sensehat.h>
 
 using namespace std;
 using namespace std::this_thread;  // sleep_for, sleep_until
-using namespace std::chrono;	   // nanoseconds, system_clock, seconds
-
-int getch() {
-	int c = 0;
-
-	struct termios org_opts, new_opts;
-	int res = 0;
-
-	//----- store current settings -------------
-	res = tcgetattr(STDIN_FILENO, &org_opts);
-	assert(res == 0);
-	//----- set new terminal parameters --------
-	memcpy(&new_opts, &org_opts, sizeof(new_opts));
-	new_opts.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
-									 ECHOPRT | ECHOKE | ICRNL);
-	tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
-	//------ wait for a single key -------------
-	c = getchar();
-	//------ restore current settings- ---------
-	res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-	assert(res == 0);
-
-	return c;
-}
+using namespace std::chrono;       // nanoseconds, system_clock, seconds
 
 int main() {
-	rgb565_pixel_t clr = 0xf800;
-	rgb_pixel_t rgb;
-	unsigned int count;
+    rgb565_pixel_t clr = 0xf800;
+    rgb_pixel_t rgb;
+    unsigned int count;
 
-	if (senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
+    if (senseInit()) {
+        cout << "-------------------------------" << endl
+             << "Sense Hat initialization Ok." << endl;
 
-		for (count = 0; count < 16; count++) {
-			rgb = senseUnPackPixel(clr);
-			cout << count << " R: " << (unsigned)rgb.color[_R]
-				 << " G: " << (unsigned)rgb.color[_G]
-				 << " B: " << (unsigned)rgb.color[_B] << endl;
-			senseRGBClear(rgb.color[_R], rgb.color[_G], rgb.color[_B]);
+        for (count = 0; count < 16; count++) {
+            rgb = senseUnPackPixel(clr);
+            cout << count << " R: " << (unsigned)rgb.color[_R]
+                 << " G: " << (unsigned)rgb.color[_G]
+                 << " B: " << (unsigned)rgb.color[_B] << endl;
+            senseRGBClear(rgb.color[_R], rgb.color[_G], rgb.color[_B]);
 
-			clr >>= 1;
-			if (clr == 0) clr = 0xf800;
+            clr >>= 1;
+            if (clr == 0) clr = 0xf800;
 
-			sleep_for(seconds(1));
-		}
-		cout << endl << "Waiting for keypress." << endl;
-		getch();
-		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
-	}
+            sleep_for(seconds(1));
+        }
+        cout << endl << "Waiting for keypress." << endl;
+        getch();
+        senseShutdown();
+        cout << "-------------------------------" << endl
+             << "Sense Hat shut down." << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

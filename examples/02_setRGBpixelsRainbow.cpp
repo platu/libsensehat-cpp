@@ -23,150 +23,125 @@
 #include <chrono>
 #include <thread>
 
-#include <termios.h>
-#include <assert.h>
-
+#include <console_io.h>
 #include <sensehat.h>
 
 using namespace std;
 using namespace std::this_thread;  // sleep_for, sleep_until
-using namespace std::chrono;	   // nanoseconds, system_clock, seconds
-
-int getch() {
-	int c = 0;
-
-	struct termios org_opts, new_opts;
-	int res = 0;
-
-	//----- store current settings -------------
-	res = tcgetattr(STDIN_FILENO, &org_opts);
-	assert(res == 0);
-	//----- set new terminal parameters --------
-	memcpy(&new_opts, &org_opts, sizeof(new_opts));
-	new_opts.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
-									 ECHOPRT | ECHOKE | ICRNL);
-	tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
-	//------ wait for a single key -------------
-	c = getchar();
-	//------ restore current settings- ---------
-	res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-	assert(res == 0);
-
-	return c;
-}
+using namespace std::chrono;       // nanoseconds, system_clock, seconds
 
 int main() {
-	rgb_pixels_t rainbow = {.array = {{{255, 0, 0},
-									   {255, 0, 0},
-									   {255, 87, 0},
-									   {255, 196, 0},
-									   {205, 255, 0},
-									   {95, 255, 0},
-									   {0, 255, 13},
-									   {0, 255, 122}},
-									  {{255, 0, 0},
-									   {255, 96, 0},
-									   {255, 205, 0},
-									   {196, 255, 0},
-									   {87, 255, 0},
-									   {0, 255, 22},
-									   {0, 255, 131},
-									   {0, 255, 240}},
-									  {{255, 105, 0},
-									   {255, 214, 0},
-									   {187, 255, 0},
-									   {78, 255, 0},
-									   {0, 255, 30},
-									   {0, 255, 140},
-									   {0, 255, 248},
-									   {0, 152, 255}},
-									  {{255, 233, 0},
-									   {178, 255, 0},
-									   {70, 255, 0},
-									   {0, 255, 40},
-									   {0, 255, 148},
-									   {0, 253, 255},
-									   {0, 144, 255},
-									   {0, 34, 255}},
-									  {{170, 255, 0},
-									   {61, 255, 0},
-									   {0, 255, 48},
-									   {0, 255, 157},
-									   {0, 243, 255},
-									   {0, 134, 255},
-									   {0, 26, 255},
-									   {83, 0, 255}},
-									  {{52, 255, 0},
-									   {0, 255, 57},
-									   {0, 255, 166},
-									   {0, 235, 255},
-									   {0, 126, 255},
-									   {0, 17, 255},
-									   {92, 0, 255},
-									   {201, 0, 255}},
-									  {{0, 255, 66},
-									   {0, 255, 174},
-									   {0, 226, 255},
-									   {0, 117, 255},
-									   {0, 8, 255},
-									   {100, 0, 255},
-									   {210, 0, 255},
-									   {255, 0, 192}},
-									  {{0, 255, 183},
-									   {0, 217, 255},
-									   {0, 109, 255},
-									   {0, 0, 255},
-									   {110, 0, 255},
-									   {218, 0, 255},
-									   {255, 0, 183},
-									   {255, 0, 74}}}};
+    rgb_pixels_t rainbow = {.array = {{{255, 0, 0},
+                                       {255, 0, 0},
+                                       {255, 87, 0},
+                                       {255, 196, 0},
+                                       {205, 255, 0},
+                                       {95, 255, 0},
+                                       {0, 255, 13},
+                                       {0, 255, 122}},
+                                      {{255, 0, 0},
+                                       {255, 96, 0},
+                                       {255, 205, 0},
+                                       {196, 255, 0},
+                                       {87, 255, 0},
+                                       {0, 255, 22},
+                                       {0, 255, 131},
+                                       {0, 255, 240}},
+                                      {{255, 105, 0},
+                                       {255, 214, 0},
+                                       {187, 255, 0},
+                                       {78, 255, 0},
+                                       {0, 255, 30},
+                                       {0, 255, 140},
+                                       {0, 255, 248},
+                                       {0, 152, 255}},
+                                      {{255, 233, 0},
+                                       {178, 255, 0},
+                                       {70, 255, 0},
+                                       {0, 255, 40},
+                                       {0, 255, 148},
+                                       {0, 253, 255},
+                                       {0, 144, 255},
+                                       {0, 34, 255}},
+                                      {{170, 255, 0},
+                                       {61, 255, 0},
+                                       {0, 255, 48},
+                                       {0, 255, 157},
+                                       {0, 243, 255},
+                                       {0, 134, 255},
+                                       {0, 26, 255},
+                                       {83, 0, 255}},
+                                      {{52, 255, 0},
+                                       {0, 255, 57},
+                                       {0, 255, 166},
+                                       {0, 235, 255},
+                                       {0, 126, 255},
+                                       {0, 17, 255},
+                                       {92, 0, 255},
+                                       {201, 0, 255}},
+                                      {{0, 255, 66},
+                                       {0, 255, 174},
+                                       {0, 226, 255},
+                                       {0, 117, 255},
+                                       {0, 8, 255},
+                                       {100, 0, 255},
+                                       {210, 0, 255},
+                                       {255, 0, 192}},
+                                      {{0, 255, 183},
+                                       {0, 217, 255},
+                                       {0, 109, 255},
+                                       {0, 0, 255},
+                                       {110, 0, 255},
+                                       {218, 0, 255},
+                                       {255, 0, 183},
+                                       {255, 0, 74}}}};
 
-	uint8_t red, green, blue;
-	int x, y, loop;
+    uint8_t red, green, blue;
+    int x, y, loop;
 
-	steady_clock::time_point begin, end;
+    steady_clock::time_point begin, end;
 
-	if (senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
-		senseClear();
-		begin = steady_clock::now();
-		for (loop = 2000; loop > 0; loop--) {
-			for (y = 0; y < SENSE_LED_WIDTH; y++)
-				for (x = 0; x < SENSE_LED_WIDTH; x++) {
-					red = rainbow.array[x][y].color[_R];
-					green = rainbow.array[x][y].color[_G];
-					blue = rainbow.array[x][y].color[_B];
+    if (senseInit()) {
+        cout << "-------------------------------" << endl
+             << "Sense Hat initialization Ok." << endl;
+        senseClear();
+        begin = steady_clock::now();
+        for (loop = 2000; loop > 0; loop--) {
+            for (y = 0; y < SENSE_LED_WIDTH; y++)
+                for (x = 0; x < SENSE_LED_WIDTH; x++) {
+                    red = rainbow.array[x][y].color[_R];
+                    green = rainbow.array[x][y].color[_G];
+                    blue = rainbow.array[x][y].color[_B];
 
-					if ((red == 255) && (green < 255) && (blue == 0)) green++;
-					if ((green == 255) && (red > 0) && (blue == 0)) red--;
-					if ((green == 255) && (blue < 255) && (red == 0)) blue++;
-					if ((blue == 255) && (green > 0) && (red == 0)) green--;
-					if ((blue == 255) && (red < 255) && (green == 0)) red++;
-					if ((red == 255) && (blue > 0) && (green == 0)) blue--;
+                    if ((red == 255) && (green < 255) && (blue == 0)) green++;
+                    if ((green == 255) && (red > 0) && (blue == 0)) red--;
+                    if ((green == 255) && (blue < 255) && (red == 0)) blue++;
+                    if ((blue == 255) && (green > 0) && (red == 0)) green--;
+                    if ((blue == 255) && (red < 255) && (green == 0)) red++;
+                    if ((red == 255) && (blue > 0) && (green == 0)) blue--;
 
-					rainbow.array[x][y].color[_R] = red;
-					rainbow.array[x][y].color[_G] = green;
-					rainbow.array[x][y].color[_B] = blue;
-				}
-			senseSetPixels(rainbow);
-			sleep_until(system_clock::now() + milliseconds(1));
-			if (loop < 2000 && loop % 200 == 0) {
-				cout << setw(4) << loop << " loops left / ";
-				end = steady_clock::now();
-				cout << "Elapsed time = "
-					 << duration_cast<milliseconds>(end - begin).count()
-					 << " ms" << endl;
-				begin = steady_clock::now();
-			}
-		}
+                    rainbow.array[x][y].color[_R] = red;
+                    rainbow.array[x][y].color[_G] = green;
+                    rainbow.array[x][y].color[_B] = blue;
+                }
+            senseSetPixels(rainbow);
+            sleep_until(system_clock::now() + milliseconds(1));
+            if (loop < 2000 && loop % 200 == 0) {
+                cout << setw(4) << loop << " loops left / ";
+                end = steady_clock::now();
+                cout << "Elapsed time = "
+                     << duration_cast<milliseconds>(end - begin).count()
+                     << " ms" << endl;
+                begin = steady_clock::now();
+            }
+        }
 
-		cout << endl << "Waiting for keypress." << endl;
-		getch();
-		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
-	}
+        cout << endl << "Waiting for keypress." << endl;
+        getch();
+        senseShutdown();
+        cout << "-------------------------------" << endl
+             << "Sense Hat shut down." << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
