@@ -35,57 +35,57 @@
 
 using namespace std;
 using namespace std::this_thread;  // sleep_for, sleep_until
-using namespace std::chrono;	   // system_clock, milliseconds
+using namespace std::chrono;       // system_clock, milliseconds
 
 int main(int argc, char **argv) {
-	int opt, count;
-	char *eptr;
-	unsigned int chan = 0, percent = 0;
+    int opt, count;
+    char *eptr;
+    unsigned int chan = 0, percent = 0;
 
-	// command line arguments: -c 0 or 1
-	while ((opt = getopt(argc, argv, "c:")) != -1) {
-		if (opt == 'c')
-			chan = strtoul(optarg, &eptr, 10);
-		else
-			cerr << "Usage: " << argv[0] << " [-p] GPIO pin number." << endl;
-	}
+    // command line arguments: -c 0 or 1
+    while ((opt = getopt(argc, argv, "c:")) != -1) {
+        if (opt == 'c')
+            chan = strtoul(optarg, &eptr, 10);
+        else
+            cerr << "Usage: " << argv[0] << " [-p] GPIO pin number." << endl;
+    }
 
-	if (senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
+    if (senseInit()) {
+        cout << "-------------------------------" << endl
+             << "Sense Hat initialization Ok." << endl;
 
-		if (pwmInit(chan)) {
-			// Set frequency to 100Hz -> period to 10000 usec
-			pwmPeriod(chan, 10000);
-			count = 0;
-			// Enable PWM channel output
-			pwmEnable(chan);
-			do {
-				for (percent = 0; percent <= 100; percent += 2) {
-					if ((percent % 10) == 0)
-						cout << "Duty cycle: " << percent << "%" << endl;
-					// Set increasing duty cycle
-					pwmDutyCycle(chan, percent);
-					sleep_for(milliseconds(10));
-				}
+        if (pwmInit(chan)) {
+            // Set frequency to 100Hz -> period to 10000 usec
+            pwmPeriod(chan, 10000);
+            count = 0;
+            // Enable PWM channel output
+            pwmEnable(chan);
+            do {
+                for (percent = 0; percent <= 100; percent += 2) {
+                    if ((percent % 10) == 0)
+                        cout << "Duty cycle: " << percent << "%" << endl;
+                    // Set increasing duty cycle
+                    pwmDutyCycle(chan, percent);
+                    sleep_for(milliseconds(10));
+                }
 
-				for (percent = 100; percent >= UINT_MAX; percent -= 2) {
-					if ((percent % 10) == 0)
-						cout << "Duty cycle: " << percent << "%" << endl;
-					// Set decreasing duty cycle
-					pwmDutyCycle(chan, percent);
-					sleep_for(milliseconds(10));
-				}
-				count++;
-			} while (count < NB_CYCLE);
-			// Disable PWM channel output
-			pwmDisable(chan);
-		}
+                for (percent = 100; percent >= UINT_MAX; percent -= 2) {
+                    if ((percent % 10) == 0)
+                        cout << "Duty cycle: " << percent << "%" << endl;
+                    // Set decreasing duty cycle
+                    pwmDutyCycle(chan, percent);
+                    sleep_for(milliseconds(10));
+                }
+                count++;
+            } while (count < NB_CYCLE);
+            // Disable PWM channel output
+            pwmDisable(chan);
+        }
 
-		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
-	}
+        senseShutdown();
+        cout << "-------------------------------" << endl
+             << "Sense Hat shut down." << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

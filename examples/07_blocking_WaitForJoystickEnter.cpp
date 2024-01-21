@@ -15,9 +15,6 @@
 #include <iostream>
 #include <iomanip>
 
-#include <termios.h>
-#include <assert.h>
-
 #include <sensehat.h>
 
 using namespace std;
