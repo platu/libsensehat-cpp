@@ -15,8 +15,8 @@
 extern "C" {
 #endif
 
-    #include <linux/i2c-dev.h>
-    #include <i2c/smbus.h>
+#include <linux/i2c-dev.h>
+#include <i2c/smbus.h>
 
 #ifdef __cplusplus
 }
@@ -46,20 +46,28 @@ extern "C" {
 // Number of pixels in the bitmap
 #define SENSE_PIXELS (SENSE_LED_WIDTH * SENSE_LED_WIDTH)
 
-/// \brief color attributes of a pixel encoded in an integer of rgb565_pixel_t type
-/// \details RGB565 format represents the 3 colors in a 16 bit integer
+/// \brief color attributes of a pixel encoded in an integer of rgb565_pixel_t
+/// type \details RGB565 format represents the 3 colors in a 16 bit integer
 /// \details The bits are arranged this way: RRRRRGGGGGGBBBBB
 typedef uint16_t rgb565_pixel_t;
 
-/// \brief led matrix 2 dimensional array of pixels encoded in rgb565_pixel_t type
-typedef struct { rgb565_pixel_t array [SENSE_LED_WIDTH][SENSE_LED_WIDTH]; } rgb565_pixels_t;
+/// \brief led matrix 2 dimensional array of pixels encoded in rgb565_pixel_t
+/// type
+typedef struct {
+    rgb565_pixel_t array[SENSE_LED_WIDTH][SENSE_LED_WIDTH];
+} rgb565_pixels_t;
 
 /// \brief color attributes of a pixel encoded in an array of 3 bytes
 /// \details the 3 bytes are in R, G, B order
-typedef struct { uint8_t color [COLORS]; } rgb_pixel_t;
+typedef struct {
+    uint8_t color[COLORS];
+} rgb_pixel_t;
 
-/// \brief led matrix 2 dimensional array with pixels encoded in rgb_pixel_t type
-typedef struct { rgb_pixel_t array [SENSE_LED_WIDTH][SENSE_LED_WIDTH]; } rgb_pixels_t;
+/// \brief led matrix 2 dimensional array with pixels encoded in rgb_pixel_t
+/// type
+typedef struct {
+    rgb_pixel_t array[SENSE_LED_WIDTH][SENSE_LED_WIDTH];
+} rgb_pixels_t;
 
 /// \brief Joystick codes and states
 #define KEY_ENTER 28
@@ -76,16 +84,16 @@ typedef struct { rgb_pixel_t array [SENSE_LED_WIDTH][SENSE_LED_WIDTH]; } rgb_pix
 /// action: KEY_ENTER, KEY_UP, KEY_LEFT, KEY_RIGHT, KEY_DOWN
 /// state: KEY_RELEASED, KEY_PRESSED, KEY_HELD
 typedef struct {
-	float timestamp;
-	int action, state;
+    float timestamp;
+    int action, state;
 } stick_t;
 
 /// \typedef GPIO pin values
 /// \details on: high level / off: low level
-typedef enum {on = 1, off = 0} gpio_state_t;
-typedef enum {in = 1, out = 0} gpio_dir_t;
+typedef enum { on = 1, off = 0 } gpio_state_t;
+typedef enum { in = 1, out = 0 } gpio_dir_t;
 
-#define	GPIO_CONSUMER	"SenseHatLib"
+#define GPIO_CONSUMER "SenseHatLib"
 
 /// \brief Initialize file handles and communications
 /// \details led matrix framebuffer, josytick input, IMU calibration
@@ -100,7 +108,8 @@ void senseShutdown();
 void senseClear();
 
 /// \brief Lower LED light intensity
-/// \param[in] low true if color values must be lowered to limit power consomption
+/// \param[in] low true if color values must be lowered to limit power
+/// consomption
 void senseSetLowLight(bool low);
 
 /// \brief Convert from array of 3 color bytes to rgb565
@@ -116,13 +125,15 @@ rgb_pixel_t senseUnPackPixel(rgb565_pixel_t rgb565);
 /// \brief Read the color attributes of one single pixel from its coordinates
 /// \param[in] x row number [0..7]
 /// \param[in] y column number [0..7]
-/// \return color attrubutes of the pixel encoded in RGB565 format: rgb565_pixel_t type
+/// \return color attrubutes of the pixel encoded in RGB565 format:
+/// rgb565_pixel_t type
 rgb565_pixel_t senseGetRGB565pixel(int x, int y);
 
 /// \brief Read the color attributes of one single pixel from its coordinates
 /// \param[in] x row number [0..7]
 /// \param[in] y column number [0..7]
-/// \return color attributes of the pixel encoded in a array of 3 bytes: rgb_pixel_t type
+/// \return color attributes of the pixel encoded in a array of 3 bytes:
+/// rgb_pixel_t type
 rgb_pixel_t senseGetRGBpixel(int x, int y);
 
 /// \brief Read the color attributes of one single pixel from its coordinates
@@ -147,7 +158,8 @@ bool senseSetRGBpixel(int x, int y, uint8_t R, uint8_t G, uint8_t B);
 const auto senseSetPixel = senseSetRGBpixel;
 
 /// \brief Read color attibutes of all pixels at once
-/// \return 2 dimensional array of integers in RGB565 format: rgb565_pixel_t type
+/// \return 2 dimensional array of integers in RGB565 format: rgb565_pixel_t
+/// type
 rgb565_pixels_t senseGetRGB565pixels();
 
 /// \brief Read color attibutes of all pixels at once
@@ -158,11 +170,13 @@ rgb_pixels_t senseGetRGBpixels();
 const auto senseGetPixels = senseGetRGBpixels;
 
 /// \brief Write color attributes of all pixels at once
-/// \param rgb565_map 2 dimensional array of integers in RGB565 format: rgb565_pixel_t type
+/// \param rgb565_map 2 dimensional array of integers in RGB565 format:
+/// rgb565_pixel_t type
 void senseSetRGB565pixels(rgb565_pixels_t rgb565_map);
 
 /// \brief Write color attributes of all pixels at once
-/// \param rgb_map 2 dimensional array of RGB color attributes of rgb_pixel_t type
+/// \param rgb_map 2 dimensional array of RGB color attributes of rgb_pixel_t
+/// type
 void senseSetRGBpixels(rgb_pixels_t rgb_map);
 
 /// \brief Set all pixels with the same color attributes
@@ -204,34 +218,35 @@ void senseShowRGBColoredLetter(char c, rgb_pixel_t fg, rgb_pixel_t bg);
 /// \brief Print a single character with foreground and background color
 const auto senseShowColoredLetter = senseShowRGBColoredLetter;
 
-/// \brief Print a single character with white foreground color on black background color
-/// \param[in] c character to print
+/// \brief Print a single character with white foreground color on black
+/// background color \param[in] c character to print
 void senseShowLetter(char c);
 
 /// \brief Print a scrolling text line with foreground and background color
 /// \param[in] msg line to print
 /// \param[in] fg foreground color encoded in RGB565 format
 /// \param[in] bg background color encoded in RGB565 format
-void senseShowRGB565ColoredMessage(std::string msg, rgb565_pixel_t fg, rgb565_pixel_t bg);
+void senseShowRGB565ColoredMessage(std::string msg, rgb565_pixel_t fg,
+                                   rgb565_pixel_t bg);
 
 /// \brief Print a scrolling text line with foreground and background color
 /// \param[in] msg line to print
 /// \param[in] fg foreground color of rgb_pixel_t type - array of 3 bytes
 /// \param[in] bg background color of rgb_pixel_t type - array of 3 bytes
-void senseShowRGBColoredMessage(std::string msg, rgb_pixel_t fg, rgb_pixel_t bg);
+void senseShowRGBColoredMessage(std::string msg, rgb_pixel_t fg,
+                                rgb_pixel_t bg);
 
-/// \brief Print a scrolling text line with white foreground color on black background color
-/// \param[in] msg line to print
+/// \brief Print a scrolling text line with white foreground color on black
+/// background color \param[in] msg line to print
 void senseShowMessage(std::string msg);
 
 // ----------------------
 // HTS221 Humidity sensor
 // ----------------------
 
-/// \brief Get temperature in °C and relative humidity in % measures from the HTS221 sensor
-/// \param[out] t_C temperature in °C
-/// \param[out] h_R relative humidity in %
-/// \return bool false if somnething went wrong
+/// \brief Get temperature in °C and relative humidity in % measures from the
+/// HTS221 sensor \param[out] t_C temperature in °C \param[out] h_R relative
+/// humidity in % \return bool false if somnething went wrong
 bool senseGetTempHumid(double &t_C, double &h_R);
 
 /// \brief Get relative humidity measure in % from the HTS221 sensor
@@ -246,9 +261,8 @@ double senseGetTemperatureFromHumidity();
 // LPS25H Pressure sensor
 // ----------------------
 
-/// \brief Get temperature in °C and pressure in hPa measures from the LPS25H sensor
-/// \param[out] t_C temperature in °C
-/// \param[out] p_hPa pressure in hPa
+/// \brief Get temperature in °C and pressure in hPa measures from the LPS25H
+/// sensor \param[out] t_C temperature in °C \param[out] p_hPa pressure in hPa
 /// \return bool false if somnething went wrong
 bool senseGetTempPressure(double &t_C, double &p_hPa);
 
@@ -310,11 +324,9 @@ bool senseGetGyroDegrees(double &picth, double &roll, double &yaw);
 /// \return bool false if somnething went wrong
 bool senseGetAccelG(double &x, double &y, double &z);
 
-/// \brief Get accelerometer measurements along the 3 axis in meter per second squared
-/// \param[out] x value in mpss
-/// \param[out] y value in mpss
-/// \param[out] z value in mpss
-/// \return bool false if somnething went wrong
+/// \brief Get accelerometer measurements along the 3 axis in meter per second
+/// squared \param[out] x value in mpss \param[out] y value in mpss \param[out]
+/// z value in mpss \return bool false if somnething went wrong
 bool senseGetAccelMPSS(double &x, double &y, double &z);
 
 // ----------------------
@@ -323,7 +335,8 @@ bool senseGetAccelMPSS(double &x, double &y, double &z);
 
 /// \brief Wait for any joystick event
 /// \details This is a blocking function
-/// \return stick_t structure contains timestamp, action and state of the joystick button
+/// \return stick_t structure contains timestamp, action and state of the
+/// joystick button
 stick_t senseWaitForJoystick();
 
 /// \brief Define the duration for monotoring joystick events
@@ -332,8 +345,8 @@ stick_t senseWaitForJoystick();
 void senseSetJoystickWaitTime(long int sec, long int msec);
 
 /// \brief Get joystick event if any
-/// \param[out] ev stick_t structure containing timestamp, action and state of the joystick button
-/// \return bool true if something happened
+/// \param[out] ev stick_t structure containing timestamp, action and state of
+/// the joystick button \return bool true if something happened
 bool senseGetJoystickEvent(stick_t &ev);
 
 /// \brief Wait for any joystick ENTER event
@@ -368,7 +381,8 @@ int gpioGetInput(unsigned int pin);
 
 /// \brief Initialize PWM channel
 /// \param[in] channel number 0 or 1
-/// \return boolean true if initialization is accepted. Beware of setup time at first run!
+/// \return boolean true if initialization is accepted. Beware of setup time at
+/// first run!
 bool pwmInit(unsigned int chan);
 
 /// \brief Set PWM channel period in usec
@@ -406,5 +420,4 @@ bool pwmDisable(unsigned int chan);
 bool colorDetectInit(tcs34725IntegrationTime_t it, tcs34725Gain_t gain);
 void colorDetectShutdown();
 
-
-#endif // __SENSEHAT_H__
+#endif  // __SENSEHAT_H__
