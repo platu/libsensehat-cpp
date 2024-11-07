@@ -96,58 +96,93 @@ static int tcs34725File = -1;
 // Internal. Parse input devices file and extract event file handler number.
 // Returns event file handler number as int.
 // Returns -1 if Sense Hat joystick is not found.
-int _getJsEvDevNumber() {
-    char line[256] = {0};
-    char *ev_pos;
-    bool match = false;
-    int num = -1;
+#define MAX_LINE_LENGTH 256
+#define DEVICES_FILE "/proc/bus/input/devices"
+#define JOYSTICK_NAME1 "rpi-sense-joy"
+#define JOYSTICK_NAME2 "Raspberry Pi Sense HAT Joystick"
+#define HANDLERS_KEY "Handlers"
+#define EVENT_PREFIX "event"
 
-    FILE *fd = fopen("/proc/bus/input/devices", "r");
-    if (!fd)
-        printf("Failed to open event devices file.\n%s\n", strerror(errno));
-    else {
-        while (fscanf(fd, "%[^\n] ", line) != EOF && !match) {
-            if (strstr(line, "rpi-sense-joy") != 0)
-                // Sense Hat joystick device name found
-                while (fscanf(fd, "%[^\n] ", line) != EOF && !match)
-                    if (strstr(line, "Handlers") != 0) {
-                        // Handlers list found
-                        match = true;
-                        ev_pos = strstr(line, "event");
-                        sscanf(ev_pos, "%*[^0123456789]%d", &num);
-                        printf("Joystick points to device event%d\n", num);
-                    }
-        }
-        if (!match) puts("Failed to find Sense Hat joystick device name");
-        fclose(fd);
+int _getJsEvDevNumber() {
+    char line[MAX_LINE_LENGTH];
+    FILE *fd = fopen(DEVICES_FILE, "r");
+    if (!fd) {
+        fprintf(stderr, "Failed to open event devices file: %s\n",
+                strerror(errno));
+        return -1;
     }
-    return num;
+
+    bool joystick_found = false;
+    bool match = false;
+    int event_number = -1;
+
+    while (fgets(line, sizeof(line), fd) && !match) {
+        line[strcspn(line, "\n")] = 0;  // Remove newline
+
+        if (!joystick_found) {
+            if (strstr(line, JOYSTICK_NAME1) || strstr(line, JOYSTICK_NAME2)) {
+                joystick_found = true;
+            }
+        } else if (strstr(line, HANDLERS_KEY)) {
+            char *event_pos = strstr(line, EVENT_PREFIX);
+            if (event_pos) {
+                if (sscanf(event_pos + strlen(EVENT_PREFIX), "%d",
+                           &event_number) == 1) {
+                    printf("Joystick points to device event%d\n", event_number);
+                    match = true;
+                }
+            }
+        }
+    }
+
+    fclose(fd);
+
+    if (event_number == -1) {
+        fprintf(stderr, "Failed to find Sense Hat joystick device\n");
+    }
+
+    return event_number;
 }
 
 // Internal. Parse framebuffer devices file and extract RPi-Sense FB number.
 // Returns FB file number as int.
 // Returns -1 if RPi-Sense FB is not found.
-int _getFBnum() {
-    char line[256] = {0};
-    bool match = false;
-    int num = -1;
+#define MAX_LINE_LENGTH 256
+#define FB_FILE "/proc/fb"
+#define FB_DEVICE_NAME "RPi-Sense FB"
 
-    FILE *fd = fopen("/proc/fb", "r");
-    if (!fd)
-        printf("Failed to open event devices file.\n%s\n", strerror(errno));
-    else {
-        while (fscanf(fd, "%[^\n] ", line) != EOF && !match) {
-            if (strstr(line, "RPi-Sense FB") != 0) {
-                // Sense Hat framebuffer device name found
-                match = true;
-                sscanf(line, "%d", &num);
-                printf("Sense Hat led matrix points to device /dev/fb%d\n",
+int _getFBnum() {
+    char line[MAX_LINE_LENGTH];
+    int num = -1;
+    FILE *fd = fopen(FB_FILE, "r");
+    bool match = false;
+
+    if (!fd) {
+        fprintf(stderr, "Failed to open framebuffer file: %s\n",
+                strerror(errno));
+        return num;
+    }
+
+    while (fgets(line, sizeof(line), fd) && !match) {
+        // Remove newline character if present
+        line[strcspn(line, "\n")] = 0;
+
+        if (strstr(line, FB_DEVICE_NAME)) {
+            // Sense Hat framebuffer device name found
+            if (sscanf(line, "%d", &num) == 1) {
+                printf("Sense Hat LED matrix points to device /dev/fb%d\n",
                        num);
+                match = true;
             }
         }
-        if (!match) puts("Failed to find Sense Hat led matrix device name");
-        fclose(fd);
     }
+
+    fclose(fd);
+
+    if (num == -1) {
+        fprintf(stderr, "Failed to find Sense Hat LED matrix device name\n");
+    }
+
     return num;
 }
 
@@ -398,15 +433,12 @@ rgb_pixel_t senseUnPackPixel(uint16_t rgb565) {
 
 // Turn on all pixels with the same RGB color
 void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
-    int x, y, i;
     rgb_pixel_t rgb = {.color = {r, g, b}};
     rgb565_pixel_t rgb565 = sensePackPixel(rgb);
 
-    for (x = 0; x < SENSE_LED_WIDTH; x++)
-        for (y = 0; y < SENSE_LED_WIDTH; y++) {
-            i = (x * 8) + y;  // offset into array
-            *(pixelMap + i) = rgb565;
-        }
+    for (int i = 0; i < SENSE_PIXELS; i++) {
+        pixelMap[i] = rgb565;
+    }
 }
 
 // Turn on a single pixel with RGB565 color format
