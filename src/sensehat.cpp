@@ -443,28 +443,25 @@ void senseRGBClear(uint8_t r, uint8_t g, uint8_t b) {
 
 // Turn on a single pixel with RGB565 color format
 bool senseSetRGB565pixel(int x, int y, rgb565_pixel_t rgb565) {
-    int i;
-    bool retOk = false;
-
-    if (x >= 0 && x < SENSE_LED_WIDTH && y >= 0 && y < SENSE_LED_WIDTH) {
-        i = (x * 8) + y;  // offset into array
-        *(pixelMap + i) = rgb565;
-        retOk = true;
+    // unsigned int type casting to avoid negative values
+    if ((unsigned int)x < SENSE_LED_WIDTH && (unsigned int)y < SENSE_LED_WIDTH) {
+        pixelMap[x * SENSE_LED_WIDTH + y] = rgb565;
+        return true;
     }
-    return retOk;
+
+    return false;
 }
 
 // Turn on a single pixel with R, G, and B individual values
 bool senseSetRGBpixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
-    rgb565_pixel_t rgb565;
-    rgb_pixel_t pix = {.color = {red, green, blue}};
-    bool retOk = false;
-
-    if (x >= 0 && x < SENSE_LED_WIDTH && y >= 0 && y < SENSE_LED_WIDTH) {
-        rgb565 = sensePackPixel(pix);
-        retOk = senseSetRGB565pixel(x, y, rgb565);
+    // unsigned int type casting to avoid negative values
+    if ((unsigned int)x < SENSE_LED_WIDTH && (unsigned int)y < SENSE_LED_WIDTH) {
+        rgb_pixel_t pix = {{red, green, blue}};
+        rgb565_pixel_t rgb565 = sensePackPixel(pix);
+        return senseSetRGB565pixel(x, y, rgb565);
     }
-    return retOk;
+
+    return false;
 }
 
 // Turn on all pixels from a RGB565 predefined map
@@ -511,28 +508,26 @@ void senseSetRGBpixels(rgb_pixels_t pixelArray) {
 
 // Read a single pixel color in RGB565 format
 rgb565_pixel_t senseGetRGB565pixel(int x, int y) {
-    int i;
-    rgb565_pixel_t rgb565pix;
-
-    if (x >= 0 && x < SENSE_LED_WIDTH && y >= 0 && y < SENSE_LED_WIDTH) {
-        i = (x * 8) + y;  // offset into array
-        rgb565pix = *(pixelMap + i);
+    // unsigned int type casting to avoid negative values
+    if ((unsigned int)x < SENSE_LED_WIDTH && (unsigned int)y < SENSE_LED_WIDTH) {
+        return pixelMap[x * SENSE_LED_WIDTH + y];
     }
 
-    return rgb565pix;
+    // Return black if out of bounds
+    return 0;
 }
 
 // Read a single pixel color in a R, G, B array
 rgb_pixel_t senseGetRGBpixel(int x, int y) {
-    int i;
-    rgb_pixel_t pix = {.color = {0, 0, 0}};
+    rgb_pixel_t read_pixel = {0}; // black pixel initialization
 
-    if (x >= 0 && x < SENSE_LED_WIDTH && y >= 0 && y < SENSE_LED_WIDTH) {
-        i = (x * 8) + y;  // offset into array
-        pix = senseUnPackPixel(*(pixelMap + i));
+    // unsigned int type casting to avoid negative values
+    if ((unsigned int)x < SENSE_LED_WIDTH && (unsigned int)y < SENSE_LED_WIDTH) {
+        read_pixel = senseUnPackPixel(pixelMap[x * SENSE_LED_WIDTH + y]);
     }
 
-    return pix;
+    // Return black if out of bounds
+    return read_pixel;
 }
 
 // Returns an 8x8 array containing RGB565 pixels
