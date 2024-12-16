@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
@@ -189,7 +191,8 @@ int _getFBnum() {
 // Turn off all LEDs
 void senseClear() {
     memset(pixelMap, 0, screensize);
-    usleep(1000 * 10);  // wait for 10ms
+    // wait for the LEDs to turn off -> 10ms
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 // Sense Hat Initialization
@@ -756,9 +759,6 @@ void senseShowLetter(char ltr) {
     senseShowColoredLetter(ltr, white, black);
 }
 
-// Internal. Microseconds to milliseconds conversion.
-void _msecSleep(unsigned int msec) { usleep(1000 * msec); }
-
 // Internal. Shift each column left from one position.
 rgb_pixels_t _shiftLeft(rgb_pixels_t shifted, rgb_pixel_t bg) {
     int i, j;
@@ -854,7 +854,8 @@ void senseShowRGBColoredMessage(std::string msg, rgb_pixel_t fg,
             for (i = 0; i < SENSE_LED_WIDTH; i++)
                 scroll.array[i][SENSE_LED_WIDTH - 1] = sign.array[i][0];
             senseSetPixels(scroll);
-            _msecSleep(speed);
+            // wait for speed milliseconds
+            std::this_thread::sleep_for(std::chrono::milliseconds(speed));
             scroll = _shiftLeft(scroll, bg);
             sign = _shiftLeft(sign, bg);
         }
@@ -863,7 +864,8 @@ void senseShowRGBColoredMessage(std::string msg, rgb_pixel_t fg,
     while (!_isSpace(scroll, bg)) {
         scroll = _shiftLeft(scroll, bg);
         senseSetPixels(scroll);
-        _msecSleep(speed);
+        // wait for speed milliseconds
+        std::this_thread::sleep_for(std::chrono::milliseconds(speed));
     }
 }
 
@@ -927,7 +929,8 @@ bool senseGetTempHumid(double &t_C, double &h_R) {
 
         // Wait until the measurement is completed
         do {
-            _msecSleep(25);  // 25 milliseconds
+            // wait for 25 milliseconds
+            std::this_thread::sleep_for(std::chrono::milliseconds(25));
             status = i2c_smbus_read_byte_data(humFile, HTS221_CTRL_REG2);
         } while (status != 0);
 
@@ -1086,7 +1089,8 @@ bool senseGetTempPressure(double &t_C, double &p_hPa) {
 
         // Wait until the measurement is complete
         do {
-            _msecSleep(25);  // 25 milliseconds
+            // wait for 25 milliseconds
+            std::this_thread::sleep_for(std::chrono::milliseconds(25));
             status = i2c_smbus_read_byte_data(preFile, LPS25H_CTRL_REG2);
         } while (status != 0);
 
@@ -1150,101 +1154,109 @@ void senseSetIMUConfig(bool compass_enabled, bool gyro_enabled,
     imu->setAccelEnable(accel_enabled);
 }
 
+bool getIMUData(RTIMU_DATA &imuData) {
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(imu->IMUGetPollInterval() * 100));
+
+    if (!imu->IMURead()) {
+        return false;
+    }
+
+    imuData = imu->getIMUData();
+    return imuData.fusionPoseValid;
+}
+
 bool senseGetOrientationRadians(double &p, double &r, double &y) {
-    bool retOk = true;
+    RTIMU_DATA imuData;
+    if (!getIMUData(imuData)) {
+        return false;
+    }
 
-    usleep((__useconds_t)(imu->IMUGetPollInterval() * 1000));
+    RTVector3 curr_pose = imuData.fusionPose;
+    p = curr_pose.x();
+    r = curr_pose.y();
+    y = -curr_pose.z();
 
-    if (imu->IMURead()) {
-        RTIMU_DATA imuData = imu->getIMUData();
-        if (imuData.fusionPoseValid) {
-            RTVector3 curr_pose = imuData.fusionPose;
-            p = curr_pose.x();
-            r = curr_pose.y();
-            y = -curr_pose.z();
-        } else
-            retOk = false;
-    } else
-        retOk = false;
-
-    return retOk;
+    return true;
 }
 
 bool senseGetOrientationDegrees(double &p, double &r, double &y) {
-    bool retOk = true;
+    if (!senseGetOrientationRadians(p, r, y)) {
+        return false;
+    }
 
-    if (senseGetOrientationRadians(p, r, y)) {
-        p *= 180.0 / M_PI;
-        r *= 180.0 / M_PI;
-        y *= 180.0 / M_PI;
-    } else
-        retOk = false;
+    p *= 180.0 / M_PI;
+    r *= 180.0 / M_PI;
+    y *= 180.0 / M_PI;
 
-    return retOk;
+    return true;
 }
 
 double senseGetCompass() {
-    double p, r, y;
+    RTIMU_DATA imuData;
+    if (!getIMUData(imuData)) {
+        return -1;  // Error: no data available
+    }
 
-    _msecSleep(20);
-    senseGetOrientationDegrees(p, r, y);
+    RTVector3 compass = imuData.compass;
+    double heading = atan2(compass.y(), compass.x()) * 180.0 / M_PI;
 
-    return y + 180;
+    // Adjust for declination (magnetic north offset)
+    if (heading < 0) {
+        heading += 360.0;
+    }
+
+    return heading;
 }
 
 bool senseGetGyroRadians(double &p, double &r, double &y) {
-    bool retOk = true;
-
     senseSetIMUConfig(false, true, false);
 
-    usleep((__useconds_t)(imu->IMUGetPollInterval() * 1000));
+    RTIMU_DATA imuData;
+    if (!getIMUData(imuData)) {
+        return false;
+    }
 
-    if (imu->IMURead()) {
-        RTIMU_DATA imuData = imu->getIMUData();
-        if (imuData.gyroValid) {
-            p = imuData.gyro.x();
-            r = imuData.gyro.y();
-            y = imuData.gyro.z();
-        } else
-            retOk = false;
-    } else
-        retOk = false;
+    if (imuData.gyroValid) {
+        p = imuData.gyro.x();
+        r = imuData.gyro.y();
+        y = imuData.gyro.z();
+    } else {
+        return false;
+    }
 
-    return retOk;
+    return true;
 }
 
 bool senseGetGyroDegrees(double &p, double &r, double &y) {
-    bool retOk = true;
+    if (!senseGetGyroRadians(p, r, y)) {
+        return false;
+    }
 
-    if (senseGetGyroRadians(p, r, y)) {
-        p *= 180.0 / M_PI;
-        r *= 180.0 / M_PI;
-        y *= 180.0 / M_PI;
-    } else
-        retOk = false;
+    p *= 180.0 / M_PI;
+    r *= 180.0 / M_PI;
+    y *= 180.0 / M_PI;
 
-    return retOk;
+    return true;
 }
 
 bool senseGetAccelG(double &x, double &y, double &z) {
-    bool retOk = true;
-
     senseSetIMUConfig(false, false, true);
 
-    usleep((__useconds_t)(imu->IMUGetPollInterval() * 1000));
+    RTIMU_DATA imuData;
+    if (!getIMUData(imuData)) {
+        return false;
+    }
 
-    if (imu->IMURead()) {
-        RTIMU_DATA imuData = imu->getIMUData();
-        if (imuData.accelValid) {
-            x = imuData.accel.x();
-            y = imuData.accel.y();
-            z = imuData.accel.z();
-        } else
-            retOk = false;
-    } else
-        retOk = false;
+    if (imuData.accelValid) {
+        x = imuData.accel.x();
+        y = imuData.accel.y();
+        z = imuData.accel.z();
+    } else {
+        return false;
+    }
 
-    return retOk;
+    return true;
 }
 
 bool senseGetAccelMPSS(double &x, double &y, double &z) {
@@ -1566,7 +1578,8 @@ bool colorDetectInit(tcs34725IntegrationTime_t it, tcs34725Gain_t gain) {
         } else {
             i2c_smbus_write_byte_data(tcs34725File, TCS34725_ENABLE,
                                       TCS34725_ENABLE_PON);
-            _msecSleep(3);
+            // Wait for the PON bit to be set
+            std::this_thread::sleep_for(std::chrono::milliseconds(3));
             i2c_smbus_write_byte_data(
                 tcs34725File, TCS34725_ENABLE,
                 TCS34725_ENABLE_PON | TCS34725_ENABLE_AEN);
@@ -1580,22 +1593,28 @@ bool colorDetectInit(tcs34725IntegrationTime_t it, tcs34725Gain_t gain) {
              */
             switch (tcs34725IntegrationTime) {
                 case TCS34725_INTEGRATIONTIME_2_4MS:
-                    _msecSleep(3);
+                    // 2.4ms delay
+                    std::this_thread::sleep_for(std::chrono::milliseconds(3));
                     break;
                 case TCS34725_INTEGRATIONTIME_24MS:
-                    _msecSleep(24);
+                    // 24ms delay
+                    std::this_thread::sleep_for(std::chrono::milliseconds(24));
                     break;
                 case TCS34725_INTEGRATIONTIME_50MS:
-                    _msecSleep(50);
+                    // 50ms delay
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
                     break;
                 case TCS34725_INTEGRATIONTIME_101MS:
-                    _msecSleep(101);
+                    // 101ms delay
+                    std::this_thread::sleep_for(std::chrono::milliseconds(101));
                     break;
                 case TCS34725_INTEGRATIONTIME_154MS:
-                    _msecSleep(154);
+                    // 154ms delay
+                    std::this_thread::sleep_for(std::chrono::milliseconds(154));
                     break;
                 case TCS34725_INTEGRATIONTIME_700MS:
-                    _msecSleep(700);
+                    // 700ms delay
+                    std::this_thread::sleep_for(std::chrono::milliseconds(700));
                     break;
             }
         }

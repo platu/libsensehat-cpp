@@ -7,6 +7,8 @@ INCLUDEDIR=${PREFIX}/include
 
 # -----------------------------------------------------------
 #  jobs
+.PHONY: all includes images script
+
 all: library examples script
 
 # -----------------------------------------------------------
@@ -66,7 +68,7 @@ examples: install
 # -----------------------------------------------------------
 #  Student lab environment shell script install
 SCRIPT=getLab.sh
-SCRIPT_DIST=${PREFIX}/sbin/${SCRIPT}
+SCRIPT_DIST=${PREFIX}/bin/${SCRIPT}
 
 script: ${SCRIPT_DIST}
 
