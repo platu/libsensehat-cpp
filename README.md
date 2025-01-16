@@ -3,10 +3,10 @@
 ## Foreword
 
 This repository aims to resume the [Python Sense
-HAT](https://github.com/astro-pi/python-sense-hat) API in C/C++ programming
+HAT](https://github.com/astro-pi/python-sense-hat) API in the C/C++ programming
 language. The functions provided by this library are intended for students who
 are taking their first steps in programming. Therefore, we use a very small
-subset of C++ programming language.
+subset of the C++ programming language.
 
 - No classes. Okaaaayyy! I know. Don't slap me, even virtually.
 - Typed input/output through iostream. Almost avoids burdens of C stdio formatting.
@@ -15,10 +15,9 @@ subset of C++ programming language.
 - Use of [libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/) for GPIO functions.
 - Use of sysfs for PWM0 and PWM1 output channels.
 
-The code in this repository has started as a compilation from different other
-repositories. It then evolved with the addition of GPIO and PWM functions to
-become a full-fledged library. Many thanks are due to the developers of the
-following projects:
+The code in this repository has been compiled from various other repositories.
+It then developed into a full library with the addition of GPIO and PWM
+functions.
 
 - [libsense](https://github.com/moshegottlieb/libsense)
 - [Raspberry Pi Sense-HAT add-on board](https://github.com/davebm1/c-sense-hat)
@@ -76,22 +75,24 @@ git clone https://github.com/platu/libsensehat-cpp.git
 cd libsensehat-cpp/ && make
 ```
 
-Depending on the number of example programs, compilation may take some time.
+Depending on the number of example programs, the compilation may take some time.
 
-You're done ! It is now time to open example files and run your own tests.
+You're all done ! Now you can open the example files and run your own tests.
 There is a generic [Makefile](examples/Makefile) in the [examples](examples/)
-directory that you can copy and adapt to your needs.
+directory which you can copy and modify to suit your needs.
 
 ## Start new project
 
-To start a new project, you need to copy the [Makefile](labTemplate/Makefile) file to your working directory.
+To start a new project, you need to copy the [Makefile](labTemplate/Makefile)
+file to your working directory.
 
 ```bash
 mkdir myProject && cd myProject
 cp $HOME/libsensehat-cpp/labTemplate/Makefile .
 ```
 
-Then, you can copy the example program that is closest to your needs and adapt it to your project.
+Then, you can copy the example program that is closest to your needs and adapt
+it to your project.
 
 ```bash
 cp $HOME/libsensehat-cpp/examples/01_setRGB565pixel.cpp .
@@ -134,8 +135,11 @@ Waiting for keypress.
 Sense Hat shut down.
 ```
 
-Beside this method, students call the [getLab.sh](getLab.sh) script to create a new project directory.
-The script creates a new project directory at the `$HOME/cpp` location and copies the Makefile and VScode settings files into it. Here is an example of how to use the script.
+In addition to this manual method, students run the [getLab.sh](getLab.sh)
+script to create a new project directory.
+The script creates a new project directory in the `$HOME/cpp` location and
+copies the Makefile and VScode settings files into it. Here is an example of how
+to use the script.
 
 ```bash
 $HOME/libsensehat-cpp/getLab.sh myProject
