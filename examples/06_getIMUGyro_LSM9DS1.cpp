@@ -27,34 +27,34 @@
 
 using namespace std;
 using namespace std::this_thread;  // sleep_for, sleep_until
-using namespace std::chrono;	   // nanoseconds, system_clock, seconds
+using namespace std::chrono;       // nanoseconds, system_clock, seconds
 
 int main() {
-	unsigned int time = 0;
-	double x, y, z;
+    unsigned int time = 0;
+    double x, y, z;
 
-	if (senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
-		senseClear();
+    if (senseInit()) {
+        cout << "-------------------------------" << endl
+             << "Sense Hat initialization Ok." << endl;
+        senseClear();
 
-		for (time = 0; time < 60; time++) {
-			// wait for 500ms
-			sleep_for(milliseconds(500));
-			cout << "Gyrometer in radians/s." << endl;
-			if (senseGetGyroRadians(x, y, z)) {
-				cout << fixed << setprecision(6) << "Roll = " << x
-					 << " Pitch = " << y << " Yaw = " << z << endl;
-			} else
-				cout << "Error. No measures." << endl;
-		}
+        for (time = 0; time < 60; time++) {
+            // wait for 500ms
+            sleep_for(milliseconds(500));
+            cout << "Gyrometer in radians/s." << endl;
+            if (senseGetGyroRadians(x, y, z)) {
+                cout << fixed << setprecision(6) << "Roll = " << x
+                     << " Pitch = " << y << " Yaw = " << z << endl;
+            } else
+                cout << "Error. No measures." << endl;
+        }
 
-		cout << endl << "Waiting for keypress." << endl;
-		getch();
-		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
-	}
+        cout << endl << "Waiting for keypress." << endl;
+        getch();
+        senseShutdown();
+        cout << "-------------------------------" << endl
+             << "Sense Hat shut down." << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

@@ -40,7 +40,7 @@ int main() {
 
     if (senseInit()) {
         cout << "-------------------------------" << endl
-            << "Sense Hat initialization Ok." << endl;
+             << "Sense Hat initialization Ok." << endl;
 
         senseClear();
         senseSetPixels(question_mark);
@@ -49,7 +49,7 @@ int main() {
         getch();
         senseShutdown();
         cout << "-------------------------------" << endl
-            << "Sense Hat shut down." << endl;
+             << "Sense Hat shut down." << endl;
     }
 
     return EXIT_SUCCESS;

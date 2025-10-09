@@ -21,13 +21,13 @@ i2cdetect -y 1
 
 2. Edit the /boot/config.txt
 
-  Add this new entry :
+Add this new entry :
 
 ```
 dtoverlay=i2c-rtc,ds1307
 ```
 
-  In our setup, the entry `dtparam=i2c_arm=on` is already active.
+In our setup, the entry `dtparam=i2c_arm=on` is already active.
 
 3. Remove fake hardware clock set by default
 
@@ -35,7 +35,7 @@ dtoverlay=i2c-rtc,ds1307
 sudo apt -y purge fake-hwclock
 ```
 
-  Edit the `/lib/udev/hwclock-set` to comment out RTC initialization instructions
+Edit the `/lib/udev/hwclock-set` to comment out RTC initialization instructions
 
 ```
 #!/bin/sh
@@ -54,7 +54,7 @@ dev=$1
 
 4. Reboot and check RTC is active
 
-  Check kernel module is loaded
+Check kernel module is loaded
 
 ```
 lsmod | grep rtc
@@ -62,7 +62,7 @@ rtc_ds1307             32768  0
 regmap_i2c             16384  1 rtc_ds1307
 ```
 
-  Check RTC setup at boot time
+Check RTC setup at boot time
 
 ```
 sudo dmesg | grep ' rtc'

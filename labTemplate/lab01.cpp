@@ -13,8 +13,8 @@
 #include <sensehat.h>
 
 using namespace std;
-using namespace std::this_thread; // sleep_for, sleep_until
-using namespace std::chrono; // system_clock, seconds, milliseconds
+using namespace std::this_thread;  // sleep_for, sleep_until
+using namespace std::chrono;       // system_clock, seconds, milliseconds
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Début constantes
@@ -29,26 +29,25 @@ using namespace std::chrono; // system_clock, seconds, milliseconds
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 int main() {
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	// Début variables
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Début variables
 
-	// Fin variables
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Fin variables
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	if(senseInit()) {
-		cout << "Sense Hat initialization Ok." << endl;
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// Début instructions
+    if (senseInit()) {
+        cout << "Sense Hat initialization Ok." << endl;
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Début instructions
 
+        // Fin instructions
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        cout << "Press joystick button to quit." << endl;
+        senseWaitForJoystickEnter();
 
-		// Fin instructions
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		cout << "Press joystick button to quit." << endl;
-		senseWaitForJoystickEnter();
+        senseShutdown();
+        cout << "Sense Hat shut down." << endl;
+    }
 
-		senseShutdown();
-		cout << "Sense Hat shut down." << endl;
-	}
-
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

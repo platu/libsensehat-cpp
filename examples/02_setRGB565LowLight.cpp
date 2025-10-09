@@ -54,8 +54,8 @@ int main() {
         // Show that the color values have decreased
         for (row = 0; row < SENSE_LED_WIDTH; row++) {
             for (col = 0; col < SENSE_LED_WIDTH; col++)
-                cout << "{ " << setw(3) << right << hex <<
-                question_mark.array[row][col] << " }, ";
+                cout << "{ " << setw(3) << right << hex
+                     << question_mark.array[row][col] << " }, ";
             cout << endl;
         }
         cout << endl << "Waiting for keypress." << endl;

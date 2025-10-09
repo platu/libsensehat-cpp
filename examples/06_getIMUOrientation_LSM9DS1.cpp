@@ -28,36 +28,36 @@
 
 using namespace std;
 using namespace std::this_thread;  // sleep_for, sleep_until
-using namespace std::chrono;	   // nanoseconds, system_clock, seconds
+using namespace std::chrono;       // nanoseconds, system_clock, seconds
 
 int main() {
-	double x, y, z;
-	unsigned int time = 0;
+    double x, y, z;
+    unsigned int time = 0;
 
-	if (senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
-		senseClear();
+    if (senseInit()) {
+        cout << "-------------------------------" << endl
+             << "Sense Hat initialization Ok." << endl;
+        senseClear();
 
-		senseSetIMUConfig(true, true, true);
+        senseSetIMUConfig(true, true, true);
 
-		for (time = 0; time < 30; time++) {
-			sleep_for(milliseconds(500));
+        for (time = 0; time < 30; time++) {
+            sleep_for(milliseconds(500));
 
-			cout << "Orientation in degrees:\t";
-			if (senseGetOrientationDegrees(x, y, z)) {
-				cout << fixed << setprecision(6) << "Roll=\t" << x
-					 << " Pitch=\t" << y << " Yaw=\t" << z << endl;
-			} else
-				cout << "Error. No measures." << endl;
-		}
+            cout << "Orientation in degrees:\t";
+            if (senseGetOrientationDegrees(x, y, z)) {
+                cout << fixed << setprecision(6) << "Roll=\t" << x
+                     << " Pitch=\t" << y << " Yaw=\t" << z << endl;
+            } else
+                cout << "Error. No measures." << endl;
+        }
 
-		cout << endl << "Waiting for keypress." << endl;
-		getch();
-		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
-	}
+        cout << endl << "Waiting for keypress." << endl;
+        getch();
+        senseShutdown();
+        cout << "-------------------------------" << endl
+             << "Sense Hat shut down." << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

@@ -29,7 +29,7 @@ gpio
 If it is not the case, you have to run a command like this: `sudo adduser
 ubuntu input`. This adds the user `ubuntu` to the `input` system group. Then,
 you have to log off and on back to see that the group assignment is correct
-with the `id` command for instance.   
+with the `id` command for instance.
 
 ## Package dependencies
 

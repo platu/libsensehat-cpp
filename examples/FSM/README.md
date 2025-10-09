@@ -37,7 +37,7 @@ The next step is to code a minimalistic FSM. There we start simulating a
 robot with two states : `STOP` and `RUN`.
 
 The robot is supposed to be stopped at the beginning.
-When the `r` key is pressed, the robot starts running. 
+When the `r` key is pressed, the robot starts running.
 When the `s` key is pressed, the robot stops.
 When the `q` key is pressed, the program exits from the main task and quits.
 

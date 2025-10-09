@@ -3,8 +3,8 @@
 According to [Sense HAT pinout page](https://en.pinout.xyz/pinout/sense_hat), 2
 PWM output pins are available.
 
-* Pin 12 / BCM 18 / PWM0
-* Pin 33 / BCM 13 / PWM1
+- Pin 12 / BCM 18 / PWM0
+- Pin 33 / BCM 13 / PWM1
 
 The reference web page is: [Using the Raspberry Pi hardware PWM timers](https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html)
 
@@ -45,74 +45,74 @@ systemd unit.
 
 1. Create the shell script
 
- ```bash
- cat << 'EOF' | sudo tee -a /usr/local/sbin/pwm-export.sh
- #!/bin/bash
+```bash
+cat << 'EOF' | sudo tee -a /usr/local/sbin/pwm-export.sh
+#!/bin/bash
 
- # file: /usr/local/sbin/pwm-export.sh
- #
- # Script run once at system startup by the pwm-export systemd service
- # https://github.com/platu/libsensehat-cpp/blob/main/docs/pwm.md
+# file: /usr/local/sbin/pwm-export.sh
+#
+# Script run once at system startup by the pwm-export systemd service
+# https://github.com/platu/libsensehat-cpp/blob/main/docs/pwm.md
 
- for CHAN in 0 1
- do
+for CHAN in 0 1
+do
 	if [[ ! -d /sys/class/pwm/pwmchip0/pwm${CHAN} ]]
 	then
 		echo ${CHAN} > /sys/class/pwm/pwmchip0/export
 		echo "PWM channel ${CHAN} exported" | systemd-cat -p info
 	fi
- done
- EOF
- ```
+done
+EOF
+```
 
 2. It has to be executable
 
- ```bash
- sudo chmod +x /usr/local/sbin/pwm-export.sh
- ```
+```bash
+sudo chmod +x /usr/local/sbin/pwm-export.sh
+```
 
 3. Create a systemd unit
 
- The unit file is named `pwm-export.service`
+The unit file is named `pwm-export.service`
 
- ```bash
- cat << EOF | sudo tee -a /etc/systemd/system/pwm-export.service
- [Unit]
- Description=PWM channels export to sysfs
- After=local-fs.target
+```bash
+cat << EOF | sudo tee -a /etc/systemd/system/pwm-export.service
+[Unit]
+Description=PWM channels export to sysfs
+After=local-fs.target
 
- [Service]
- ExecStart=/usr/local/sbin/pwm-export.sh
- Type=oneshot
+[Service]
+ExecStart=/usr/local/sbin/pwm-export.sh
+Type=oneshot
 
- [Install]
- WantedBy=multi-user.target
- EOF
- ```
+[Install]
+WantedBy=multi-user.target
+EOF
+```
 
- This unit file has to be enabled
+This unit file has to be enabled
 
- ```bash
- sudo systemctl daemon-reload
- sudo systemctl enable pwm-export.service
- sudo systemctl start pwm-export.service
- ```
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable pwm-export.service
+sudo systemctl start pwm-export.service
+```
 
- Then we can check that the 2 channels were exported to sysfs
+Then we can check that the 2 channels were exported to sysfs
 
- ```bash
- systemctl status pwm-export.service
- ● pwm-export.service - PWM channels export to sysfs
-    Loaded: loaded (/etc/systemd/system/pwm-export.service; enabled; vendor preset: enabled)
-    Active: inactive (dead) since Mon 2021-06-14 16:31:24 CEST; 7min ago
-   Process: 468 ExecStart=/usr/local/sbin/pwm-export.sh (code=exited, status=0/SUCCESS)
-  Main PID: 468 (code=exited, status=0/SUCCESS)
+```bash
+systemctl status pwm-export.service
+● pwm-export.service - PWM channels export to sysfs
+   Loaded: loaded (/etc/systemd/system/pwm-export.service; enabled; vendor preset: enabled)
+   Active: inactive (dead) since Mon 2021-06-14 16:31:24 CEST; 7min ago
+  Process: 468 ExecStart=/usr/local/sbin/pwm-export.sh (code=exited, status=0/SUCCESS)
+ Main PID: 468 (code=exited, status=0/SUCCESS)
 
- juin 14 16:31:23 picodev2 systemd[1]: Starting PWM channels export to sysfs...
- juin 14 16:31:24 picodev2 cat[497]: PWM channel 1 exported
- juin 14 16:31:24 picodev2 systemd[1]: pwm-export.service: Succeeded.
- juin 14 16:31:24 picodev2 systemd[1]: Started PWM channels export to sysfs.
- ```
+juin 14 16:31:23 picodev2 systemd[1]: Starting PWM channels export to sysfs...
+juin 14 16:31:24 picodev2 cat[497]: PWM channel 1 exported
+juin 14 16:31:24 picodev2 systemd[1]: pwm-export.service: Succeeded.
+juin 14 16:31:24 picodev2 systemd[1]: Started PWM channels export to sysfs.
+```
 
 ## Check PWM channels parameters are available
 

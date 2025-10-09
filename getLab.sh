@@ -2,7 +2,7 @@
 
 cwd=$(pwd)
 
-if [[ -z "$1" ]]; then
+if [[ -z $1 ]]; then
 	lab="lab01"
 else
 	lab="$1"
@@ -26,7 +26,7 @@ git pull origin main
 rm -rf .git
 
 mv labTemplate "${lab}"
-if [[ ! ${lab} == "lab01" ]]; then
+if [[ ${lab} != "lab01" ]]; then
 	mv "${lab}/lab01.cpp" "${lab}/${lab}.cpp"
 	sed -i "s/lab01/${lab}/g" "${lab}/${lab}.cpp"
 	sed -i "s/lab01/${lab}/g" "${lab}/.vscode/settings.json"

@@ -20,18 +20,18 @@
 using namespace std;
 
 int main() {
-	if (senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
+    if (senseInit()) {
+        cout << "-------------------------------" << endl
+             << "Sense Hat initialization Ok." << endl;
 
-		senseRGBClear(0, 204, 128);
+        senseRGBClear(0, 204, 128);
 
-		senseWaitForJoystickEnter();
+        senseWaitForJoystickEnter();
 
-		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
-	}
+        senseShutdown();
+        cout << "-------------------------------" << endl
+             << "Sense Hat shut down." << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

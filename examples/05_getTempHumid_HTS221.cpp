@@ -26,27 +26,27 @@
 using namespace std;
 
 int main() {
-	double Temp, Humid;
+    double Temp, Humid;
 
-	if (senseInit()) {
-		cout << "-------------------------------" << endl
-			 << "Sense Hat initialization Ok." << endl;
-		senseClear();
+    if (senseInit()) {
+        cout << "-------------------------------" << endl
+             << "Sense Hat initialization Ok." << endl;
+        senseClear();
 
-		Temp = senseGetTemperatureFromHumidity();
-		cout << fixed << setprecision(2) << "Temp (from humid) = " << Temp
-			 << "°C" << endl;
+        Temp = senseGetTemperatureFromHumidity();
+        cout << fixed << setprecision(2) << "Temp (from humid) = " << Temp
+             << "°C" << endl;
 
-		Humid = senseGetHumidity();
-		cout << fixed << setprecision(0) << "Humidity = " << Humid << "% rH"
-			 << endl;
+        Humid = senseGetHumidity();
+        cout << fixed << setprecision(0) << "Humidity = " << Humid << "% rH"
+             << endl;
 
-		cout << endl << "Waiting for keypress." << endl;
-		getch();
-		senseShutdown();
-		cout << "-------------------------------" << endl
-			 << "Sense Hat shut down." << endl;
-	}
+        cout << endl << "Waiting for keypress." << endl;
+        getch();
+        senseShutdown();
+        cout << "-------------------------------" << endl
+             << "Sense Hat shut down." << endl;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
