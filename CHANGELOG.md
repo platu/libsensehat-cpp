@@ -1,104 +1,67 @@
-# CHANGELOG — Migration libgpiod 1.x → 2.x
+# October 2025
 
-Date: 2025-10-09
+The GPIO library API was changed alongside the migration of the Raspberry Pi OS
+from Bookworm to Trixie.
 
-## Contexte
+This project code was initially developed using the
+[libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git) v1.x API.
+With the v2.2.x version now packaged in Debian Trixie, the GPIO functions have
+been rewritten.
 
-Avec la migration de Debian Bookworm vers Debian Trixie, la version de la bibliothèque `libgpiod` a évolué de la série 1.x (par ex. 1.6.3) vers la série 2.x (par ex. 2.2.1). Cette migration introduit des changements d'API importants : la gestion des lignes GPIO s'effectue maintenant via des objets de configuration et de requête (`gpiod_line_settings`, `gpiod_line_config`, `gpiod_line_request`) plutôt qu'avec les fonctions simples de la v1 (`gpiod_chip_get_line`, `gpiod_line_request_output`, `gpiod_line_set_value`, etc.).
+## New GPIO API design
 
-## Changements effectués dans ce dépôt
+According to the [libgpiod V2: New Major Release with a Ton of New
+Features](https://lpc.events/event/16/contributions/1247/), Libgpiod v2.x has
+been redesigned to improve usability and provide a flexible API and enhanced
+platform support. The new version features a streamlined API that is less prone
+to errors, supports GObject and D-Bus integration, and provides a modern model
+for GPIO programming. Its internal structures have been reorganised to include
+immutable snapshots and expanded language bindings.
 
-Fichiers modifiés/ajoutés :
+The public interface now enables line requests to be grouped and line parameters
+to be configured more precisely, including bias, drive and active low settings.
+Requests can also be made across multiple lines at once.
 
-- `src/sensehat.cpp`
+## Changes to the code in `sensehat.cpp`
 
-  - Migration complète de l'API libgpiod v1 → v2 :
-    - Remplacement des types et fonctions v1 par l'API v2 `line_request`.
-    - Remplacement du tableau `struct gpiod_line *gpio_line[]` par
-      `struct gpiod_line_request *gpio_line[]`.
-    - Ajout d'un helper `_request_line(pin, direction)` qui encapsule la
-      création de `gpiod_line_settings` et `gpiod_line_config` et qui
-      appelle `gpiod_chip_request_lines()`.
-    - Remplacement des appels de lecture/écriture par
-      `gpiod_line_request_get_value(request, offset)` et
-      `gpiod_line_request_set_value(request, offset, value)`.
-    - Ajout d'un helper `_open_first_gpiochip()` pour détecter et ouvrir
-      dynamiquement le premier `/dev/gpiochipN` disponible plutôt que
-      d'utiliser un chemin codé en dur.
-    - Libération systématique des `gpiod_line_request` via
-      `gpiod_line_request_release()` dans `senseShutdown()`.
+### Data structures
 
-- `include/LSM9DS1_Types.h`
-  - Ajout de `#include <cstdint>` pour corriger des erreurs de compilation
-    liées à `uint8_t`/`uint16_t` lors de la construction des exemples.
+On line 89 of the `sensehat.cpp` file is an array that stores the status of the
+GPIO line request objects.
 
-## Raison du changement
+```cpp
+static struct gpiod_chip *gpio_chip;
+#define GPIOLIST 7
+const uint8_t gpio_pinlist[GPIOLIST] = {5, 6, 16, 17, 22, 26, 27};
+static struct gpiod_line_request *gpio_line[GPIOLIST];
 
-- La v2 de libgpiod modifie l'interface publique pour être plus expressive
-  et permettre des demandes groupées de lignes, la configuration fine des
-  paramètres de ligne (bias, drive, active low, etc.) et des requêtes
-  atomiques sur plusieurs lignes. Le code existant utilisant la v1 ne
-  compile plus correctement sous libgpiod 2.x.
-
-## Impact et compatibilité
-
-- Le code modifié est compatible avec libgpiod >= 2.x.
-- Si vous devez maintenir la compatibilité avec des systèmes utilisant
-  libgpiod 1.x, envisagez :
-  - d'ajouter une couche d'adaptation conditionnelle via des macros
-    (#ifdef) pour détecter la version disponible et utiliser l'API
-    appropriée, ou
-  - de documenter clairement dans le README la version minimale
-    requise (libgpiod >= 2.0.0) pour la branche actuelle.
-
-## Tests recommandés
-
-1. Compiler la bibliothèque et les exemples :
-
-```bash
-make
+/* Forward declaration of helper (defined later). */
+static struct gpiod_line_request *_request_line(unsigned int pin,
+                                                gpio_dir_t direction);
 ```
 
-2. Vérifier que la compilation réussit sans erreurs. (Le dépôt a été
-   testé localement et compile correctement après les modifications.)
+### Functions
 
-3. Tester au moins un exemple qui manipule des GPIOs en conditions
-   réelles (sur la Raspberry Pi) : par exemple `examples/08_gpioOutputBlink`
-   (ou `06_setPixelToNorth` si vous utilisez des GPIOs dans cet exemple).
+A first helper function, `_open_first_gpiochip()`, has been added to dynamically
+detect and open the first available `/dev/gpiochipN`, rather than using a
+hard-coded path.This is similar to what was done for the framebuffer device used
+to drive the LED matrix.
 
-```bash
-# Exemple : exécuter le clignotement GPIO (nécessite droits)
-cd examples
-./08_gpioOutputBlink
-```
+A second helper function, `_request_line(pin, direction)`, has been added that
+encapsulates the creation of `gpiod_line_settings` and `gpiod_line_config`, and
+calls `gpiod_chip_request_lines()`.
 
-4. Si l'exécution échoue à cause de permissions, ajoutez votre utilisateur
-   au groupe `gpio` ou exécutez l'exemple avec `sudo`.
+Replacing read/write calls with `gpiod_line_request_get_value(request, offset)`
+and `gpiod_line_request_set_value(request, offset, value)`.
+The new API requires you to specify the row offsets. We then use these to read
+or write values according to the defined pin number.
 
-## Notes d'implémentation
+All the requests done with `gpiod_line_request` are systematically released via
+the `gpiod_line_request_release()` call in the `senseShutdown()` function.
 
-- La nouvelle API requiert que vous fournissiez les offsets des lignes
-  lorsque vous lisez ou écrivez leur valeur (p. ex. `gpiod_line_request_set_value(request, offset, value)`).
-- Les helper ajoutés dans `src/sensehat.cpp` (`_request_line`,
-  `_open_first_gpiochip`) ont été conçus pour rester simples et compréhensibles
-  pour les étudiants; ils peuvent être améliorés si vous avez besoin de
-  fonctionnalités avancées (pull-up/down, debouncing, edge detection...).
+## Implementation note
 
-## Recommandation
-
-- Mettre à jour la documentation (`README.md`) avec une ligne indiquant
-  que la version minimale requise de libgpiod est désormais la 2.x.
-- Si vous distribuez ce code à des étudiants ou utilisateurs, mentionnez
-  explicitement la procédure d'installation de libgpiod (package system)
-  et l'appartenance au groupe `gpio` pour l'accès sans sudo.
-
----
-
-Si vous voulez, je peux :
-
-- ajouter un contrôle préprocesseur pour supporter à la fois v1 et v2 ;
-- ajouter une note dans `README.md` et/ou un changelog au format plus
-  structuré (Keep a Changelog) ;
-- documenter la procédure d'installation pour Debian Trixie.
-
-Dites-moi quelle option vous préférez et je l'implémenterai.
+The added helpers are basic and are designed for simple reading and writing
+operations that students will find easy to understand. They can be enhanced if
+you require more comprehensive features, such as pull-up/down, debouncing and
+edge detection.
