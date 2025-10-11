@@ -21,6 +21,7 @@ Distributed as-is; no warranty is given.
 #ifndef __LSM9DS1_Types_H__
 #define __LSM9DS1_Types_H__
 
+#include <cstdint>
 #include "LSM9DS1_Registers.h"
 
 // accel_scale defines all possible FSR's of the accelerometer:

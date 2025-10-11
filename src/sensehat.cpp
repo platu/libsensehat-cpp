@@ -27,6 +27,12 @@ static bool lowLight_state = false;
 static uint16_t *pixelMap;
 static size_t screensize = 0;
 
+/* Persistent file descriptors for pwm sysfs files per channel.
+ * Index 0 => pwm0, index 1 => pwm1. -1 means not opened. */
+static int pwm_fd_period[2] = {-1, -1};
+static int pwm_fd_duty[2] = {-1, -1};
+static int pwm_fd_enable[2] = {-1, -1};
+
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 const uint8_t gamma8[] = {
@@ -84,7 +90,36 @@ static struct timeval _jstv;
 static struct gpiod_chip *gpio_chip;
 #define GPIOLIST 7
 const uint8_t gpio_pinlist[GPIOLIST] = {5, 6, 16, 17, 22, 26, 27};
-static struct gpiod_line *gpio_line[GPIOLIST];
+/* In libgpiod v2 the API requests lines and returns a gpiod_line_request
+ * object. We store pointers to those requests here. */
+static struct gpiod_line_request *gpio_line[GPIOLIST];
+
+/* Forward declaration of helper (defined later). */
+static struct gpiod_line_request *_request_line(unsigned int pin,
+                                                gpio_dir_t direction);
+
+/* Try to open the first available gpiochip device under /dev among 8.
+ * This is more robust than hardcoding a single path and helps on systems where
+ * the gpiochip number may differ.
+ * Returns pointer to opened chip or NULL. */
+static struct gpiod_chip *_open_first_gpiochip(void) {
+    char path[32];
+    struct gpiod_chip *chip = NULL;
+    bool chip_found = false;
+
+    int chip_num = 0;
+    while (!chip_found && chip_num < 8) {
+        snprintf(path, sizeof(path), "/dev/gpiochip%d", chip_num);
+        chip = gpiod_chip_open(path);
+        if (chip) {
+            chip_found = true;
+        } else {
+            ++chip_num;
+        }
+    }
+
+    return chip;
+}
 
 // TCS34725 color detection
 static tcs34725IntegrationTime_t tcs34725IntegrationTime;
@@ -149,7 +184,6 @@ int _getJsEvDevNumber() {
 // Internal. Parse framebuffer devices file and extract RPi-Sense FB number.
 // Returns FB file number as int.
 // Returns -1 if RPi-Sense FB is not found.
-#define MAX_LINE_LENGTH 256
 #define FB_FILE "/proc/fb"
 #define FB_DEVICE_NAME "RPi-Sense FB"
 
@@ -166,11 +200,9 @@ int _getFBnum() {
     }
 
     while (fgets(line, sizeof(line), fd) && !match) {
-        // Remove newline character if present
         line[strcspn(line, "\n")] = 0;
 
         if (strstr(line, FB_DEVICE_NAME)) {
-            // Sense Hat framebuffer device name found
             if (sscanf(line, "%d", &num) == 1) {
                 printf("Sense Hat LED matrix points to device /dev/fb%d\n",
                        num);
@@ -353,7 +385,9 @@ bool senseInit() {
 
     // GPIO chip selection
     if (initOk) {
-        gpio_chip = gpiod_chip_open_by_name("gpiochip0");
+        /* Open the first available gpiochip device (more robust than
+         * hardcoding /dev/gpiochip0). */
+        gpio_chip = _open_first_gpiochip();
         if (!gpio_chip) {
             printf("GPIO chip opening failure.\n%s\n", strerror(errno));
             initOk = false;
@@ -380,7 +414,33 @@ void senseShutdown() {
         jsFile = -1;
     }
     // Close GPIO chip communication
-    gpiod_chip_close(gpio_chip);
+    if (gpio_chip) {
+        /* Release any requested lines before closing the chip. */
+        for (int i = 0; i < GPIOLIST; ++i) {
+            if (gpio_line[i]) {
+                gpiod_line_request_release(gpio_line[i]);
+                gpio_line[i] = NULL;
+            }
+        }
+        gpiod_chip_close(gpio_chip);
+        gpio_chip = NULL;
+    }
+
+    /* Close persistent pwm file descriptors if opened */
+    for (int i = 0; i < 2; ++i) {
+        if (pwm_fd_period[i] >= 0) {
+            close(pwm_fd_period[i]);
+            pwm_fd_period[i] = -1;
+        }
+        if (pwm_fd_duty[i] >= 0) {
+            close(pwm_fd_duty[i]);
+            pwm_fd_duty[i] = -1;
+        }
+        if (pwm_fd_enable[i] >= 0) {
+            close(pwm_fd_enable[i]);
+            pwm_fd_enable[i] = -1;
+        }
+    }
 
     // Close TCS34725 file handle
     colorDetectShutdown();
@@ -1365,6 +1425,59 @@ int _gpioCheckPin(uint8_t pin) {
     return pos;
 }
 
+/* Helper: request a single GPIO line using libgpiod v2 API.
+ * Returns a pointer to gpiod_line_request on success, NULL on failure.
+ * The returned request must be released with gpiod_line_request_release().
+ */
+static struct gpiod_line_request *_request_line(unsigned int pin,
+                                                gpio_dir_t direction) {
+    struct gpiod_line_settings *settings = NULL;
+    struct gpiod_line_config *config = NULL;
+    struct gpiod_line_request *request = NULL;
+    unsigned int offsets[1] = {pin};
+    bool retOk = true;
+
+    settings = gpiod_line_settings_new();
+    config = gpiod_line_config_new();
+    if (!settings || !config) {
+        fprintf(stderr, "Failed to allocate gpiod line settings/config.\n");
+        retOk = false;
+    }
+
+    if (retOk and direction != in and direction != out) {
+        fprintf(stderr, "Wrong GPIO direction for pin %u\n", pin);
+        retOk = false;
+    }
+
+    if (retOk and direction == out) {
+        gpiod_line_settings_set_direction(settings,
+                                          GPIOD_LINE_DIRECTION_OUTPUT);
+        gpiod_line_settings_set_output_value(settings,
+                                             GPIOD_LINE_VALUE_INACTIVE);
+    } else {
+        gpiod_line_settings_set_direction(settings, GPIOD_LINE_DIRECTION_INPUT);
+    }
+
+    if (retOk and
+        gpiod_line_config_add_line_settings(config, offsets, 1, settings) < 0) {
+        fprintf(stderr, "Failed to add line settings for pin %u\n", pin);
+        retOk = false;
+    }
+
+    /* Request the line(s) on the chip. Use NULL for request config. */
+    request = gpiod_chip_request_lines(gpio_chip, NULL, config);
+    if (!request) {
+        fprintf(stderr, "gpiod: request lines failed for pin %u\n", pin);
+        retOk = false;
+    }
+
+    if (retOk) {
+        if (settings) gpiod_line_settings_free(settings);
+        if (config) gpiod_line_config_free(config);
+    }
+    return request;
+}
+
 // Set GPIO pin configuration:
 // . Pin number must belong to gpio_pinlist
 // . Pin line must be free
@@ -1377,21 +1490,10 @@ bool gpioSetConfig(unsigned int pin, gpio_dir_t direction) {
         printf("Wrong GPIO pin number: %u.\n", pin);
         retOk = false;
     } else {
-        gpio_line[pos] = gpiod_chip_get_line(gpio_chip, pin);
+        /* Request the line using the helper. */
+        gpio_line[pos] = _request_line(pin, direction);
         if (!gpio_line[pos]) {
-            printf("GPIO get line failed for pin number: %u.\n", pin);
-            retOk = false;
-        } else if ((direction == out) &&
-                   (gpiod_line_request_output(gpio_line[pos], GPIO_CONSUMER,
-                                              0) < 0)) {
-            printf("Request line as output failed for pin number: %u.\n", pin);
-            gpiod_line_release(gpio_line[pos]);
-            retOk = false;
-        } else if ((direction == in) &&
-                   (gpiod_line_request_input(gpio_line[pos], GPIO_CONSUMER) <
-                    0)) {
-            printf("Request line as output failed for pin number: %u.\n", pin);
-            gpiod_line_release(gpio_line[pos]);
+            fprintf(stderr, "Failed to configure GPIO pin %u\n", pin);
             retOk = false;
         }
     }
@@ -1407,9 +1509,9 @@ bool gpioSetOutput(unsigned int pin, gpio_state_t val) {
     if ((pos = _gpioCheckPin(pin)) < 0) {
         printf("Wrong GPIO pin number: %u.\n", pin);
         retOk = false;
-    } else if (gpiod_line_set_value(gpio_line[pos], val) < 0) {
+    } else if (gpiod_line_request_set_value(gpio_line[pos], pin,
+                                            (enum gpiod_line_value)val) < 0) {
         puts("Set line output failed.");
-        gpiod_line_release(gpio_line[pos]);
         retOk = false;
     }
 
@@ -1424,9 +1526,9 @@ int gpioGetInput(unsigned int pin) {
     if ((pos = _gpioCheckPin(pin)) < 0) {
         printf("Wrong GPIO pin number: %u.\n", pin);
         val = -1;
-    } else if ((val = (gpio_state_t)gpiod_line_get_value(gpio_line[pos])) < 0) {
+    } else if ((val = (int)gpiod_line_request_get_value(gpio_line[pos], pin)) <
+               0) {
         puts("Get line input failed.");
-        gpiod_line_release(gpio_line[pos]);
     }
 
     return val;
@@ -1454,15 +1556,99 @@ bool _chanOk(unsigned int line) {
 bool pwmInit(unsigned int chan) {
     FILE *fd;
     bool retOk = true;
+    char buf[(FILENAMELENGTH - 1)];
 
     if (_chanOk(chan)) {
+        /* Try to export the channel. If already exported, writing will fail
+         * - that's ok; we'll still check for the existence of the channel
+         * directory and files. */
         fd = fopen("/sys/class/pwm/pwmchip0/export", "w");
         if (!fd) {
-            printf("Failed to open export file.\n%s\n", strerror(errno));
-            retOk = false;
+            /* If opening export fails for permission or other reasons, we
+             * still attempt to continue to check whether the pwm channel
+             * already exists. */
+            printf(
+                "Warning: cannot open export file. Will check existing sysfs "
+                "for pwm%u.\n%s\n",
+                chan, strerror(errno));
         } else {
-            fprintf(fd, "%u", chan);
+            if (fprintf(fd, "%u", chan) < 0) {
+                /* writing may fail if already exported */
+                printf("Warning: exporting pwm%u failed: %s\n", chan,
+                       strerror(errno));
+            }
             fclose(fd);
+        }
+
+        /* Wait for the sysfs pwm channel files (period, duty_cycle, enable)
+         * to be both present and openable for writing. On some kernels the
+         * files are created then their permissions/groups are adjusted
+         * asynchronously; attempting to open immediately may return EACCES.
+         * We'll poll for a short timeout until all three can be opened
+         * with O_WRONLY. */
+        const char *names[] = {"period", "duty_cycle", "enable"};
+        const int n_names = 3;
+        bool ok[3] = {false, false, false};
+        const int max_tries = 500; /* 500 * 10ms = 5s timeout */
+        int tries = 0;
+        struct stat st;
+
+        while (tries < max_tries) {
+            int all_ok = 1;
+            for (int i = 0; i < n_names; ++i) {
+                if (ok[i]) continue;
+                snprintf(buf, sizeof(buf), "/sys/class/pwm/pwmchip0/pwm%u/%s",
+                         chan, names[i]);
+                /* Try to open for write without truncating (open O_WRONLY). */
+                int fdtest = open(buf, O_WRONLY);
+                if (fdtest >= 0) {
+                    /* Keep the fd open persistently so later writes won't
+                     * fail because of transient permission changes. */
+                    if (strcmp(names[i], "period") == 0) {
+                        pwm_fd_period[chan] = fdtest;
+                    } else if (strcmp(names[i], "duty_cycle") == 0) {
+                        pwm_fd_duty[chan] = fdtest;
+                    } else if (strcmp(names[i], "enable") == 0) {
+                        pwm_fd_enable[chan] = fdtest;
+                    } else {
+                        close(fdtest);
+                    }
+                    ok[i] = true;
+                } else {
+                    /* If file doesn't exist, note and retry. If exists but
+                     * permission denied, also retry a few times until
+                     * permissions are adjusted. */
+                    all_ok = 0;
+                }
+            }
+
+            if (all_ok) break;
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            ++tries;
+        }
+
+        if (tries >= max_tries) {
+            /* Check whether the pwm directory exists at all. */
+            snprintf(buf, sizeof(buf), "/sys/class/pwm/pwmchip0/pwm%u", chan);
+            if (stat(buf, &st) != 0) {
+                printf(
+                    "Failed to find pwm channel directory for pwm%u after "
+                    "export.\n",
+                    chan);
+                printf(
+                    "Please ensure pwm-2chan overlay is enabled and you have "
+                    "permissions to access /sys/class/pwm.\n");
+            } else {
+                printf(
+                    "pwm%u directory present but some sysfs files were not "
+                    "openable after timeout.\n",
+                    chan);
+                printf(
+                    "This may be caused by transient permissions during "
+                    "creation; try running as root or re-running the "
+                    "program.\n");
+            }
+            retOk = false;
         }
     }
     return retOk;
@@ -1472,19 +1658,42 @@ bool pwmPeriod(unsigned int chan, unsigned int period) {
     FILE *fd;
     bool retOk = true;
     char buf[(FILENAMELENGTH - 1)];
-
     if (_chanOk(chan)) {
-        sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/period", chan);
-        fd = fopen(buf, "w");
-        if (!fd) {
-            printf("Failed to open channel %u period file.\n%s\n", chan,
-                   strerror(errno));
-            retOk = false;
+        if (pwm_fd_period[chan] >= 0) {
+            /* write using stored fd */
+            char outbuf[32];
+            int len = snprintf(outbuf, sizeof(outbuf), "%u", period * 1000u);
+            if (len > 0) {
+                if (lseek(pwm_fd_period[chan], 0, SEEK_SET) == -1) {
+                    /* ignore lseek errors, but attempt write anyway */
+                }
+                if (write(pwm_fd_period[chan], outbuf, (size_t)len) < 0) {
+                    printf("Failed to write period to pwm%u: %s\n", chan,
+                           strerror(errno));
+                    retOk = false;
+                }
+            }
         } else {
-            // usec to nanosec
-            period *= 1000;
-            fprintf(fd, "%u", period);
-            fclose(fd);
+            sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/period", chan);
+            /* Retry fopen for a short time to handle transient sysfs
+             * creation/permission changes that can happen right after export.
+             */
+            const int max_tries = 200; /* 200 * 10ms = 2s */
+            int tries = 0;
+            while ((fd = fopen(buf, "w")) == NULL && tries < max_tries) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                ++tries;
+            }
+            if (!fd) {
+                printf("Failed to open channel %u period file.\n%s\n", chan,
+                       strerror(errno));
+                retOk = false;
+            } else {
+                // usec to nanosec
+                period *= 1000;
+                fprintf(fd, "%u", period);
+                fclose(fd);
+            }
         }
     }
     return retOk;
@@ -1496,17 +1705,39 @@ bool pwmDutyCycle(unsigned int chan, unsigned int percent) {
     char buf[(FILENAMELENGTH - 1)];
 
     if (_chanOk(chan)) {
-        sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/duty_cycle", chan);
-        fd = fopen(buf, "w");
-        if (!fd) {
-            printf("Failed to open channel %u duty_cycle file.\n%s\n", chan,
-                   strerror(errno));
-            retOk = false;
+        if (pwm_fd_duty[chan] >= 0) {
+            /* write using stored fd */
+            unsigned int ns = percent * 100000u;
+            char outbuf[32];
+            int len = snprintf(outbuf, sizeof(outbuf), "%u", ns);
+            if (len > 0) {
+                if (lseek(pwm_fd_duty[chan], 0, SEEK_SET) == -1) {
+                    /* ignore */
+                }
+                if (write(pwm_fd_duty[chan], outbuf, (size_t)len) < 0) {
+                    printf("Failed to write duty_cycle to pwm%u: %s\n", chan,
+                           strerror(errno));
+                    retOk = false;
+                }
+            }
         } else {
-            // percent to nanosec period
-            percent *= 100000;
-            fprintf(fd, "%u", percent);
-            fclose(fd);
+            sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/duty_cycle", chan);
+            const int max_tries = 200; /* 200 * 10ms = 2s */
+            int tries = 0;
+            while ((fd = fopen(buf, "w")) == NULL && tries < max_tries) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                ++tries;
+            }
+            if (!fd) {
+                printf("Failed to open channel %u duty_cycle file.\n%s\n", chan,
+                       strerror(errno));
+                retOk = false;
+            } else {
+                // percent to nanosec period
+                percent *= 100000;
+                fprintf(fd, "%u", percent);
+                fclose(fd);
+            }
         }
     }
     return retOk;
@@ -1518,15 +1749,31 @@ bool pwmChangeState(unsigned int chan, std::string state) {
     char buf[(FILENAMELENGTH - 1)];
 
     if (_chanOk(chan)) {
-        sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/enable", chan);
-        fd = fopen(buf, "w");
-        if (!fd) {
-            printf("Failed to open channel %u enable file.\n%s\n", chan,
-                   strerror(errno));
-            retOk = false;
+        if (pwm_fd_enable[chan] >= 0) {
+            if (lseek(pwm_fd_enable[chan], 0, SEEK_SET) == -1) {
+                /* ignore */
+            }
+            if (write(pwm_fd_enable[chan], state.c_str(), state.length()) < 0) {
+                printf("Failed to write enable to pwm%u: %s\n", chan,
+                       strerror(errno));
+                retOk = false;
+            }
         } else {
-            fprintf(fd, "%s", state.c_str());
-            fclose(fd);
+            sprintf(buf, "/sys/class/pwm/pwmchip0/pwm%u/enable", chan);
+            const int max_tries = 200; /* 200 * 10ms = 2s */
+            int tries = 0;
+            while ((fd = fopen(buf, "w")) == NULL && tries < max_tries) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                ++tries;
+            }
+            if (!fd) {
+                printf("Failed to open channel %u enable file.\n%s\n", chan,
+                       strerror(errno));
+                retOk = false;
+            } else {
+                fprintf(fd, "%s", state.c_str());
+                fclose(fd);
+            }
         }
     }
     return retOk;

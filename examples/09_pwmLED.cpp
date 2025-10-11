@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
         if (opt == 'c')
             chan = strtoul(optarg, &eptr, 10);
         else
-            cerr << "Usage: " << argv[0] << " [-p] GPIO pin number." << endl;
+            cerr << "Usage: " << argv[0] << " [-p] PWM pin number." << endl;
     }
 
     if (senseInit()) {
