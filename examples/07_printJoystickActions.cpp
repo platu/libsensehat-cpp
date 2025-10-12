@@ -39,6 +39,7 @@ int main() {
 
     const rgb_pixel_t rainbow[8] = {red,  orange, yellow, green,
                                     cyan, blue,   purple, pink};
+    const int NUM_COLORS = sizeof(rainbow) / sizeof(rainbow[0]);
     rgb_pixel_t pix;
     int row, col, index;
     int event_count, click;
@@ -62,51 +63,48 @@ int main() {
             joystick = senseWaitForJoystick();
             click++;
             if (click % 4 == 0) {
-                cout << "Event number " << event_count + 1 << endl;
-                event_count++;
-
                 // Turn off previous pixel
                 senseSetPixel(row, col, 0, 0, 0);
 
                 // Push to change color index
                 if (joystick.action == KEY_ENTER &&
                     joystick.state == KEY_RELEASED) {
-                    index++;
-                    if (index == SENSE_LED_WIDTH) index = 0;
+                    index = (index + 1) % NUM_COLORS;
                     pix = rainbow[index];
                 }
 
                 // Activate the pixel above
                 if (joystick.action == KEY_UP &&
                     joystick.state == KEY_RELEASED) {
-                    row--;
-                    if (row == 0) row = 7;
+                    row = (row + SENSE_LED_WIDTH - 1) % SENSE_LED_WIDTH;
                 }
 
                 // Activate the pixel below
                 if (joystick.action == KEY_DOWN &&
                     joystick.state == KEY_RELEASED) {
-                    row++;
-                    if (row == SENSE_LED_WIDTH) row = 0;
+                    row = (row + 1) % SENSE_LED_WIDTH;
                 }
 
                 // Activate the pixel on the left
                 if (joystick.action == KEY_LEFT &&
                     joystick.state == KEY_RELEASED) {
-                    col--;
-                    if (col == 0) col = 7;
+                    col = (col + SENSE_LED_WIDTH - 1) % SENSE_LED_WIDTH;
                 }
 
                 // Activate the pixel on the right
                 if (joystick.action == KEY_RIGHT &&
                     joystick.state == KEY_RELEASED) {
-                    col++;
-                    if (col == SENSE_LED_WIDTH) col = 0;
+                    col = (col + 1) % SENSE_LED_WIDTH;
                 }
 
                 // Turn on new pixel
                 senseSetPixel(row, col, pix.color[_R], pix.color[_G],
                               pix.color[_B]);
+
+             // Print the new active pixel coordinates so they match the LED
+             cout << "Event number " << event_count + 1 << " row " << row
+                 << " col " << col << endl;
+             event_count++;
             }
 
         } while (event_count < 60);

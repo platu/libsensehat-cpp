@@ -24,7 +24,7 @@ The following entry sets BCM 18 as PWM0 and BCM 13 as PWM1. Only BCM 13 has to
 be changed from "default" pinout.
 
 ```bash
-echo "dtoverlay=pwm-2chan,pin2=13,func2=4" | sudo tee --append /boot/config.txt
+echo "dtoverlay=pwm-2chan,pin2=13,func2=4" | sudo tee --append /boot/firmware/config.txt
 ```
 
 After reboot of the Raspberry Pi, we can check that PWM kernel module is loaded.
