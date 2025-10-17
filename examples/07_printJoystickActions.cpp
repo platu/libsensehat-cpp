@@ -101,10 +101,10 @@ int main() {
                 senseSetPixel(row, col, pix.color[_R], pix.color[_G],
                               pix.color[_B]);
 
-             // Print the new active pixel coordinates so they match the LED
-             cout << "Event number " << event_count + 1 << " row " << row
-                 << " col " << col << endl;
-             event_count++;
+                // Print the new active pixel coordinates so they match the LED
+                cout << "Event number " << event_count + 1 << " row " << row
+                     << " col " << col << endl;
+                event_count++;
             }
 
         } while (event_count < 60);

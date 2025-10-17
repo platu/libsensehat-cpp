@@ -36,6 +36,9 @@ pwm_bcm2835            16384  2
 
 ## Shell export versus library function
 
+**The content of this section is obsolete due to the October 2025 code update,
+which manages PWM channels using persistent file descriptors.**
+
 At the very first run it is advised to do the `export` job manually as it takes
 "some time" to load the chip configuration within the `/sys/class/pwm/pwmchip0`
 tree.

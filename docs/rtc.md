@@ -6,7 +6,7 @@ Here are the steps to use its RTC DS1307 chip as a system RTC
 
 1. Detect the chip on I2C bus number 1 at 0x68 address
 
-```
+```bash
 i2cdetect -y 1
      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
 00:                         -- -- -- -- -- -- -- --
@@ -23,7 +23,7 @@ i2cdetect -y 1
 
 Add this new entry :
 
-```
+```text
 dtoverlay=i2c-rtc,ds1307
 ```
 
@@ -31,13 +31,13 @@ In our setup, the entry `dtparam=i2c_arm=on` is already active.
 
 3. Remove fake hardware clock set by default
 
-```
+```bash
 sudo apt -y purge fake-hwclock
 ```
 
 Edit the `/lib/udev/hwclock-set` to comment out RTC initialization instructions
 
-```
+```bash
 #!/bin/sh
 # Reset the System Clock to UTC if the hardware clock from which it
 # was copied by the kernel was in localtime.
@@ -56,16 +56,22 @@ dev=$1
 
 Check kernel module is loaded
 
-```
+```bash
 lsmod | grep rtc
+```
+
+```bash
 rtc_ds1307             32768  0
 regmap_i2c             16384  1 rtc_ds1307
 ```
 
 Check RTC setup at boot time
 
-```
+```bash
 sudo dmesg | grep ' rtc'
+```
+
+```bash
 [    8.138816] rtc-ds1307 1-0068: registered as rtc0
 [    8.141436] rtc-ds1307 1-0068: setting system clock to 2022-12-06T13:12:43 UTC (1670332363)
 ```
