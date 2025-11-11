@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-CXXFLAGS= -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++2a
+CXXFLAGS= -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++23
 
 PREFIX=/usr/local
 LIBDIR=${PREFIX}/lib

@@ -105,7 +105,7 @@ make
 ```
 
 ```bash
-g++ -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++2a -o 01_setRGB565pixel 01_setRGB565pixel.cpp -lsensehat-c++ -lpng -li2c -lm -lRTIMULib -lgpiod
+g++ -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++23 -o 01_setRGB565pixel 01_setRGB565pixel.cpp -lsensehat-c++ -lpng -li2c -lm -lRTIMULib -lgpiod
 ```
 
 Run the program.

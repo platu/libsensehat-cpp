@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-CXXFLAGS= -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++2a
+CXXFLAGS= -Wall -Wextra -Wduplicated-cond -Wduplicated-branches -Wsign-conversion -Wlogical-op -Wuseless-cast -Werror -pedantic -std=gnu++23
 LIBLIST= -lsensehat-c++ -lpng -li2c -lm -lRTIMULib -lgpiod
 LIBDEP=/usr/local/lib/libsensehat-c++.so.0
 
