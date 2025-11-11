@@ -53,11 +53,11 @@ State evolve(State current_state, Event event) {
 void action(State current_state) {
     switch (current_state) {
         case RUN:
-            std::cout << "Robot moves forward" << ends;
+            std::cout << "Robot moves forward" << std::endl;
             // TODO: move the robot forward
             break;
         case STOP:
-            std::cout << "Robot stops" << ends;
+            std::cout << "Robot stops" << std::endl;
             // TODO: stop the robot
             break;
     }
@@ -85,9 +85,21 @@ int main() {
         key_count = 0;
         time = 0;
         cycle_count = 0;
-        clearConsole();            // Clear the console
-        gotoxy(5, 4);              // Move cursor to column 5, raw 4
-        std::cout << '>' << ends;  // Display the prompt
+        clearConsole();  // Clear the console
+
+        // Display instructions
+        gotoxy(5, 2);
+        std::cout << "=== ROBOT SIMULATOR ===" << std::endl;
+        gotoxy(5, 3);
+        std::cout << "Commands:" << std::endl;
+        gotoxy(7, 4);
+        std::cout << "'R' - Run (robot moves forward)" << std::endl;
+        gotoxy(7, 5);
+        std::cout << "'S' - Stop (robot stops)" << std::endl;
+        gotoxy(7, 6);
+        std::cout << "'Q' - Quit or press joystick" << std::endl;
+        gotoxy(5, 8);
+        std::cout << "Enter command > " << std::flush;
 
         //---------------------------------------------------------------------
         // Main loop
@@ -106,9 +118,8 @@ int main() {
             // Event codes for single key press
             if (key_count == 1) {
                 c = std::cin.get();
-                gotoxy(7, 4);  // Move cursor to column 7, raw 4
-                std::cout << "key = [" << c << "]"
-                          << ends;  // Display the character
+                gotoxy(21, 8);  // Move cursor after prompt
+                std::cout << "[" << c << "]" << std::flush;
 
                 switch (toupper(c)) {
                     case 'R':
@@ -132,9 +143,10 @@ int main() {
                 // -----------------------------------------------------------
                 // Robot action if state has changed
                 if (next_state != current_state) {
-                    gotoxy(5, 7);  // Move cursor to column 5, raw 7
+                    gotoxy(5, 10);  // Move cursor to column 5, raw 10
                     clearEOL();
-                    std::cout << "Robot state: " << ends;
+                    std::cout << "Robot state: ";
+                    std::cout.flush();
 
                     action(next_state);
 
@@ -160,8 +172,8 @@ int main() {
             if (cycle_count == 50) {
                 cycle_count = 0;
                 time += 1;
-                gotoxy(30, 4);  // Move cursor to column 30, raw 4
-                std::cout << "time = " << time << "s" << ends;
+                gotoxy(5, 12);  // Move cursor to column 5, raw 12
+                std::cout << "Running time: " << time << "s" << std::flush;
                 clearEOL();
             }
 

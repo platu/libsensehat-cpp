@@ -31,10 +31,6 @@ int main() {
         std::cout << "-------------------------------" << endl
                   << "Sense Hat initialization Ok." << endl;
 
-        clearConsole();  // Clear the console
-        std::cout << "Keyboard key event detection" << endl
-                  << "Press joystick to quit." << endl;
-
         //---------------------------------------------------------------------
         // Initializations
         stop = false;
@@ -42,12 +38,21 @@ int main() {
         time = 0;
         cycle_count = 0;
 
+        clearConsole();  // Clear the console
+
+        // Display instructions
+        gotoxy(5, 2);
+        std::cout << "=== KEYBOARD & JOYSTICK EVENT DETECTION ===" << std::endl;
+        gotoxy(5, 3);
+        std::cout << "Press any key to see its detection" << std::endl;
+        gotoxy(5, 4);
+        std::cout << "Press joystick to quit" << std::endl;
+        gotoxy(5, 6);
+        std::cout << "Enter command > " << std::flush;
+
         //---------------------------------------------------------------------
         // Main task
         do {
-            gotoxy(5, 4);  // Move cursor to column 5, raw 4
-            std::cout << '>';
-
             // ---------------------------------------------------------------
             // Collect events by scanning keyboard and joystick
 
@@ -63,7 +68,8 @@ int main() {
             // An event has been detected
             if (key_count == 1) {
                 c = std::cin.get();
-                std::cout << "key = [" << c << "]";  // Display the character
+                gotoxy(21, 6);  // Move cursor after prompt
+                std::cout << "[" << c << "]" << std::flush;
                 clearEOL();
             }
 
@@ -78,8 +84,8 @@ int main() {
             if (cycle_count == 50) {
                 cycle_count = 0;
                 time += 1;
-                gotoxy(5, 6);  // Move cursor to column 5, raw 6
-                std::cout << "time = " << time << "s";
+                gotoxy(5, 8);  // Move cursor to column 5, raw 8
+                std::cout << "Running time: " << time << "s" << std::flush;
                 clearEOL();
             }
 

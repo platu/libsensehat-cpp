@@ -47,9 +47,20 @@ int main() {
         time = 0;
         cycle_count = 0;
         clearConsole();  // Clear the console
-        gotoxy(5, 4);    // Move cursor to column 5, raw 4
-        std::cout << '>' << ends;
-        gotoxy(7, 4);  // Move cursor to column 7, raw 4
+
+        // Display instructions
+        gotoxy(5, 2);
+        std::cout << "=== ROBOT SIMULATOR ===" << std::endl;
+        gotoxy(5, 3);
+        std::cout << "Commands:" << std::endl;
+        gotoxy(7, 4);
+        std::cout << "'R' - Run (robot moves forward)" << std::endl;
+        gotoxy(7, 5);
+        std::cout << "'S' - Stop (robot stops)" << std::endl;
+        gotoxy(7, 6);
+        std::cout << "'Q' - Quit" << std::endl;
+        gotoxy(5, 8);
+        std::cout << "Enter command > " << std::flush;
 
         //---------------------------------------------------------------------
         // Main task
@@ -61,9 +72,9 @@ int main() {
             // check if a single key is pressed. We have an event!
             if (key_count == 1) {
                 c = std::cin.get();
-                gotoxy(7, 4);  // Move cursor to column 7, raw 4
+                gotoxy(21, 8);  // Move cursor after prompt
                 clearEOL();
-                std::cout << "key = [" << c << "]";  // Display the character
+                std::cout << "[" << c << "]" << std::flush;
 
                 // -----------------------------------------------------------
                 // STATE machine evolution
@@ -82,17 +93,17 @@ int main() {
                 // -----------------------------------------------------------
                 // State transition and Robot action
                 if (next_state != current_state) {
-                    gotoxy(5, 7);  // Move cursor to column 5, raw 7
+                    gotoxy(5, 10);  // Move cursor to column 5, raw 10
                     clearEOL();
                     std::cout << "Robot state: ";
                     switch (next_state) {
                         case RUN:
-                            std::cout << "RUN";
+                            std::cout << "RUN" << std::endl;
                             // TODO: move the robot forward
 
                             break;
                         case STOP:
-                            std::cout << "STOP";
+                            std::cout << "STOP" << std::endl;
                             // TODO: stop the robot
 
                             break;
@@ -100,8 +111,7 @@ int main() {
                     current_state = next_state;
                 }
 
-                // Reset the cursor position and key count
-                gotoxy(7, 4);  // Move cursor to column 7, raw 4
+                // Reset key count
                 key_count = 0;
             }
             // ---------------------------------------------------------------
@@ -115,8 +125,8 @@ int main() {
             if (cycle_count == 50) {
                 cycle_count = 0;
                 time += 1;
-                gotoxy(30, 4);  // Move cursor to column 30, raw 4
-                std::cout << "time = " << time << "s";
+                gotoxy(5, 12);  // Move cursor to column 5, raw 12
+                std::cout << "Running time: " << time << "s" << std::flush;
                 clearEOL();
             }
 
