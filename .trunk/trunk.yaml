@@ -19,7 +19,7 @@ runtimes:
 lint:
   enabled:
     - trufflehog@3.90.13
-    - checkov@3.2.491
+    - checkov@3.2.492
     - clang-format@16.0.3
     - git-diff-check
     - markdownlint@0.45.0

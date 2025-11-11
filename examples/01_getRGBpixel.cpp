@@ -28,6 +28,7 @@
 
 using namespace std;
 
+// Function to capture a single keypress from the user
 int getch() {
     int c = 0;
 
@@ -51,6 +52,17 @@ int getch() {
     return c;
 }
 
+// Function to check if the entered coordinate is valid
+bool isValidCoordinate(int coord) {
+    bool valid = false;
+
+    if (coord >= 0 && coord < 8) {
+        valid = true;
+    }
+
+    return valid;
+}
+
 int main() {
     rgb565_pixel_t color, mask = 0xf800;
     rgb_pixel_t readpx;
@@ -62,32 +74,48 @@ int main() {
              << "Sense Hat initialization Ok." << endl;
         senseClear();
 
-        // First we fill the LED matrix
+        // Based on the initial color value of mask, we fill the LED matrix
         for (y = 0; y < 8; y++) {
             color = mask;
             for (x = 0; x < 8; x++) {
                 senseSetRGB565pixel(x, y, color);
+                // We shift color to get the next color in RGB565 format
                 color <<= 1;
             }
             mask >>= 2;
         }
 
         // Next we ask the user to enter pixel row and column
-        cout << "Enter the row and column numbers of the pixel to be read: ";
-        cin >> row >> col;
-        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        do {
+            cout << "Enter both the row and column numbers (0-7) of the pixel "
+                    "to be read: ";
+            cin >> row >> col;
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            if (!isValidCoordinate(row)) {
+                cout << "Invalid row number. Please enter a value between 0 "
+                        "and 7."
+                     << endl;
+            }
+            if (!isValidCoordinate(col)) {
+                cout << "Invalid column number. Please enter a value between 0 "
+                        "and 7."
+                     << endl;
+            }
+        } while (!isValidCoordinate(row) || !isValidCoordinate(col));
 
-        // Finally, we read the pixel in RGB565 format
-        readpx = senseGetRGBpixel(row, col);
+        // Read the pixel in RGB format
+        readpx = senseGetRGBpixel(col, row);
         cout << "Here is the color encoded in RGB format." << endl
-             << "Hexadecimal:\t" << hex << setw(3) << (uint16_t)readpx.color[_R]
-             << ", " << (uint16_t)readpx.color[_G] << ", "
+             << "Hexadecimal:\t0x" << hex << setw(2) << setfill('0')
+             << (uint16_t)readpx.color[_R] << ", 0x" << setw(2) << setfill('0')
+             << (uint16_t)readpx.color[_G] << ", 0x" << setw(2) << setfill('0')
              << (uint16_t)readpx.color[_B] << endl
              << "Decimal:\t" << dec << setw(3) << (uint16_t)readpx.color[_R]
-             << ", " << (uint16_t)readpx.color[_G] << ", "
+             << ", " << setw(3) << (uint16_t)readpx.color[_G] << ", " << setw(3)
              << (uint16_t)readpx.color[_B] << endl;
         senseClear();
-        senseSetRGBpixel(row, col, readpx.color[_R], readpx.color[_G],
+        // We set back the read pixel to verify
+        senseSetRGBpixel(col, row, readpx.color[_R], readpx.color[_G],
                          readpx.color[_B]);
 
         cout << endl << "Waiting for keypress." << endl;

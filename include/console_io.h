@@ -1,45 +1,54 @@
+#ifndef CONSOLE_IO_H
+#define CONSOLE_IO_H
+
 #include <iostream>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
-#include <cassert>
 #include <cstring>
+#include <stdexcept>
 
 //! \brief Arrow key code list
 enum arrowKey { UP, DOWN, LEFT, RIGHT, OTHER };
 
 //! \brief Clear the console screen and place the cursor at the top left
-void clearConsole() { std::cout << "\x1b[2J\x1b[0;0f" << std::flush; }
+inline void clearConsole() noexcept {
+    std::cout << "\x1b[2J\x1b[0;0f" << std::flush;
+}
 
 //! \brief Clear the line from the cursor position to the end of line
-void clearEOL() { std::cout << "\x1b[K" << std::flush; }
+inline void clearEOL() noexcept {
+    std::cout << "\x1b[K" << std::flush;
+}
 
 //! \brief Set cursor position to (x,y) in the console
 //! \param x Horizontal position or column
 //! \param y Vertical position or row
-void gotoxy(int x, int y) {
+inline void gotoxy(int x, int y) noexcept {
     std::cout << "\x1b[" << y << ';' << x << 'f' << std::flush;
 }
 
 //! \brief Non-blocking keyboard input detection
 //! \return Number of bytes waiting in the keyboard buffer
-int keypressed() {
+inline int keypressed() {
     static const int STDIN = 0;
-    static bool initialized = false;
-    termios term;
     int bytesWaiting;
 
-    if (!initialized) {
-        // Deactivate buffered input
-        tcgetattr(STDIN, &term);
-        term.c_lflag &= (tcflag_t)~ICANON;
-        tcsetattr(STDIN, TCSANOW, &term);
-        setbuf(stdin, NULL);
-        // Synchronize with C I/O
-        std::cin.sync_with_stdio();
-
-        initialized = true;
-    }
+    static struct InitTerminal {
+        InitTerminal() {
+            termios term;
+            if (tcgetattr(STDIN, &term) != 0) {
+                throw std::runtime_error("Failed to get terminal attributes");
+            }
+            term.c_lflag &= static_cast<tcflag_t>(~ICANON);
+            if (tcsetattr(STDIN, TCSANOW, &term) != 0) {
+                throw std::runtime_error("Failed to set terminal attributes");
+            }
+            setbuf(stdin, nullptr);
+            std::cin.sync_with_stdio();
+        }
+    } init;
+    (void)init; // Ensure initialization happens
 
     ioctl(STDIN, FIONREAD, &bytesWaiting);
     return bytesWaiting;
@@ -47,61 +56,71 @@ int keypressed() {
 
 //! \brief Return the arrow key code from the keyboard buffer if any
 //! \return arrowKey code among UP, DOWN, LEFT, RIGHT, OTHER enum values
-arrowKey getArrowKey() {
+inline arrowKey getArrowKey() {
     char c;
-    arrowKey code;
+    arrowKey code = OTHER;
 
     // Read first character
     c = getchar();
     // Test for escape sequence
     if (c == '\x1b') {
-        // Read second character '\\'
+        // Read second character '['
         c = getchar();
-        // Read third character '['
-        c = getchar();
-        // Read fourth character with arrow key code
-        switch (c) {
-            case 'A':
-                code = UP;
-                break;
-            case 'B':
-                code = DOWN;
-                break;
-            case 'C':
-                code = RIGHT;
-                break;
-            case 'D':
-                code = LEFT;
-                break;
-            default:
-                code = OTHER;
+        if (c == '[') {
+            // Read third character with arrow key code
+            c = getchar();
+            switch (c) {
+                case 'A':
+                    code = UP;
+                    break;
+                case 'B':
+                    code = DOWN;
+                    break;
+                case 'C':
+                    code = RIGHT;
+                    break;
+                case 'D':
+                    code = LEFT;
+                    break;
+                default:
+                    code = OTHER;
+            }
         }
     }
-    fflush(stdin);
+
+    // Vider le buffer en mode non-bloquant
+    while (keypressed() > 0) {
+        getchar();
+    }
+
     return code;
 }
 
 //! \brief Wait for a single key press and return the key code
 //! \return Key code of the pressed key
-int getch() {
+inline int getch() {
     int c = 0;
-
     struct termios org_opts, new_opts;
-    int res = 0;
 
     //----- store current settings -------------
-    res = tcgetattr(STDIN_FILENO, &org_opts);
-    assert(res == 0);
+    if (tcgetattr(STDIN_FILENO, &org_opts) != 0) {
+        throw std::runtime_error("Failed to get terminal attributes");
+    }
     //----- set new terminal parameters --------
     memcpy(&new_opts, &org_opts, sizeof(new_opts));
-    new_opts.c_lflag &= (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL |
-                                     ECHOPRT | ECHOKE | ICRNL);
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
+    new_opts.c_lflag &= static_cast<tcflag_t>(~(ICANON | ECHO | ECHOE | ECHOK |
+                                                 ECHONL | ECHOPRT | ECHOKE | ICRNL));
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &new_opts) != 0) {
+        throw std::runtime_error("Failed to set terminal attributes");
+    }
     //------ wait for a single key -------------
     c = getchar();
-    //------ restore current settings- ---------
-    res = tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
-    assert(res == 0);
+    //------ restore current settings ----------
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &org_opts) != 0) {
+        throw std::runtime_error("Failed to restore terminal attributes");
+    }
 
     return c;
 }
+
+#endif // CONSOLE_IO_H
