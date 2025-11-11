@@ -18,8 +18,8 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   enabled:
-    - trufflehog@3.90.11
-    - checkov@3.2.484
+    - trufflehog@3.90.13
+    - checkov@3.2.491
     - clang-format@16.0.3
     - git-diff-check
     - markdownlint@0.45.0

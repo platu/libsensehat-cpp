@@ -173,4 +173,5 @@ designates the category of functions. Here is a list of these categories:
 Once the Sense HAT standard header is replaced by a stacking header, GPIO and
 PWM pins are available.
 
-<img src="https://inetdoc.net/images/sensehat_stacking.jpg" width="384px" />
+<img alt="Raspberry Pi with stacking header"
+src="https://inetdoc.net/images/sensehat_stacking.jpg" width="384px" />

@@ -12,8 +12,14 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
-            "environment": [],
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "${env:PATH}"
+                }
+            ],
             "externalConsole": false,
+            "internalConsoleOptions": "neverOpen",
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -23,7 +29,7 @@
                 }
             ],
             "preLaunchTask": "C/C++: g++ build active file",
-            "miDebuggerPath": "/usr/bin/gdb"
+            "miDebuggerPath": "/usr/bin/gdb",
         }
     ]
 }

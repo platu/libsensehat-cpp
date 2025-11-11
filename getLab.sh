@@ -1,4 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Vérifier et configurer la branche par défaut à 'main'
+default_branch=$(git config --global init.defaultBranch 2>/dev/null)
+if [[ -z "${default_branch}" ]] || [[ "${default_branch}" != 'main' ]]; then
+	git config --global init.defaultBranch main
+fi
 
 cwd=$(pwd)
 
