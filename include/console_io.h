@@ -17,9 +17,7 @@ inline void clearConsole() noexcept {
 }
 
 //! \brief Clear the line from the cursor position to the end of line
-inline void clearEOL() noexcept {
-    std::cout << "\x1b[K" << std::flush;
-}
+inline void clearEOL() noexcept { std::cout << "\x1b[K" << std::flush; }
 
 //! \brief Set cursor position to (x,y) in the console
 //! \param x Horizontal position or column
@@ -48,7 +46,7 @@ inline int keypressed() {
             std::cin.sync_with_stdio();
         }
     } init;
-    (void)init; // Ensure initialization happens
+    (void)init;  // Ensure initialization happens
 
     ioctl(STDIN, FIONREAD, &bytesWaiting);
     return bytesWaiting;
@@ -108,8 +106,8 @@ inline int getch() {
     }
     //----- set new terminal parameters --------
     memcpy(&new_opts, &org_opts, sizeof(new_opts));
-    new_opts.c_lflag &= static_cast<tcflag_t>(~(ICANON | ECHO | ECHOE | ECHOK |
-                                                 ECHONL | ECHOPRT | ECHOKE | ICRNL));
+    new_opts.c_lflag &= static_cast<tcflag_t>(
+        ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL));
     if (tcsetattr(STDIN_FILENO, TCSANOW, &new_opts) != 0) {
         throw std::runtime_error("Failed to set terminal attributes");
     }
@@ -123,4 +121,4 @@ inline int getch() {
     return c;
 }
 
-#endif // CONSOLE_IO_H
+#endif  // CONSOLE_IO_H

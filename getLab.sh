@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# Vérifier et configurer la branche par défaut à 'main'
+# Check if git default branch is set to main, if not set it.
 default_branch=$(git config --global init.defaultBranch 2>/dev/null)
-if [[ -z "${default_branch}" ]] || [[ "${default_branch}" != 'main' ]]; then
+if [[ -z ${default_branch} ]] || [[ ${default_branch} != 'main' ]]; then
 	git config --global init.defaultBranch main
 fi
 
@@ -22,7 +22,10 @@ fi
 echo "New lab: ${lab} in ${HOME}/cpp/${lab} directory"
 
 mkdir -p ~/cpp
-cd ~/cpp || exit
+cd ~/cpp || {
+	echo "Failed to change directory to ~/cpp" >&2
+	exit 1
+}
 
 git init
 git config core.sparsecheckout true
@@ -34,13 +37,15 @@ rm -rf .git
 mv labTemplate "${lab}"
 if [[ ${lab} != "lab01" ]]; then
 	mv "${lab}/lab01.cpp" "${lab}/${lab}.cpp"
+	# Replace source file name inside the cpp file
 	sed -i "s/lab01/${lab}/g" "${lab}/${lab}.cpp"
-	sed -i "s/lab01/${lab}/g" "${lab}/.vscode/settings.json"
+	# Remove author name from the cpp file
+	sed -i "s/ \* Author: .*/ \* Author: /g" "${lab}/${lab}.cpp"
 fi
 
-sed -i "s/labTemplate/${lab}/g" "${lab}/.vscode/settings.json"
-sed -i "s/__USER__/${USER}/g" "${lab}/.vscode/settings.json"
-
-cd "${cwd}" || exit
+cd "${cwd}" || {
+	echo "Failed to change directory to ${cwd}" >&2
+	exit 1
+}
 
 exit 0
