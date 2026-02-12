@@ -1,0 +1,7 @@
+{
+  // Recommended extensions for this C/C++ + Makefile lab
+  "recommendations": [
+    "ms-vscode.cpptools-extension-pack", // C/C++ Extension Pack
+    "ms-vscode.makefile-tools"          // Makefile Tools
+  ]
+}
