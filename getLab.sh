@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if (( $# > 1 )); then
+if (($# > 1)); then
 	echo "Usage: $0 [project-name]" >&2
 	exit 1
 fi
@@ -16,7 +16,7 @@ fi
 project_parent="${HOME}/cpp"
 project_dir="${project_parent}/${lab}"
 
-if [[ -e "${project_dir}" || -L "${project_dir}" ]]; then
+if [[ -e ${project_dir} || -L ${project_dir} ]]; then
 	echo "The ${project_dir} path already exists" >&2
 	exit 1
 fi

@@ -174,5 +174,6 @@ Once the Sense HAT standard header is replaced by a stacking header, GPIO and
 PWM pins are available.
 
 <!-- markdownlint-disable-next-line MD033 -->
+
 <img alt="Raspberry Pi with stacking header"
 src="https://inetdoc.net/images/sensehat_stacking.jpg" width="384px" />

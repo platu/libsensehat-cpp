@@ -48,7 +48,7 @@ int main() {
 
             question_mark_RedOnWhite = senseFlip_v(false);
         }
-        
+
         cout << "Press joystick button to quit." << endl;
         senseWaitForJoystickEnter();
 
